@@ -149,7 +149,7 @@ export default function LivePage() {
         referrerPolicy="no-referrer"
         onLoad={handleIframeLoad}
         onError={handleIframeError}
-        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads allow-presentation"
+        // sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads allow-presentation"
       />
       
       <style jsx>{`
