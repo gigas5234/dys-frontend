@@ -135,7 +135,7 @@ export default function LivePage() {
       
       <iframe
         title="데연소 Live (Runpod)"
-        src={RUNPOD_URL}
+        src={`${RUNPOD_URL}/webcam`}
         style={{ 
           width: "100%", 
           height: "100vh", 
@@ -143,12 +143,13 @@ export default function LivePage() {
           opacity: iframeLoaded ? 1 : 0,
           transition: "opacity 0.3s ease"
         }}
-        allow="camera; microphone; autoplay; clipboard-read; clipboard-write; fullscreen"
+        allow="camera; microphone; autoplay; clipboard-read; clipboard-write; fullscreen; display-capture; encrypted-media; geolocation; gyroscope; accelerometer; magnetometer; picture-in-picture; web-share"
         allowFullScreen
+        allowTransparency={true}
         referrerPolicy="no-referrer"
         onLoad={handleIframeLoad}
         onError={handleIframeError}
-        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads"
+        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads allow-presentation"
       />
       
       <style jsx>{`
