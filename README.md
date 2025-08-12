@@ -4,6 +4,16 @@ Next.js 14 기반의 RunPod 임베딩 프론트엔드 애플리케이션입니�
 
 ## 🚀 빠른 시작
 
+### Supabase 설정
+
+1. [Supabase](https://supabase.com)에서 새 프로젝트 생성
+2. Authentication > Settings > Auth Providers에서 Google 활성화
+3. Google Cloud Console에서 OAuth 2.0 클라이언트 ID 생성
+4. Supabase에 Google OAuth 설정 정보 입력:
+   - Client ID
+   - Client Secret
+   - Authorized redirect URI: `https://your-project-ref.supabase.co/auth/v1/callback`
+
 ### 로컬 개발
 
 ```bash
@@ -19,7 +29,12 @@ npm run dev
 프로젝트 루트에 `.env.local` 파일을 생성하고 다음을 추가하세요:
 
 ```env
+# RunPod 프록시 URL
 NEXT_PUBLIC_BACKEND_URL=https://your-runpod-proxy-url.com
+
+# Supabase 설정 (Google 로그인용)
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 ```
 
 ### Vercel 배포
@@ -44,6 +59,8 @@ dys_frontend/
 
 ## 🔧 주요 기능
 
+- **Google 로그인**: Supabase OAuth를 통한 간편한 Google 로그인
+- **세션 관리**: 자동 로그인 상태 유지 및 세션 확인
 - **현대적인 UI/UX**: 그라디언트 배경과 애니메이션 효과
 - **에러 처리**: 환경변수 누락 및 연결 오류 처리
 - **로딩 상태**: 사용자 친화적인 로딩 인디케이터
@@ -55,6 +72,7 @@ dys_frontend/
 - **Framework**: Next.js 14
 - **Language**: JavaScript (JSX)
 - **Styling**: Inline Styles + CSS-in-JS
+- **Authentication**: Supabase Auth (Google OAuth)
 - **Deployment**: Vercel (권장)
 
 ## 🔒 보안 고려사항
@@ -66,6 +84,8 @@ dys_frontend/
 ## 📝 배포 체크리스트
 
 - [ ] `NEXT_PUBLIC_BACKEND_URL` 환경변수 설정
+- [ ] `NEXT_PUBLIC_SUPABASE_URL` 및 `NEXT_PUBLIC_SUPABASE_ANON_KEY` 환경변수 설정
+- [ ] Supabase 프로젝트에서 Google OAuth 설정 완료
 - [ ] RunPod 프록시 URL 유효성 확인
 - [ ] 카메라/마이크 권한 테스트
 - [ ] 모바일 디바이스 호환성 확인
