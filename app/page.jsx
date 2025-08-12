@@ -17,16 +17,30 @@ export default function Home() {
 
   const checkUser = async () => {
     try {
+      // 환경 변수가 설정되지 않은 경우 더미 사용자로 설정
+      if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+        setUser(null);
+        setAuthLoading(false);
+        return;
+      }
+      
       const session = await getCurrentSession();
       setUser(session?.user || null);
     } catch (error) {
       console.error('Error checking user session:', error);
+      setUser(null);
     } finally {
       setAuthLoading(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
+    // 환경 변수가 설정되지 않은 경우 안내 메시지
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      alert('Supabase 환경 변수가 설정되지 않았습니다.\n\n.env.local 파일에 다음을 추가해주세요:\n\nNEXT_PUBLIC_SUPABASE_URL=your_supabase_url\nNEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key');
+      return;
+    }
+    
     setLoading(true);
     try {
       const { error } = await signInWithGoogle();
