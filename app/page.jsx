@@ -111,11 +111,11 @@ export default function Home() {
       {/* 로그인 후 우측 상단 홈 버튼 */}
       {user && (
         <button
-          onClick={() => window.location.href = '/'}
+          onClick={() => window.location.href = '/studio'}
           style={{
             position: "absolute",
             top: 20,
-            right: 20,
+            left: 20,
             background: "rgba(255, 255, 255, 0.1)",
             border: "1px solid rgba(255, 255, 255, 0.2)",
             borderRadius: "50%",
@@ -139,7 +139,7 @@ export default function Home() {
             e.target.style.transform = "scale(1)";
             e.target.style.boxShadow = "none";
           }}
-          title="메인 페이지로 돌아가기"
+          title="스튜디오 페이지로 이동"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>

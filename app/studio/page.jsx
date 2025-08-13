@@ -1,12 +1,68 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { getCurrentSession } from "../../lib/supabase";
 
 const API = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function StudioPage() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const session = await getCurrentSession();
+        setUser(session?.user || null);
+      } catch (error) {
+        console.error('Error checking user session:', error);
+        setUser(null);
+      }
+    };
+
+    checkUser();
+  }, []);
+
   return (
-    <main style={{ minHeight: "100vh", display: "grid", gridTemplateColumns: "320px 1fr 360px", gap: 16, padding: 16, background: "#0b1220", color: "#fff" }}>
+    <main style={{ minHeight: "100vh", display: "grid", gridTemplateColumns: "320px 1fr 360px", gap: 16, padding: 16, background: "#0b1220", color: "#fff", position: "relative" }}>
+      {/* 로그인 후 우측 상단 홈 버튼 */}
+      {user && (
+        <button
+          onClick={() => window.location.href = '/studio'}
+          style={{
+            position: "absolute",
+            top: 20,
+            left: 20,
+            background: "rgba(255, 255, 255, 0.1)",
+            border: "1px solid rgba(255, 255, 255, 0.2)",
+            borderRadius: "50%",
+            width: 50,
+            height: 50,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+            backdropFilter: "blur(10px)",
+            zIndex: 1000
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.background = "rgba(255, 255, 255, 0.2)";
+            e.target.style.transform = "scale(1.1)";
+            e.target.style.boxShadow = "0 8px 25px rgba(0, 0, 0, 0.3)";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.background = "rgba(255, 255, 255, 0.1)";
+            e.target.style.transform = "scale(1)";
+            e.target.style.boxShadow = "none";
+          }}
+          title="스튜디오 페이지"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9,22 9,12 15,12 15,22"/>
+          </svg>
+        </button>
+      )}
       <LeftPanel />
       <CenterPanel />
       <RightPanel />
