@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getCurrentSession } from "../../lib/supabase";
+import { getCurrentSession, sendAuthToBackend, getIframeUrl } from "../../lib/supabase";
 
 export default function LivePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [user, setUser] = useState(null);
+  const [iframeUrl, setIframeUrl] = useState('');
   
   // Vercel에 환경변수로 등록: NEXT_PUBLIC_BACKEND_URL = https://<runpod-프록시-URL>
   const RUNPOD_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -18,6 +19,14 @@ export default function LivePage() {
         // 사용자 세션 확인
         const session = await getCurrentSession();
         setUser(session?.user || null);
+        
+        // 백엔드로 인증 정보 전송
+        if (session && RUNPOD_URL) {
+          await sendAuthToBackend(RUNPOD_URL);
+          // iframe URL 생성 (JWT 토큰 포함)
+          const url = await getIframeUrl(RUNPOD_URL, 'webcam');
+          setIframeUrl(url);
+        }
       } catch (error) {
         console.error('Error checking user session:', error);
         setUser(null);
@@ -190,7 +199,7 @@ export default function LivePage() {
       
       <iframe
         title="데연소 Live (Runpod)"
-        src={`${RUNPOD_URL}/webcam`}
+        src={iframeUrl || `${RUNPOD_URL}/webcam`}
         style={{ 
           width: "100%", 
           height: "100vh", 

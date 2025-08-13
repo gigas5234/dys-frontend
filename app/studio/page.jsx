@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getCurrentSession } from "../../lib/supabase";
+import { getCurrentSession, sendAuthToBackend, getIframeUrl } from "../../lib/supabase";
 
 export default function StudioPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [user, setUser] = useState(null);
+  const [iframeUrl, setIframeUrl] = useState('');
   
   // Vercel에 환경변수로 등록: NEXT_PUBLIC_BACKEND_URL = https://<runpod-프록시-URL>
   const RUNPOD_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -18,6 +19,14 @@ export default function StudioPage() {
         // 사용자 세션 확인
         const session = await getCurrentSession();
         setUser(session?.user || null);
+        
+        // 백엔드로 인증 정보 전송
+        if (session && RUNPOD_URL) {
+          await sendAuthToBackend(RUNPOD_URL);
+          // iframe URL 생성 (JWT 토큰 포함)
+          const url = await getIframeUrl(RUNPOD_URL, 'studio');
+          setIframeUrl(url);
+        }
       } catch (error) {
         console.error('Error checking user session:', error);
         setUser(null);
@@ -190,7 +199,7 @@ export default function StudioPage() {
       
       <iframe
         title="데연소 Studio (Runpod)"
-        src={`${RUNPOD_URL}/studio`}
+        src={iframeUrl || `${RUNPOD_URL}/studio`}
         style={{ 
           width: "100%", 
           height: "100vh", 
