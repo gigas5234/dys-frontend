@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getCurrentSession, sendAuthToBackend, getIframeUrl } from "../../lib/supabase";
+import { getCurrentSession, sendAuthToBackend, getIframeUrl, restoreSessionFromUrl } from "../../lib/supabase";
 
 export default function StudioPage() {
   const [loading, setLoading] = useState(true);
@@ -16,8 +16,14 @@ export default function StudioPage() {
   useEffect(() => {
     const checkUserAndRunpod = async () => {
       try {
-        // 사용자 세션 확인
-        const session = await getCurrentSession();
+        // 먼저 URL에서 세션 복원 시도
+        let session = await restoreSessionFromUrl();
+        
+        // 복원된 세션이 없으면 현재 세션 확인
+        if (!session) {
+          session = await getCurrentSession();
+        }
+        
         setUser(session?.user || null);
         
         // 백엔드로 인증 정보 전송
