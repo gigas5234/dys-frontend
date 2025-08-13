@@ -1,32 +1,48 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { getCurrentSession } from "../../lib/supabase";
 
 export default function LivePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [user, setUser] = useState(null);
   
   // Vercel에 환경변수로 등록: NEXT_PUBLIC_BACKEND_URL = https://<runpod-프록시-URL>
   const RUNPOD_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   useEffect(() => {
-    if (!RUNPOD_URL) {
-      setError("백엔드 URL이 설정되지 않았습니다.");
-      setLoading(false);
-      return;
-    }
+    const checkUserAndRunpod = async () => {
+      try {
+        // 사용자 세션 확인
+        const session = await getCurrentSession();
+        setUser(session?.user || null);
+      } catch (error) {
+        console.error('Error checking user session:', error);
+        setUser(null);
+      }
 
-    // URL 유효성 검사
-    try {
-      new URL(RUNPOD_URL);
-    } catch (e) {
-      setError("잘못된 백엔드 URL 형식입니다.");
-      setLoading(false);
-      return;
-    }
+      // RunPod URL 확인
+      if (!RUNPOD_URL) {
+        setError("백엔드 URL이 설정되지 않았습니다.");
+        setLoading(false);
+        return;
+      }
 
-    setLoading(false);
+      // URL 유효성 검사
+      try {
+        new URL(RUNPOD_URL);
+      } catch (e) {
+        setError("잘못된 백엔드 URL 형식입니다.");
+        setLoading(false);
+        return;
+      }
+
+      setLoading(false);
+    };
+
+    checkUserAndRunpod();
   }, [RUNPOD_URL]);
 
   const handleIframeLoad = () => {
@@ -106,6 +122,45 @@ export default function LivePage() {
 
   return (
     <main style={{ minHeight: "100vh", position: "relative" }}>
+      {/* 로그인 후 우측 상단 홈 버튼 */}
+      {user && (
+        <button
+          onClick={() => window.location.href = '/'}
+          style={{
+            position: "absolute",
+            top: 20,
+            right: 20,
+            background: "rgba(255, 255, 255, 0.1)",
+            border: "1px solid rgba(255, 255, 255, 0.2)",
+            borderRadius: "50%",
+            width: 50,
+            height: 50,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+            backdropFilter: "blur(10px)",
+            zIndex: 1000
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.background = "rgba(255, 255, 255, 0.2)";
+            e.target.style.transform = "scale(1.1)";
+            e.target.style.boxShadow = "0 8px 25px rgba(0, 0, 0, 0.3)";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.background = "rgba(255, 255, 255, 0.1)";
+            e.target.style.transform = "scale(1)";
+            e.target.style.boxShadow = "none";
+          }}
+          title="메인 페이지로 돌아가기"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9,22 9,12 15,12 15,22"/>
+          </svg>
+        </button>
+      )}
       {!iframeLoaded && (
         <div style={{
           position: "absolute",

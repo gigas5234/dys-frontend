@@ -105,8 +105,48 @@ export default function Home() {
       padding: 24, 
       background: "linear-gradient(135deg, #0b1220 0%, #1e293b 100%)",
       color: "#fff",
-      fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, Apple SD Gothic Neo, Malgun Gothic"
+      fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, Apple SD Gothic Neo, Malgun Gothic",
+      position: "relative"
     }}>
+      {/* 로그인 후 우측 상단 홈 버튼 */}
+      {user && (
+        <button
+          onClick={() => window.location.href = '/'}
+          style={{
+            position: "absolute",
+            top: 20,
+            right: 20,
+            background: "rgba(255, 255, 255, 0.1)",
+            border: "1px solid rgba(255, 255, 255, 0.2)",
+            borderRadius: "50%",
+            width: 50,
+            height: 50,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+            backdropFilter: "blur(10px)",
+            zIndex: 1000
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.background = "rgba(255, 255, 255, 0.2)";
+            e.target.style.transform = "scale(1.1)";
+            e.target.style.boxShadow = "0 8px 25px rgba(0, 0, 0, 0.3)";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.background = "rgba(255, 255, 255, 0.1)";
+            e.target.style.transform = "scale(1)";
+            e.target.style.boxShadow = "none";
+          }}
+          title="메인 페이지로 돌아가기"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9,22 9,12 15,12 15,22"/>
+          </svg>
+        </button>
+      )}
       <div style={{ 
         textAlign: "center", 
         maxWidth: 500,
