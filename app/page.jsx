@@ -424,27 +424,27 @@ function HomePage() {
   const [user, setUser] = useState(null);
   const chatAnimated = useRef(false);
 
+  // 사용자 세션 확인 함수
+  const checkUser = async () => {
+    try {
+      // URL에서 토큰이 있는지 확인하고 세션 복원 시도
+      const restoredSession = await restoreSessionFromUrl();
+      if (restoredSession) {
+        setUser(restoredSession.user);
+        return;
+      }
+      
+      // 기존 세션 확인
+      const session = await getCurrentSession();
+      setUser(session?.user || null);
+    } catch (error) {
+      console.error('Error checking user session:', error);
+      setUser(null);
+    }
+  };
+
   // useEffect를 사용하여 컴포넌트가 렌더링된 후 스크립트 로직을 실행합니다.
   useEffect(() => {
-    // 사용자 세션 확인
-    const checkUser = async () => {
-      try {
-        // URL에서 토큰이 있는지 확인하고 세션 복원 시도
-        const restoredSession = await restoreSessionFromUrl();
-        if (restoredSession) {
-          setUser(restoredSession.user);
-          return;
-        }
-        
-        // 기존 세션 확인
-        const session = await getCurrentSession();
-        setUser(session?.user || null);
-      } catch (error) {
-        console.error('Error checking user session:', error);
-        setUser(null);
-      }
-    };
-    
     checkUser();
   }, []);
 
