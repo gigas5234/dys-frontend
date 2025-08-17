@@ -324,7 +324,6 @@ const GlobalStyles = () => (
 
 // 로그인 페이지 컴포넌트
 function LoginPage() {
-    const [passwordVisible, setPasswordVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [authLoading, setAuthLoading] = useState(true);
     const [user, setUser] = useState(null);
@@ -360,7 +359,7 @@ function LoginPage() {
     };
 
     const togglePasswordVisibility = () => {
-        setPasswordVisible(!passwordVisible);
+        // This function is no longer used
     };
 
     const handleGoogleSignIn = async () => {
@@ -376,10 +375,8 @@ function LoginPage() {
             if (error) {
                 console.error('Google sign in error:', error);
                 alert('로그인 중 오류가 발생했습니다.');
-            } else {
-                // 로그인 성공 시 persona 페이지로 이동
-                router.push('/persona');
             }
+            // 성공 시에는 Supabase가 자동으로 리다이렉트하므로 여기서는 아무것도 하지 않음
         } catch (error) {
             console.error('Sign in error:', error);
             alert('로그인 중 오류가 발생했습니다.');
@@ -390,13 +387,7 @@ function LoginPage() {
 
     const handleLogin = (event) => {
         event.preventDefault();
-        setIsLoading(true);
-
-        // 2초 후 로딩 상태 해제 (API 호출 시뮬레이션)
-        setTimeout(() => {
-            setIsLoading(false);
-            // 실제 로그인 성공/실패 로직 추가
-        }, 2000);
+        alert('일반 로그인은 현재 지원되지 않습니다. Google 계정으로 로그인해주세요.');
     };
 
     // 로딩 중일 때 표시할 화면
@@ -457,38 +448,36 @@ function LoginPage() {
                     </div>
                     <p>계정에 로그인하여 계속하세요.</p>
                     
-                    <form onSubmit={handleLogin}>
-                        <div className="input-group">
-                            <input type="email" id="email" name="email" required placeholder="이메일 주소" />
-                            <span className="icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                            </span>
-                        </div>
-                        <div className="input-group">
-                            <input type={passwordVisible ? 'text' : 'password'} id="password" name="password" required placeholder="비밀번호" />
-                             <span className="icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                            </span>
-                            <span className="password-toggle" onClick={togglePasswordVisibility}>
-                                {passwordVisible ? (
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
-                                ) : (
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                )}
-                            </span>
-                        </div>
-                        <button type="submit" className={`btn btn-primary ${isLoading ? 'loading' : ''}`} disabled={isLoading}>
-                            <span className="btn-text">로그인</span>
-                            <div className="spinner"></div>
-                        </button>
-                    </form>
-
-                    <div className="divider">또는</div>
+                    <div style={{ 
+                        background: 'rgba(255, 193, 7, 0.1)', 
+                        border: '1px solid rgba(255, 193, 7, 0.3)', 
+                        borderRadius: '12px', 
+                        padding: '16px', 
+                        marginBottom: '24px',
+                        textAlign: 'center'
+                    }}>
+                        <p style={{ 
+                            margin: '0 0 12px 0', 
+                            color: '#856404', 
+                            fontSize: '14px',
+                            fontWeight: '500'
+                        }}>
+                            ⚠️ 일반 로그인은 현재 지원되지 않습니다
+                        </p>
+                        <p style={{ 
+                            margin: '0', 
+                            color: '#856404', 
+                            fontSize: '13px'
+                        }}>
+                            Google 계정으로 로그인해주세요
+                        </p>
+                    </div>
 
                     <button 
                         className={`btn btn-google ${isLoading ? 'loading' : ''}`} 
                         onClick={handleGoogleSignIn}
                         disabled={isLoading}
+                        style={{ marginBottom: '24px' }}
                     >
                         {isLoading ? (
                             <div className="spinner"></div>
@@ -502,6 +491,25 @@ function LoginPage() {
                         )}
                         {isLoading ? '로그인 중...' : 'Google 계정으로 로그인'}
                     </button>
+
+                    <div style={{ 
+                        background: 'rgba(166, 193, 238, 0.1)', 
+                        border: '1px solid rgba(166, 193, 238, 0.3)', 
+                        borderRadius: '12px', 
+                        padding: '16px',
+                        marginBottom: '24px'
+                    }}>
+                        <p style={{ 
+                            margin: '0', 
+                            color: '#2c3e50', 
+                            fontSize: '13px',
+                            textAlign: 'center',
+                            lineHeight: '1.5'
+                        }}>
+                            💡 <strong>팁:</strong> Google 계정으로 간편하게 로그인하세요.<br/>
+                            로그인 후 자동으로 데이트 상대 선택 페이지로 이동합니다.
+                        </p>
+                    </div>
 
                     <div className="login-links">
                         <a href="#">비밀번호 찾기</a>

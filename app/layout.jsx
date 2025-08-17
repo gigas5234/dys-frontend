@@ -1,5 +1,5 @@
 export const metadata = {
-    title: "데연소 - Minimal",
+    title: "데연소",
     description: "Start → Runpod webcam feedback"
   };
   
