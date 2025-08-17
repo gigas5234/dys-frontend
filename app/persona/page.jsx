@@ -530,7 +530,7 @@ function PersonaPage() {
     // 사용자 세션 확인
     useEffect(() => {
         checkUser();
-    }, []);
+    }, [router]);
 
     const checkUser = async () => {
         try {

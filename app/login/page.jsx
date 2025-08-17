@@ -52,10 +52,75 @@ const GlobalStyles = () => (
       0% { transform: translate(-20%, -20%) rotate(0deg) scale(1.2); }
       100% { transform: translate(20%, 20%) rotate(360deg) scale(1.4); }
     }
+    /* 메인 헤더 스타일 */
+    .main-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: var(--glass);
+      border-bottom: 1px solid var(--stroke);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      z-index: 100;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+    .main-header .logo { 
+      display: flex; 
+      align-items: center; 
+      gap: 14px; 
+      font-size: 32px; 
+      font-weight: 700; 
+      color: var(--text); 
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+    .main-header .logo img {
+      width: 38px;
+      height: 38px;
+      object-fit: contain;
+    }
+    .main-header nav {
+      display: flex;
+      gap: 30px;
+    }
+    .main-header nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    .main-header nav a:hover {
+      color: var(--text);
+    }
+    .btn-login {
+      background: linear-gradient(135deg, var(--brand2), var(--brand1));
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(166, 193, 238, 0.4);
+    }
+
     .login-container {
       width: 100%;
       max-width: 420px;
       padding: 20px;
+      margin-top: 100px;
     }
     .login-box {
       background: var(--glass);
@@ -80,7 +145,7 @@ const GlobalStyles = () => (
     }
     .login-header {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       margin-bottom: 25px;
     }
@@ -268,7 +333,7 @@ function LoginPage() {
     // 컴포넌트 마운트 시 세션 확인
     useEffect(() => {
         checkUser();
-    }, []);
+    }, [router]);
 
     const checkUser = async () => {
         try {
@@ -360,13 +425,28 @@ function LoginPage() {
     return (
         <>
             <GlobalStyles />
+            
+            {/* 메인 헤더 */}
+            <header className="main-header">
+                <div className="header-left">
+                    <a href="/" className="logo">
+                        <img src="/dys_logo.png" alt="데연소 로고" />
+                        데연소
+                    </a>
+                    <nav>
+                        <a href="/#problem">공감</a>
+                        <a href="/#preview">미리보기</a>
+                        <a href="/#science">과학적 분석</a>
+                        <a href="/#features">핵심 기능</a>
+                        <a href="/price">가격</a>
+                    </nav>
+                </div>
+                <a href="/login" className="btn-login">로그인</a>
+            </header>
+
             <div className="login-container">
                 <div className="login-box">
                     <div className="login-header">
-                        <a href="/" className="logo">
-                            <img src="/dys_logo.png" alt="데연소 로고" />
-                            데연소
-                        </a>
                         <div className="header-icon">
                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="#a6c1ee" strokeWidth="2" strokeMiterlimit="10"/>
