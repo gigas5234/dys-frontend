@@ -698,12 +698,12 @@ function HomePage() {
                 <div className="review-track scroll-left">
                     {/* 무한 루프 효과를 위해 리뷰 목록을 복제합니다. */}
                     {[...Array(2)].map((_, i) => (
-                      <React.Fragment key={i}>
-                        <div className="review-card"><div className="stars">★★★★★</div><p className="comment">소개팅 전날 밤, AI랑 연습한 게 정말 큰 도움이 됐어요. 예전 같았으면 어색해서 말도 못했을 텐데, 자연스럽게 대화를 이어갈 수 있었습니다!</p><p className="author">- 김민준 (31세, 개발자)</p></div>
-                        <div className="review-card"><div className="stars">★★★★★</div><p className="comment">제가 어떤 표정을 짓는지, 목소리 톤이 어떤지 객관적으로 알 수 있어서 좋았어요. 리포트 보고 고칠 점을 명확히 알게 됐습니다.</p><p className="author">- 박서연 (28세, 마케터)</p></div>
-                        <div className="review-card"><div className="stars">★★★★☆</div><p className="comment">다양한 성격의 AI가 있어서 여러 상황을 연습하기 좋았어요. 다만 가끔 AI 답변이 조금 느릴 때가 있네요. 그래도 만족합니다.</p><p className="author">- 최현우 (34세, 회사원)</p></div>
-                        <div className="review-card"><div className="stars">★★★★★</div><p className="comment">솔직히 반신반의했는데, 그냥 대화만 하는 게 아니라 과학적으로 분석해준다는 점이 신뢰가 갔어요. 제 매력이 뭔지 알게 된 기분이에요.</p><p className="author">- 이지은 (29세, 디자이너)</p></div>
-                        <div className="review-card"><div className="stars">★★★★★</div><p className="comment">이런 서비스 만들어주셔서 감사합니다. 저처럼 내성적인 사람들한테는 정말 한 줄기 빛과 같아요. 자신감이 많이 생겼어요!</p><p className="author">- 정다솜 (26세, 대학원생)</p></div>
+                      <React.Fragment key={`left-${i}`}>
+                        <div className="review-card" key={`left-${i}-1`}><div className="stars">★★★★★</div><p className="comment">소개팅 전날 밤, AI랑 연습한 게 정말 큰 도움이 됐어요. 예전 같았으면 어색해서 말도 못했을 텐데, 자연스럽게 대화를 이어갈 수 있었습니다!</p><p className="author">- 김민준 (31세, 개발자)</p></div>
+                        <div className="review-card" key={`left-${i}-2`}><div className="stars">★★★★★</div><p className="comment">제가 어떤 표정을 짓는지, 목소리 톤이 어떤지 객관적으로 알 수 있어서 좋았어요. 리포트 보고 고칠 점을 명확히 알게 됐습니다.</p><p className="author">- 박서연 (28세, 마케터)</p></div>
+                        <div className="review-card" key={`left-${i}-3`}><div className="stars">★★★★☆</div><p className="comment">다양한 성격의 AI가 있어서 여러 상황을 연습하기 좋았어요. 다만 가끔 AI 답변이 조금 느릴 때가 있네요. 그래도 만족합니다.</p><p className="author">- 최현우 (34세, 회사원)</p></div>
+                        <div className="review-card" key={`left-${i}-4`}><div className="stars">★★★★★</div><p className="comment">솔직히 반신반의했는데, 그냥 대화만 하는 게 아니라 과학적으로 분석해준다는 점이 신뢰가 갔어요. 제 매력이 뭔지 알게 된 기분이에요.</p><p className="author">- 이지은 (29세, 디자이너)</p></div>
+                        <div className="review-card" key={`left-${i}-5`}><div className="stars">★★★★★</div><p className="comment">이런 서비스 만들어주셔서 감사합니다. 저처럼 내성적인 사람들한테는 정말 한 줄기 빛과 같아요. 자신감이 많이 생겼어요!</p><p className="author">- 정다솜 (26세, 대학원생)</p></div>
                       </React.Fragment>
                     ))}
                 </div>
@@ -712,12 +712,12 @@ function HomePage() {
             <div className="reviews-wrapper" style={{marginTop: '30px'}}>
                 <div className="review-track scroll-right">
                     {[...Array(2)].map((_, i) => (
-                      <React.Fragment key={i}>
-                        <div className="review-card"><div className="stars">★★★★★</div><p className="comment">실패해도 부담이 없다는 점이 가장 큰 장점이에요. 마음 편하게 여러 가지 시도를 해볼 수 있었어요.</p><p className="author">- 윤지호 (30세, 프리랜서)</p></div>
-                        <div className="review-card"><div className="stars">★★★★☆</div><p className="comment">리액션이나 질문 타이밍 같은 디테일한 부분을 연습하기에 좋네요.</p><p className="author">- 한소라 (27세, 간호사)</p></div>
-                        <div className="review-card"><div className="stars">★★★★★</div><p className="comment">드디어... 썸녀한테 애프터 신청 받았습니다. 다 데연소 덕분입니다. 진심으로요.</p><p className="author">- 강태민 (32세, 연구원)</p></div>
-                        <div className="review-card"><div className="stars">★★★★★</div><p className="comment">AI라고 어색할 줄 알았는데, 대화가 너무 자연스러워서 놀랐어요. 시간 가는 줄 모르고 연습했네요.</p><p className="author">- 신아영 (29세, 교사)</p></div>
-                        <div className="review-card"><div className="stars">★★★★☆</div><p className="comment">분석 리포트가 생각보다 훨씬 상세해서 놀랐습니다. 다음 업데이트도 기대돼요!</p><p className="author">- 문성혁 (35세, 공무원)</p></div>
+                      <React.Fragment key={`right-${i}`}>
+                        <div className="review-card" key={`right-${i}-1`}><div className="stars">★★★★★</div><p className="comment">실패해도 부담이 없다는 점이 가장 큰 장점이에요. 마음 편하게 여러 가지 시도를 해볼 수 있었어요.</p><p className="author">- 윤지호 (30세, 프리랜서)</p></div>
+                        <div className="review-card" key={`right-${i}-2`}><div className="stars">★★★★☆</div><p className="comment">리액션이나 질문 타이밍 같은 디테일한 부분을 연습하기에 좋네요.</p><p className="author">- 한소라 (27세, 간호사)</p></div>
+                        <div className="review-card" key={`right-${i}-3`}><div className="stars">★★★★★</div><p className="comment">드디어... 썸녀한테 애프터 신청 받았습니다. 다 데연소 덕분입니다. 진심으로요.</p><p className="author">- 강태민 (32세, 연구원)</p></div>
+                        <div className="review-card" key={`right-${i}-4`}><div className="stars">★★★★★</div><p className="comment">AI라고 어색할 줄 알았는데, 대화가 너무 자연스러워서 놀랐어요. 시간 가는 줄 모르고 연습했네요.</p><p className="author">- 신아영 (29세, 교사)</p></div>
+                        <div className="review-card" key={`right-${i}-5`}><div className="stars">★★★★☆</div><p className="comment">분석 리포트가 생각보다 훨씬 상세해서 놀랐습니다. 다음 업데이트도 기대돼요!</p><p className="author">- 문성혁 (35세, 공무원)</p></div>
                       </React.Fragment>
                     ))}
                 </div>
