@@ -22,7 +22,7 @@ const GlobalStyles = () => (
     html, body, #root {
       height: 100%;
       margin: 0;
-      font-family: 'Pretendard', 'Segoe UI', 'Malgun Gothic', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
       background: var(--bg);
       color: var(--text);
       display: flex;
@@ -85,16 +85,16 @@ const GlobalStyles = () => (
     .login-box .logo {
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 32px;
-      font-weight: 800;
+      gap: 14px;
+      font-size: 36px;
+      font-weight: 700;
       color: var(--text);
-      letter-spacing: 1px;
+      letter-spacing: -0.5px;
       text-decoration: none;
     }
     .login-box .logo img {
-      width: 36px;
-      height: 36px;
+      width: 42px;
+      height: 42px;
       object-fit: contain;
     }
     .header-icon {

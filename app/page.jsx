@@ -27,7 +27,7 @@ const GlobalStyles = () => (
 
     html, body {
         margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Pretendard', sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
         background: var(--bg);
         color: var(--text);
         overflow-x: hidden;
@@ -137,15 +137,16 @@ const GlobalStyles = () => (
     .main-header .logo { 
         display: flex; 
         align-items: center; 
-        gap: 12px; 
-        font-size: 28px; 
-        font-weight: 800; 
+        gap: 14px; 
+        font-size: 32px; 
+        font-weight: 700; 
         color: var(--text); 
         text-decoration: none;
+        letter-spacing: -0.5px;
     }
     .main-header .logo img {
-        width: 32px;
-        height: 32px;
+        width: 38px;
+        height: 38px;
         object-fit: contain;
     }
     .main-header nav { display: flex; gap: 30px; }
