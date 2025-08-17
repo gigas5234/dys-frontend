@@ -527,12 +527,36 @@ function PersonaPage() {
         return () => window.removeEventListener('resize', handleResize);
     }, [selectedIndex, updateSlider]);
 
+    const checkUser = useCallback(async () => {
+        try {
+            if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+                // 환경변수가 설정되지 않은 경우 더미 사용자로 설정
+                setUser({
+                    user_metadata: {
+                        full_name: '김민준',
+                        avatar_url: 'https://placehold.co/100x100/e0e8ff/7d7d7d?text=Me'
+                    }
+                });
+                return;
+            }
+            
+            const session = await getCurrentSession();
+            if (session?.user) {
+                setUser(session.user);
+            } else {
+                // 로그인되지 않은 경우 로그인 페이지로 이동
+                router.push('/login');
+            }
+        } catch (error) {
+            console.error('Error checking user session:', error);
+            router.push('/login');
+        }
+    }, [router]);
+
     // 사용자 세션 확인
     useEffect(() => {
         checkUser();
-    }, [router]);
-
-    const checkUser = async () => {
+    }, [checkUser]);
         try {
             if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
                 // 환경변수가 설정되지 않은 경우 더미 사용자로 설정

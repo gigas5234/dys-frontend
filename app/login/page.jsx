@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { signInWithGoogle, getCurrentSession } from '../../lib/supabase';
 
@@ -103,7 +103,7 @@ const GlobalStyles = () => (
       color: var(--text);
     }
     .btn-login {
-      background: linear-gradient(135deg, var(--brand2), var(--brand1));
+      background: var(--brand2);
       color: white;
       padding: 12px 24px;
       border-radius: 12px;
@@ -330,12 +330,34 @@ function LoginPage() {
     const [user, setUser] = useState(null);
     const router = useRouter();
 
+    const checkUser = useCallback(async () => {
+        try {
+            // 환경 변수가 설정되지 않은 경우 더미 사용자로 설정
+            if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+                setUser(null);
+                setAuthLoading(false);
+                return;
+            }
+            
+            const session = await getCurrentSession();
+            setUser(session?.user || null);
+            
+            // 이미 로그인된 경우 persona 페이지로 이동
+            if (session?.user) {
+                router.push('/persona');
+            }
+        } catch (error) {
+            console.error('Error checking user session:', error);
+            setUser(null);
+        } finally {
+            setAuthLoading(false);
+        }
+    }, [router]);
+
     // 컴포넌트 마운트 시 세션 확인
     useEffect(() => {
         checkUser();
-    }, [router]);
-
-    const checkUser = async () => {
+    }, [checkUser]);
         try {
             // 환경 변수가 설정되지 않은 경우 더미 사용자로 설정
             if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
