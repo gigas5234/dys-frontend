@@ -115,6 +115,57 @@ const GlobalStyles = () => (
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(166, 193, 238, 0.4);
     }
+    
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      background: var(--glass);
+      border: 1px solid var(--stroke);
+      border-radius: 12px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    
+    .user-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .btn-start {
+      background: linear-gradient(135deg, var(--brand2), var(--brand1));
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-start:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(166, 193, 238, 0.4);
+    }
 
     .login-container {
       width: 100%;
@@ -480,7 +531,21 @@ function LoginPage() {
                         <a href="/price">가격</a>
                     </nav>
                 </div>
-                <a href="/login" className="btn-login">로그인</a>
+                <div className="header-right">
+                    {user ? (
+                        <div className="user-info">
+                            <img 
+                                src={user.user_metadata?.avatar_url || 'https://placehold.co/32x32/e0e8ff/7d7d7d?text=U'} 
+                                alt="프로필" 
+                                className="user-avatar"
+                            />
+                            <span className="user-name">{user.user_metadata?.full_name || user.email}</span>
+                            <a href="/persona" className="btn-start">시작하기</a>
+                        </div>
+                    ) : (
+                        <a href="/login" className="btn-login">로그인</a>
+                    )}
+                </div>
             </header>
 
             <div className="login-container">

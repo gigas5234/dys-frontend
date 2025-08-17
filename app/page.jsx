@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
+import { getCurrentSession, restoreSessionFromUrl } from '../lib/supabase';
 
 // 모든 스타일을 컴포넌트 내에 포함시킵니다.
 const GlobalStyles = () => (
@@ -155,7 +156,61 @@ const GlobalStyles = () => (
     
     .btn { padding: 10px 22px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; }
     .btn-login { background: var(--text); color: white; }
-    .btn-login:hover { background: #000; transform: translateY(-2px); }
+    .btn-login:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 25px rgba(166, 193, 238, 0.4);
+    }
+    
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      background: var(--glass);
+      border: 1px solid var(--stroke);
+      border-radius: 12px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    
+    .user-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .btn-start {
+      background: linear-gradient(135deg, var(--brand2), var(--brand1));
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-start:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(166, 193, 238, 0.4);
+    }
     .btn-cta { background: linear-gradient(135deg, var(--brand2), var(--brand1)); color: white; padding: 18px 35px; font-size: 18px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
     .btn-cta:hover { transform: translateY(-3px); box-shadow: 0 6px 25px rgba(166, 193, 238, 0.4); }
 
@@ -362,14 +417,37 @@ const GlobalStyles = () => (
   `}</style>
 );
 
-function App() {
-  // 상태(state)를 사용하여 UI의 동적인 부분을 관리합니다.
+function HomePage() {
   const [isChatStarted, setIsChatStarted] = useState(false);
   const [visibleBubbles, setVisibleBubbles] = useState([]);
   const [isDateButtonActive, setIsDateButtonActive] = useState(false);
+  const [user, setUser] = useState(null);
   const chatAnimated = useRef(false);
 
   // useEffect를 사용하여 컴포넌트가 렌더링된 후 스크립트 로직을 실행합니다.
+  useEffect(() => {
+    // 사용자 세션 확인
+    const checkUser = async () => {
+      try {
+        // URL에서 토큰이 있는지 확인하고 세션 복원 시도
+        const restoredSession = await restoreSessionFromUrl();
+        if (restoredSession) {
+          setUser(restoredSession.user);
+          return;
+        }
+        
+        // 기존 세션 확인
+        const session = await getCurrentSession();
+        setUser(session?.user || null);
+      } catch (error) {
+        console.error('Error checking user session:', error);
+        setUser(null);
+      }
+    };
+    
+    checkUser();
+  }, []);
+
   useEffect(() => {
     // 스크롤 시 나타나는 애니메이션 효과
     const revealElements = document.querySelectorAll('.reveal');
@@ -471,7 +549,21 @@ function App() {
               <a href="/price">가격</a>
             </nav>
           </div>
-          <a href="/login" className="btn btn-login">로그인</a>
+          <div className="header-right">
+            {user ? (
+              <div className="user-info">
+                <img 
+                  src={user.user_metadata?.avatar_url || 'https://placehold.co/32x32/e0e8ff/7d7d7d?text=U'} 
+                  alt="프로필" 
+                  className="user-avatar"
+                />
+                <span className="user-name">{user.user_metadata?.full_name || user.email}</span>
+                <a href="/persona" className="btn btn-start">시작하기</a>
+              </div>
+            ) : (
+              <a href="/login" className="btn btn-login">로그인</a>
+            )}
+          </div>
         </div>
       </header>
 
@@ -649,4 +741,4 @@ function App() {
   );
 }
 
-export default App;
+export default HomePage;
