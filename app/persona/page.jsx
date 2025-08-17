@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { getCurrentSession, signOut } from '../../lib/supabase';
 
 // 페이지에 필요한 모든 스타일을 포함하는 컴포넌트입니다.
 const GlobalStyles = () => (
@@ -19,13 +21,17 @@ const GlobalStyles = () => (
       --transition-speed: 0.5s;
     }
     * { box-sizing: border-box; }
-    html, body, #root { 
-      height: 100%; 
+    html, body { 
+      height: 100vh; 
       margin: 0; 
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif; 
       overflow: hidden;
       background: var(--bg);
       color: var(--text);
+    }
+    #root {
+      height: 100vh;
+      width: 100vw;
     }
     body::before {
       content: '';
@@ -47,7 +53,7 @@ const GlobalStyles = () => (
       0% { transform: translate(-20%, -20%) rotate(0deg) scale(1.2); }
       100% { transform: translate(20%, 20%) rotate(360deg) scale(1.4); }
     }
-    .container { display: flex; height: 100%; }
+    .container { display: flex; height: 100vh; width: 100vw; }
     .sidebar {
         width: 300px;
         height: 100%;
@@ -80,9 +86,83 @@ const GlobalStyles = () => (
         box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
     .sidebar nav a svg { width: 20px; height: 20px; }
-    .sidebar .profile { margin-top: auto; display: flex; align-items: center; gap: 12px; }
+    .sidebar .profile { margin-top: auto; display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 8px; border-radius: 10px; transition: all 0.2s ease; }
+    .sidebar .profile:hover { background: rgba(255,255,255,0.5); }
     .sidebar .profile img { width: 40px; height: 40px; border-radius: 50%; }
     .sidebar .profile .name { font-weight: 600; }
+    
+    /* 설정 팝업 스타일 */
+    .settings-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .settings-popup.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    .settings-content {
+      background: var(--glass);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      padding: 30px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+      min-width: 300px;
+      text-align: center;
+    }
+    .settings-content h3 {
+      margin: 0 0 20px 0;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .settings-content p {
+      margin: 0 0 25px 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .settings-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .btn-cancel {
+      padding: 10px 20px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,0.5);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .btn-cancel:hover {
+      background: rgba(255,255,255,0.8);
+    }
+    .btn-logout {
+      padding: 10px 20px;
+      border: none;
+      background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .btn-logout:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255,107,107,0.3);
+    }
     .main-content {
         flex: 1;
         display: flex;
@@ -407,11 +487,14 @@ function PersonaPage() {
     const [chatMessages, setChatMessages] = useState([]);
     const [activeFilter, setActiveFilter] = useState('all');
     const [trackStyle, setTrackStyle] = useState({});
+    const [user, setUser] = useState(null);
+    const [showSettings, setShowSettings] = useState(false);
     
     const trackRef = useRef(null);
     const coverflowRef = useRef(null);
     const isAnimating = useRef(false);
     const chatTimeoutRef = useRef(null);
+    const router = useRouter();
 
     const updateSlider = useCallback((index) => {
         if (!trackRef.current || !coverflowRef.current) return;
@@ -443,6 +526,46 @@ function PersonaPage() {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, [selectedIndex, updateSlider]);
+
+    // 사용자 세션 확인
+    useEffect(() => {
+        checkUser();
+    }, []);
+
+    const checkUser = async () => {
+        try {
+            if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+                // 환경변수가 설정되지 않은 경우 더미 사용자로 설정
+                setUser({
+                    user_metadata: {
+                        full_name: '김민준',
+                        avatar_url: 'https://placehold.co/100x100/e0e8ff/7d7d7d?text=Me'
+                    }
+                });
+                return;
+            }
+            
+            const session = await getCurrentSession();
+            if (session?.user) {
+                setUser(session.user);
+            } else {
+                // 로그인되지 않은 경우 로그인 페이지로 이동
+                router.push('/login');
+            }
+        } catch (error) {
+            console.error('Error checking user session:', error);
+            router.push('/login');
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            await signOut();
+            router.push('/login');
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+    };
 
     const handleFilterClick = (filter) => {
         if (isAnimating.current || activeFilter === filter) return;
@@ -508,11 +631,14 @@ function PersonaPage() {
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M3.783 2.826L12 1l8.217 1.826a1 1 0 0 1 .783.976v9.987a6 6 0 0 1-2.672 4.992L12 23l-6.328-4.219A6 6 0 0 1 3 13.79V3.802a1 1 0 0 1 .783-.976zM5 4.604v9.185a4 4 0 0 0 1.781 3.328L12 20.597l5.219-3.48A4 4 0 0 0 19 13.79V4.604L12 3.05 5 4.604z"></path></svg>
                             <span>데이트 상대 선택</span>
                         </a>
-                        {/* Other nav links */}
+                        <a href="#" onClick={(e) => { e.preventDefault(); setShowSettings(true); }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l3.09 6.26L22 7.27l-5 4.87 1.18 6.88L12 17.77l-6.18 1.25L7 12.14 2 7.27l6.91-1.01L12 1z"></path></svg>
+                            <span>설정</span>
+                        </a>
                     </nav>
-                    <div className="profile">
-                        <img src="https://placehold.co/100x100/e0e8ff/7d7d7d?text=Me" alt="Profile" />
-                        <div className="name">김민준</div>
+                    <div className="profile" onClick={() => setShowSettings(true)}>
+                        <img src={user?.user_metadata?.avatar_url || "https://placehold.co/100x100/e0e8ff/7d7d7d?text=Me"} alt="Profile" />
+                        <div className="name">{user?.user_metadata?.full_name || "김민준"}</div>
                     </div>
                 </aside>
 
@@ -578,6 +704,22 @@ function PersonaPage() {
                         </div>
                     </div>
                 </main>
+            </div>
+
+            {/* 설정 팝업 */}
+            <div className={`settings-popup ${showSettings ? 'show' : ''}`} onClick={() => setShowSettings(false)}>
+                <div className="settings-content" onClick={(e) => e.stopPropagation()}>
+                    <h3>설정</h3>
+                    <p>계정 설정을 관리하세요</p>
+                    <div className="settings-buttons">
+                        <button className="btn-cancel" onClick={() => setShowSettings(false)}>
+                            취소
+                        </button>
+                        <button className="btn-logout" onClick={handleLogout}>
+                            로그아웃
+                        </button>
+                    </div>
+                </div>
             </div>
         </>
     );
