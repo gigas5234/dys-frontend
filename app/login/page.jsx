@@ -344,6 +344,7 @@ function LoginPage() {
                 
                 console.log('🔍 [LOGIN] 현재 URL:', window.location.href);
                 console.log('🔍 [LOGIN] URL 해시:', window.location.hash);
+                console.log('🔍 [LOGIN] URL 검색 파라미터:', window.location.search);
                 
                 // URL에서 토큰이 있는지 확인하고 세션 복원 시도
                 const restoredSession = await restoreSessionFromUrl();
@@ -362,6 +363,9 @@ function LoginPage() {
                 // 기존 세션 확인
                 const session = await getCurrentSession();
                 console.log('🔍 [LOGIN] 기존 세션 결과:', session ? '있음' : '없음');
+                if (session?.user) {
+                    console.log('🔍 [LOGIN] 기존 세션 사용자:', session.user.email);
+                }
                 setUser(session?.user || null);
                 
                 // 리다이렉트 비활성화 (디버깅용)

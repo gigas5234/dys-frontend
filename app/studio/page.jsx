@@ -12,6 +12,7 @@ export default function StudioPage() {
   
   // Vercel에 환경변수로 등록: NEXT_PUBLIC_BACKEND_URL = https://<runpod-프록시-URL>
   const RUNPOD_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const API = RUNPOD_URL; // API 변수 정의
 
   useEffect(() => {
     const checkUserAndRunpod = async () => {
@@ -298,7 +299,7 @@ function WebcamCapture() {
       tick();
     }
     return () => clearTimeout(t);
-  }, [running]);
+  }, [running, API]);
 
   return (
     <div>
@@ -336,7 +337,7 @@ function Metrics() {
     };
     connectWS();
     return () => { try { ws && ws.close(); } catch {} };
-  }, []);
+  }, [API]);
 
   const total = data?.scores?.total ?? 0;
   return (
@@ -358,7 +359,7 @@ function OverlayView() {
       }
     }, 500);
     return () => clearInterval(t);
-  }, []);
+  }, [API]);
 
   return (
     <div style={{ background:"#000", borderRadius:8, minHeight:360, display:"grid", placeItems:"center" }}>
