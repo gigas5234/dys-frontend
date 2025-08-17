@@ -331,57 +331,57 @@ function LoginPage() {
 
     // 컴포넌트 마운트 시 세션 확인
     useEffect(() => {
+        const checkUser = async () => {
+            console.log('🔍 [LOGIN] checkUser 함수 시작');
+            try {
+                // 환경 변수가 설정되지 않은 경우 더미 사용자로 설정
+                if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+                    console.log('⚠️ [LOGIN] 환경 변수가 설정되지 않음');
+                    setUser(null);
+                    setAuthLoading(false);
+                    return;
+                }
+                
+                console.log('🔍 [LOGIN] 현재 URL:', window.location.href);
+                console.log('🔍 [LOGIN] URL 해시:', window.location.hash);
+                
+                // URL에서 토큰이 있는지 확인하고 세션 복원 시도
+                const restoredSession = await restoreSessionFromUrl();
+                if (restoredSession) {
+                    console.log('✅ [LOGIN] URL에서 세션 복원 성공:', restoredSession.user.email);
+                    setUser(restoredSession.user);
+                    setAuthLoading(false);
+                    // URL 정리만 하고 리다이렉트는 하지 않음 (디버깅용)
+                    console.log('🔄 [LOGIN] URL 정리만 수행 (리다이렉트 비활성화)');
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    // router.push('/persona'); // 리다이렉트 비활성화
+                    return;
+                }
+                
+                console.log('🔍 [LOGIN] 기존 세션 확인 시도');
+                // 기존 세션 확인
+                const session = await getCurrentSession();
+                console.log('🔍 [LOGIN] 기존 세션 결과:', session ? '있음' : '없음');
+                setUser(session?.user || null);
+                
+                // 리다이렉트 비활성화 (디버깅용)
+                if (session?.user) {
+                    console.log('✅ [LOGIN] 기존 세션 발견, 하지만 리다이렉트 비활성화');
+                    // router.push('/persona'); // 리다이렉트 비활성화
+                } else {
+                    console.log('⚠️ [LOGIN] 로그인된 세션 없음 - 로그인 페이지에 머물기');
+                }
+            } catch (error) {
+                console.error('❌ [LOGIN] Error checking user session:', error);
+                setUser(null);
+            } finally {
+                console.log('🔍 [LOGIN] checkUser 완료, authLoading false로 설정');
+                setAuthLoading(false);
+            }
+        };
+        
         checkUser();
     }, []);
-
-    const checkUser = async () => {
-        console.log('🔍 [LOGIN] checkUser 함수 시작');
-        try {
-            // 환경 변수가 설정되지 않은 경우 더미 사용자로 설정
-            if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-                console.log('⚠️ [LOGIN] 환경 변수가 설정되지 않음');
-                setUser(null);
-                setAuthLoading(false);
-                return;
-            }
-            
-            console.log('🔍 [LOGIN] 현재 URL:', window.location.href);
-            console.log('🔍 [LOGIN] URL 해시:', window.location.hash);
-            
-            // URL에서 토큰이 있는지 확인하고 세션 복원 시도
-            const restoredSession = await restoreSessionFromUrl();
-            if (restoredSession) {
-                console.log('✅ [LOGIN] URL에서 세션 복원 성공:', restoredSession.user.email);
-                setUser(restoredSession.user);
-                setAuthLoading(false);
-                // URL 정리만 하고 리다이렉트는 하지 않음 (디버깅용)
-                console.log('🔄 [LOGIN] URL 정리만 수행 (리다이렉트 비활성화)');
-                window.history.replaceState({}, document.title, window.location.pathname);
-                // router.push('/persona'); // 리다이렉트 비활성화
-                return;
-            }
-            
-            console.log('🔍 [LOGIN] 기존 세션 확인 시도');
-            // 기존 세션 확인
-            const session = await getCurrentSession();
-            console.log('🔍 [LOGIN] 기존 세션 결과:', session ? '있음' : '없음');
-            setUser(session?.user || null);
-            
-            // 리다이렉트 비활성화 (디버깅용)
-            if (session?.user) {
-                console.log('✅ [LOGIN] 기존 세션 발견, 하지만 리다이렉트 비활성화');
-                // router.push('/persona'); // 리다이렉트 비활성화
-            } else {
-                console.log('⚠️ [LOGIN] 로그인된 세션 없음 - 로그인 페이지에 머물기');
-            }
-        } catch (error) {
-            console.error('❌ [LOGIN] Error checking user session:', error);
-            setUser(null);
-        } finally {
-            console.log('🔍 [LOGIN] checkUser 완료, authLoading false로 설정');
-            setAuthLoading(false);
-        }
-    };
 
     const togglePasswordVisibility = () => {
         // This function is no longer used
