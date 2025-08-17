@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { signInWithGoogle, getCurrentSession } from '../../lib/supabase';
 
 // 페이지에 필요한 모든 스타일을 포함하는 컴포넌트입니다.
 const GlobalStyles = () => (
@@ -259,9 +261,66 @@ const GlobalStyles = () => (
 function LoginPage() {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [authLoading, setAuthLoading] = useState(true);
+    const [user, setUser] = useState(null);
+    const router = useRouter();
+
+    // 컴포넌트 마운트 시 세션 확인
+    useEffect(() => {
+        checkUser();
+    }, []);
+
+    const checkUser = async () => {
+        try {
+            // 환경 변수가 설정되지 않은 경우 더미 사용자로 설정
+            if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+                setUser(null);
+                setAuthLoading(false);
+                return;
+            }
+            
+            const session = await getCurrentSession();
+            setUser(session?.user || null);
+            
+            // 이미 로그인된 경우 persona 페이지로 이동
+            if (session?.user) {
+                router.push('/persona');
+            }
+        } catch (error) {
+            console.error('Error checking user session:', error);
+            setUser(null);
+        } finally {
+            setAuthLoading(false);
+        }
+    };
 
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
+    };
+
+    const handleGoogleSignIn = async () => {
+        // 환경 변수가 설정되지 않은 경우 안내 메시지
+        if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+            alert('Supabase 환경 변수가 설정되지 않았습니다.\n\n.env.local 파일에 다음을 추가해주세요:\n\nNEXT_PUBLIC_SUPABASE_URL=your_supabase_url\nNEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key');
+            return;
+        }
+        
+        setIsLoading(true);
+        try {
+            const { error } = await signInWithGoogle();
+            if (error) {
+                console.error('Google sign in error:', error);
+                alert('로그인 중 오류가 발생했습니다.');
+            } else {
+                // 로그인 성공 시 persona 페이지로 이동
+                router.push('/persona');
+            }
+        } catch (error) {
+            console.error('Sign in error:', error);
+            alert('로그인 중 오류가 발생했습니다.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleLogin = (event) => {
@@ -274,6 +333,29 @@ function LoginPage() {
             // 실제 로그인 성공/실패 로직 추가
         }, 2000);
     };
+
+    // 로딩 중일 때 표시할 화면
+    if (authLoading) {
+        return (
+            <>
+                <GlobalStyles />
+                <div className="login-container">
+                    <div className="login-box" style={{ textAlign: 'center' }}>
+                        <div style={{
+                            width: 40,
+                            height: 40,
+                            border: "3px solid rgba(166, 193, 238, 0.3)",
+                            borderTop: "3px solid var(--brand2)",
+                            borderRadius: "50%",
+                            animation: "spin 1s linear infinite",
+                            margin: "0 auto 20px"
+                        }}></div>
+                        <p>로그인 상태를 확인하는 중...</p>
+                    </div>
+                </div>
+            </>
+        );
+    }
 
     return (
         <>
@@ -323,14 +405,22 @@ function LoginPage() {
 
                     <div className="divider">또는</div>
 
-                    <button className="btn btn-google">
-                        <svg className="google-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-                            <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path>
-                            <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path>
-                            <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.618-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path>
-                            <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C39.99,34.556,44,29.865,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path>
-                        </svg>
-                        Google 계정으로 로그인
+                    <button 
+                        className={`btn btn-google ${isLoading ? 'loading' : ''}`} 
+                        onClick={handleGoogleSignIn}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? (
+                            <div className="spinner"></div>
+                        ) : (
+                            <svg className="google-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path>
+                                <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path>
+                                <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.618-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path>
+                                <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C39.99,34.556,44,29.865,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path>
+                            </svg>
+                        )}
+                        {isLoading ? '로그인 중...' : 'Google 계정으로 로그인'}
                     </button>
 
                     <div className="login-links">

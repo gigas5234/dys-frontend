@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 // 페이지에 필요한 모든 스타일을 포함하는 컴포넌트입니다.
@@ -20,7 +22,7 @@ const GlobalStyles = () => (
     html, body, #root { 
       height: 100%; 
       margin: 0; 
-      font-family: 'Pretendard', 'Segoe UI', 'Malgun Gothic', sans-serif; 
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif; 
       overflow: hidden;
       background: var(--bg);
       color: var(--text);
@@ -398,7 +400,7 @@ const PersonaCard = ({ persona, isSelected, onClick, isProfileCard = false }) =>
 };
 
 // 메인 앱 컴포넌트
-function App() {
+function PersonaPage() {
     const [currentPersonas, setCurrentPersonas] = useState(allPersonas);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [isChatActive, setIsChatActive] = useState(false);
@@ -581,4 +583,4 @@ function App() {
     );
 }
 
-export default App;
+export default PersonaPage;
