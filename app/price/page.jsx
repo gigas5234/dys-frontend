@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 
 // 페이지에 필요한 모든 스타일을 포함하는 컴포넌트입니다.

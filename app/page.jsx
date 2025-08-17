@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
 
 // 모든 스타일을 컴포넌트 내에 포함시킵니다.
