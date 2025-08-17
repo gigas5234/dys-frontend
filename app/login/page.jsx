@@ -531,21 +531,6 @@ function LoginPage() {
                         <a href="/price">가격</a>
                     </nav>
                 </div>
-                <div className="header-right">
-                    {user ? (
-                        <div className="user-info">
-                            <img 
-                                src={user.user_metadata?.avatar_url || 'https://placehold.co/32x32/e0e8ff/7d7d7d?text=U'} 
-                                alt="프로필" 
-                                className="user-avatar"
-                            />
-                            <span className="user-name">{user.user_metadata?.full_name || user.email}</span>
-                            <a href="/persona" className="btn-start">시작하기</a>
-                        </div>
-                    ) : (
-                        <a href="/login" className="btn-login">로그인</a>
-                    )}
-                </div>
             </header>
 
             <div className="login-container">

@@ -489,6 +489,7 @@ function PersonaPage() {
     const [trackStyle, setTrackStyle] = useState({});
     const [user, setUser] = useState(null);
     const [showSettings, setShowSettings] = useState(false);
+    const [isDateButtonActive, setIsDateButtonActive] = useState(false); // 데이트 시작하기 버튼 활성화 상태
     
     const trackRef = useRef(null);
     const coverflowRef = useRef(null);
@@ -593,6 +594,11 @@ function PersonaPage() {
         
         setIsChatActive(true);
         createNewChat(currentPersonas[index]);
+        
+        // 데이트 시작하기 버튼을 즉시 활성화
+        setTimeout(() => {
+            setIsDateButtonActive(true);
+        }, 500); // 폰 애니메이션과 함께 나타나도록
 
         setTimeout(() => { isAnimating.current = false; }, 500);
     };
@@ -602,10 +608,16 @@ function PersonaPage() {
         setChatMessages([]);
 
         const messages = [
-            { role: 'me', text: `안녕하세요. 김민준이라고 합니다.` },
+            { role: 'me', text: `안녕하세요. ${user?.user_metadata?.full_name || '사용자'}이라고 합니다.` },
             { role: 'ai', text: `네, 안녕하세요. 저는 ${persona.name}이라고 합니다.` },
             { role: 'me', text: '혹시 이번 주말 시간이 괜찮으실까요?' },
             { role: 'ai', text: '이번 주말이요? 네, 가능할 것 같습니다.' },
+            { role: 'me', text: '그렇다면 혹시 어디서 뵙는 게 좋을까요?' },
+            { role: 'ai', text: '조용한 곳이 좋을 것 같은데 카페 괜찮으신가요?' },
+            { role: 'me', text: '네, 좋습니다. 그럼 XX카페는 어떠세요?' },
+            { role: 'ai', text: '네, 거기 괜찮습니다.' },
+            { role: 'me', text: '그럼 토요일 오후 1시에 뵙겠습니다.' },
+            { role: 'ai', text: '네, 알겠습니다. 그때 뵙겠습니다.' }
         ];
 
         let delay = 100;
@@ -660,7 +672,7 @@ function PersonaPage() {
                                         ))}
                                     </div>
                                     <div className="phone-footer">
-                                        <button className={`date-start-button ${chatMessages.length >= 4 ? 'active' : ''}`}>데이트 시작하기</button>
+                                        <button className={`date-start-button ${isDateButtonActive ? 'active' : ''}`}>데이트 시작하기</button>
                                     </div>
                                     <div className="phone-home-indicator"></div>
                                 </div>
