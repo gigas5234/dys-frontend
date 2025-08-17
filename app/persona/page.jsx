@@ -527,6 +527,14 @@ function PersonaPage() {
         return () => window.removeEventListener('resize', handleResize);
     }, [selectedIndex]);
 
+    // 채팅 메시지가 추가될 때마다 자동 스크롤
+    useEffect(() => {
+        const chatLog = document.querySelector('.phone-chat-log');
+        if (chatLog && chatMessages.length > 0) {
+            chatLog.scrollTop = chatLog.scrollHeight;
+        }
+    }, [chatMessages]);
+
     // 사용자 세션 확인
     useEffect(() => {
         const checkUser = async () => {
@@ -561,9 +569,10 @@ function PersonaPage() {
     const handleLogout = async () => {
         try {
             await signOut();
-            router.push('/login');
+            router.push('/'); // 메인 페이지로 리다이렉트
         } catch (error) {
             console.error('Logout error:', error);
+            router.push('/'); // 에러가 발생해도 메인 페이지로 리다이렉트
         }
     };
 
@@ -639,11 +648,11 @@ function PersonaPage() {
                     <div className="logo">STUDIO</div>
                     <nav>
                         <a href="#" className="active">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M3.783 2.826L12 1l8.217 1.826a1 1 0 0 1 .783.976v9.987a6 6 0 0 1-2.672 4.992L12 23l-6.328-4.219A6 6 0 0 1 3 13.79V3.802a1 1 0 0 1 .783-.976zM5 4.604v9.185a4 4 0 0 0 1.781 3.328L12 20.597l5.219-3.48A4 4 0 0 0 19 13.79V4.604L12 3.05 5 4.604z"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm9 11a1 1 0 0 1-2 0v-2a3 3 0 0 0-3-3H8a3 3 0 0 0-3 3v2a1 1 0 1 1-2 0v-2a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v2z"/></svg>
                             <span>데이트 상대 선택</span>
                         </a>
                         <a href="#" onClick={(e) => { e.preventDefault(); setShowSettings(true); }}>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l3.09 6.26L22 7.27l-5 4.87 1.18 6.88L12 17.77l-6.18 1.25L7 12.14 2 7.27l6.91-1.01L12 1z"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 15a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm9.4-2.7l-1.2-1.2a8.5 8.5 0 0 0-.9-9.6l-1.4 1.4a6.5 6.5 0 0 1 .7 7.4l1.2 1.2a1 1 0 0 1 0 1.4l-.7.7a1 1 0 0 1-1.4 0zM2.6 12.3l1.2 1.2a8.5 8.5 0 0 0 .9 9.6l1.4-1.4a6.5 6.5 0 0 1-.7-7.4l-1.2-1.2a1 1 0 0 1 0-1.4l.7-.7a1 1 0 0 1 1.4 0z"/></svg>
                             <span>설정</span>
                         </a>
                     </nav>
