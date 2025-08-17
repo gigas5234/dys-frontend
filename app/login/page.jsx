@@ -354,10 +354,10 @@ function LoginPage() {
                 console.log('✅ [LOGIN] URL에서 세션 복원 성공:', restoredSession.user.email);
                 setUser(restoredSession.user);
                 setAuthLoading(false);
-                // URL 정리 후 persona 페이지로 이동
-                console.log('🔄 [LOGIN] URL 정리 및 persona 페이지로 이동');
+                // URL 정리만 하고 리다이렉트는 하지 않음 (디버깅용)
+                console.log('🔄 [LOGIN] URL 정리만 수행 (리다이렉트 비활성화)');
                 window.history.replaceState({}, document.title, window.location.pathname);
-                router.push('/persona');
+                // router.push('/persona'); // 리다이렉트 비활성화
                 return;
             }
             
@@ -367,13 +367,12 @@ function LoginPage() {
             console.log('🔍 [LOGIN] 기존 세션 결과:', session ? '있음' : '없음');
             setUser(session?.user || null);
             
-            // 이미 로그인된 경우에만 persona 페이지로 이동
+            // 리다이렉트 비활성화 (디버깅용)
             if (session?.user) {
-                console.log('✅ [LOGIN] 기존 세션 발견, persona 페이지로 이동');
-                router.push('/persona');
+                console.log('✅ [LOGIN] 기존 세션 발견, 하지만 리다이렉트 비활성화');
+                // router.push('/persona'); // 리다이렉트 비활성화
             } else {
                 console.log('⚠️ [LOGIN] 로그인된 세션 없음 - 로그인 페이지에 머물기');
-                // 세션이 없으면 로그인 페이지에 머물기 (리다이렉트하지 않음)
             }
         } catch (error) {
             console.error('❌ [LOGIN] Error checking user session:', error);
@@ -391,6 +390,9 @@ function LoginPage() {
     const handleGoogleSignIn = async () => {
         console.log('🔍 [GOOGLE] Google 로그인 버튼 클릭됨!');
         console.log('🔍 [GOOGLE] 현재 URL:', window.location.href);
+        console.log('🔍 [GOOGLE] 환경 변수 확인:');
+        console.log('  - NEXT_PUBLIC_SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? '설정됨' : '설정되지 않음');
+        console.log('  - NEXT_PUBLIC_SUPABASE_ANON_KEY:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? '설정됨' : '설정되지 않음');
         
         // 환경 변수가 설정되지 않은 경우 안내 메시지
         if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -411,15 +413,16 @@ function LoginPage() {
             
             if (error) {
                 console.error('❌ [GOOGLE] Google sign in error:', error);
-                alert('로그인 중 오류가 발생했습니다.');
+                alert('로그인 중 오류가 발생했습니다: ' + error.message);
             } else {
-                console.log('✅ [GOOGLE] Google 로그인 성공, Supabase가 리다이렉트 처리');
+                console.log('✅ [GOOGLE] Google 로그인 성공');
                 console.log('🔍 [GOOGLE] data 객체:', data);
+                console.log('🔍 [GOOGLE] Supabase가 리다이렉트 처리할 예정');
+                // 리다이렉트는 Supabase가 처리하므로 여기서는 아무것도 하지 않음
             }
-            // 성공 시에는 Supabase가 자동으로 리다이렉트하므로 여기서는 아무것도 하지 않음
         } catch (error) {
             console.error('❌ [GOOGLE] Sign in error:', error);
-            alert('로그인 중 오류가 발생했습니다.');
+            alert('로그인 중 오류가 발생했습니다: ' + error.message);
         } finally {
             console.log('🔍 [GOOGLE] Google 로그인 완료, 로딩 상태 해제');
             setIsLoading(false);
