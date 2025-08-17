@@ -367,12 +367,13 @@ function LoginPage() {
             console.log('🔍 [LOGIN] 기존 세션 결과:', session ? '있음' : '없음');
             setUser(session?.user || null);
             
-            // 이미 로그인된 경우 persona 페이지로 이동
+            // 이미 로그인된 경우에만 persona 페이지로 이동
             if (session?.user) {
                 console.log('✅ [LOGIN] 기존 세션 발견, persona 페이지로 이동');
                 router.push('/persona');
             } else {
-                console.log('⚠️ [LOGIN] 로그인된 세션 없음');
+                console.log('⚠️ [LOGIN] 로그인된 세션 없음 - 로그인 페이지에 머물기');
+                // 세션이 없으면 로그인 페이지에 머물기 (리다이렉트하지 않음)
             }
         } catch (error) {
             console.error('❌ [LOGIN] Error checking user session:', error);
@@ -388,7 +389,8 @@ function LoginPage() {
     };
 
     const handleGoogleSignIn = async () => {
-        console.log('🔍 [GOOGLE] Google 로그인 시작');
+        console.log('🔍 [GOOGLE] Google 로그인 버튼 클릭됨!');
+        console.log('🔍 [GOOGLE] 현재 URL:', window.location.href);
         
         // 환경 변수가 설정되지 않은 경우 안내 메시지
         if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -398,17 +400,21 @@ function LoginPage() {
         }
         
         console.log('🔍 [GOOGLE] 환경 변수 확인됨');
+        console.log('🔍 [GOOGLE] 로딩 상태 설정 시작');
         setIsLoading(true);
         
         try {
-            console.log('🔍 [GOOGLE] signInWithGoogle 호출');
-            const { error } = await signInWithGoogle();
+            console.log('🔍 [GOOGLE] signInWithGoogle 호출 시작');
+            const { data, error } = await signInWithGoogle();
+            
+            console.log('🔍 [GOOGLE] signInWithGoogle 응답 받음:', { data: !!data, error: !!error });
             
             if (error) {
                 console.error('❌ [GOOGLE] Google sign in error:', error);
                 alert('로그인 중 오류가 발생했습니다.');
             } else {
                 console.log('✅ [GOOGLE] Google 로그인 성공, Supabase가 리다이렉트 처리');
+                console.log('🔍 [GOOGLE] data 객체:', data);
             }
             // 성공 시에는 Supabase가 자동으로 리다이렉트하므로 여기서는 아무것도 하지 않음
         } catch (error) {
