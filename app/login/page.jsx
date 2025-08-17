@@ -335,38 +335,50 @@ function LoginPage() {
     }, []);
 
     const checkUser = async () => {
+        console.log('🔍 [LOGIN] checkUser 함수 시작');
         try {
             // 환경 변수가 설정되지 않은 경우 더미 사용자로 설정
             if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+                console.log('⚠️ [LOGIN] 환경 변수가 설정되지 않음');
                 setUser(null);
                 setAuthLoading(false);
                 return;
             }
             
+            console.log('🔍 [LOGIN] 현재 URL:', window.location.href);
+            console.log('🔍 [LOGIN] URL 해시:', window.location.hash);
+            
             // URL에서 토큰이 있는지 확인하고 세션 복원 시도
             const restoredSession = await restoreSessionFromUrl();
             if (restoredSession) {
-                console.log('✅ URL에서 세션 복원 성공');
+                console.log('✅ [LOGIN] URL에서 세션 복원 성공:', restoredSession.user.email);
                 setUser(restoredSession.user);
                 setAuthLoading(false);
                 // URL 정리 후 persona 페이지로 이동
+                console.log('🔄 [LOGIN] URL 정리 및 persona 페이지로 이동');
                 window.history.replaceState({}, document.title, window.location.pathname);
                 router.push('/persona');
                 return;
             }
             
+            console.log('🔍 [LOGIN] 기존 세션 확인 시도');
             // 기존 세션 확인
             const session = await getCurrentSession();
+            console.log('🔍 [LOGIN] 기존 세션 결과:', session ? '있음' : '없음');
             setUser(session?.user || null);
             
             // 이미 로그인된 경우 persona 페이지로 이동
             if (session?.user) {
+                console.log('✅ [LOGIN] 기존 세션 발견, persona 페이지로 이동');
                 router.push('/persona');
+            } else {
+                console.log('⚠️ [LOGIN] 로그인된 세션 없음');
             }
         } catch (error) {
-            console.error('Error checking user session:', error);
+            console.error('❌ [LOGIN] Error checking user session:', error);
             setUser(null);
         } finally {
+            console.log('🔍 [LOGIN] checkUser 완료, authLoading false로 설정');
             setAuthLoading(false);
         }
     };
@@ -376,24 +388,34 @@ function LoginPage() {
     };
 
     const handleGoogleSignIn = async () => {
+        console.log('🔍 [GOOGLE] Google 로그인 시작');
+        
         // 환경 변수가 설정되지 않은 경우 안내 메시지
         if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+            console.log('⚠️ [GOOGLE] 환경 변수가 설정되지 않음');
             alert('Supabase 환경 변수가 설정되지 않았습니다.\n\n.env.local 파일에 다음을 추가해주세요:\n\nNEXT_PUBLIC_SUPABASE_URL=your_supabase_url\nNEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key');
             return;
         }
         
+        console.log('🔍 [GOOGLE] 환경 변수 확인됨');
         setIsLoading(true);
+        
         try {
+            console.log('🔍 [GOOGLE] signInWithGoogle 호출');
             const { error } = await signInWithGoogle();
+            
             if (error) {
-                console.error('Google sign in error:', error);
+                console.error('❌ [GOOGLE] Google sign in error:', error);
                 alert('로그인 중 오류가 발생했습니다.');
+            } else {
+                console.log('✅ [GOOGLE] Google 로그인 성공, Supabase가 리다이렉트 처리');
             }
             // 성공 시에는 Supabase가 자동으로 리다이렉트하므로 여기서는 아무것도 하지 않음
         } catch (error) {
-            console.error('Sign in error:', error);
+            console.error('❌ [GOOGLE] Sign in error:', error);
             alert('로그인 중 오류가 발생했습니다.');
         } finally {
+            console.log('🔍 [GOOGLE] Google 로그인 완료, 로딩 상태 해제');
             setIsLoading(false);
         }
     };
