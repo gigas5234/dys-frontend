@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithGoogle, getCurrentSession } from '../../lib/supabase';
+import { signInWithGoogle, getCurrentSession, restoreSessionFromUrl } from '../../lib/supabase';
 
 // 페이지에 필요한 모든 스타일을 포함하는 컴포넌트입니다.
 const GlobalStyles = () => (
@@ -343,6 +343,19 @@ function LoginPage() {
                 return;
             }
             
+            // URL에서 토큰이 있는지 확인하고 세션 복원 시도
+            const restoredSession = await restoreSessionFromUrl();
+            if (restoredSession) {
+                console.log('✅ URL에서 세션 복원 성공');
+                setUser(restoredSession.user);
+                setAuthLoading(false);
+                // URL 정리 후 persona 페이지로 이동
+                window.history.replaceState({}, document.title, window.location.pathname);
+                router.push('/persona');
+                return;
+            }
+            
+            // 기존 세션 확인
             const session = await getCurrentSession();
             setUser(session?.user || null);
             
