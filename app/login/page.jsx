@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { signInWithGoogle, getCurrentSession } from '../../lib/supabase';
 
@@ -330,7 +330,12 @@ function LoginPage() {
     const [user, setUser] = useState(null);
     const router = useRouter();
 
-    const checkUser = useCallback(async () => {
+    // 컴포넌트 마운트 시 세션 확인
+    useEffect(() => {
+        checkUser();
+    }, []);
+
+    const checkUser = async () => {
         try {
             // 환경 변수가 설정되지 않은 경우 더미 사용자로 설정
             if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -352,12 +357,7 @@ function LoginPage() {
         } finally {
             setAuthLoading(false);
         }
-    }, [router]);
-
-    // 컴포넌트 마운트 시 세션 확인
-    useEffect(() => {
-        checkUser();
-    }, [checkUser]);
+    };
 
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);

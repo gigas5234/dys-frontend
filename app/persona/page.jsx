@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { getCurrentSession, signOut } from '../../lib/supabase';
 
@@ -496,7 +496,7 @@ function PersonaPage() {
     const chatTimeoutRef = useRef(null);
     const router = useRouter();
 
-    const updateSlider = useCallback((index) => {
+    const updateSlider = (index) => {
         if (!trackRef.current || !coverflowRef.current) return;
         
         const newIndex = Math.max(0, Math.min(index, currentPersonas.length - 1));
@@ -514,20 +514,24 @@ function PersonaPage() {
 
         const translateX = (containerWidth / 2) - cardLeft - (cardWidth / 2);
         setTrackStyle({ transform: `translate3d(${translateX}px, -50%, 0)` });
-
-    }, [currentPersonas.length]);
+    };
 
     useEffect(() => {
         updateSlider(0);
-    }, [currentPersonas, updateSlider]);
+    }, [currentPersonas]);
 
     useEffect(() => {
         const handleResize = () => updateSlider(selectedIndex);
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
-    }, [selectedIndex, updateSlider]);
+    }, [selectedIndex]);
 
-    const checkUser = useCallback(async () => {
+    // 사용자 세션 확인
+    useEffect(() => {
+        checkUser();
+    }, []);
+
+    const checkUser = async () => {
         try {
             if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
                 // 환경변수가 설정되지 않은 경우 더미 사용자로 설정
@@ -551,12 +555,7 @@ function PersonaPage() {
             console.error('Error checking user session:', error);
             router.push('/login');
         }
-    }, [router]);
-
-    // 사용자 세션 확인
-    useEffect(() => {
-        checkUser();
-    }, [checkUser]);
+    };
 
     const handleLogout = async () => {
         try {
