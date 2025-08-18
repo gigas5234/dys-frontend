@@ -519,16 +519,16 @@ const GlobalStyles = () => (
 
 // 페르소나 데이터
 const allPersonas = [
-    { gender: 'female', name: '김세아', age: 28, mbti: 'ENFP', job: '마케터', personality: ['활발함', '긍정적'], image: 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
-    { gender: 'female', name: '박서진', age: 25, mbti: 'ESFJ', job: '대학생', personality: ['사교적', '다정함'], image: 'https://images.pexels.com/photos/1181519/pexels-photo-1181519.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
-    { gender: 'female', name: '최유나', age: 34, mbti: 'INFJ', job: '상담사', personality: ['통찰력', '따뜻함'], image: 'https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
-    { gender: 'female', name: '이지은', age: 29, mbti: 'ISFP', job: '디자이너', personality: ['예술적', '온화함'], image: 'https://images.pexels.com/photos/1386604/pexels-photo-1386604.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
-    { gender: 'female', name: '한소희', age: 26, mbti: 'ESTP', job: '필라테스 강사', personality: ['에너제틱', '모험적'], image: 'https://images.pexels.com/photos/1310522/pexels-photo-1310522.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
-    { gender: 'male', name: '이준영', age: 31, mbti: 'ISTJ', job: '개발자', personality: ['논리적', '신중함'], image: 'https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
-    { gender: 'male', name: '정현우', age: 29, mbti: 'ENTP', job: '스타트업 대표', personality: ['도전적', '창의적'], image: 'https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
-    { gender: 'male', name: '박도윤', age: 32, mbti: 'INTP', job: '연구원', personality: ['분석적', '지적 호기심'], image: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
-    { gender: 'male', name: '강태오', age: 27, mbti: 'ESFP', job: '배우 지망생', personality: ['자유로운 영혼', '즉흥적'], image: 'https://images.pexels.com/photos/837358/pexels-photo-837358.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
-    { gender: 'male', name: '서지훈', age: 30, mbti: 'ISFJ', job: '수의사', personality: ['헌신적', '차분함'], image: 'https://images.pexels.com/photos/819530/pexels-photo-819530.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+    { gender: 'female', name: '이서아', age: 28, mbti: 'ENFP', job: '마케터', personality: ['활발함', '긍정적'], image: '/woman1_insta.webp' },
+    { gender: 'female', name: '김연진', age: 25, mbti: 'ESFJ', job: '대학생', personality: ['사교적', '다정함'], image: '/woman2_insta.webp' },
+    { gender: 'female', name: '이진아', age: 34, mbti: 'INFJ', job: '상담사', personality: ['통찰력', '따뜻함'], image: '/woman3_insta.webp' },
+    { gender: 'female', name: '박지은', age: 29, mbti: 'ISFP', job: '디자이너', personality: ['예술적', '온화함'], image: '/woman4_insta.webp' },
+    { gender: 'female', name: '최소희', age: 26, mbti: 'ESTP', job: '필라테스 강사', personality: ['에너제틱', '모험적'], image: '/woman5_insta.webp' },
+    { gender: 'male', name: '한승준', age: 31, mbti: 'ISTJ', job: '개발자', personality: ['논리적', '신중함'], image: '/man1_insta.webp' },
+    { gender: 'male', name: '박찬수', age: 29, mbti: 'ENTP', job: '스타트업 대표', personality: ['도전적', '창의적'], image: '/man2_insta.webp' },
+    { gender: 'male', name: '김도윤', age: 32, mbti: 'INTP', job: '연구원', personality: ['분석적', '지적 호기심'], image: '/man3_insta.webp' },
+    { gender: 'male', name: '강태오', age: 27, mbti: 'ESFP', job: '배우 지망생', personality: ['자유로운 영혼', '즉흥적'], image: '/man4_insta.webp' },
+    { gender: 'male', name: '서지훈', age: 30, mbti: 'ISFJ', job: '수의사', personality: ['헌신적', '차분함'], image: '/man5_insta.webp' },
 ];
 
 // 페르소나 카드 컴포넌트
