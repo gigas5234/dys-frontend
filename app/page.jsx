@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { getCurrentSession, restoreSessionFromUrl } from '../lib/supabase';
+import { getCurrentSession, restoreSessionFromUrl, signOut } from '../lib/supabase';
 
 // 모든 스타일을 컴포넌트 내에 포함시킵니다.
 const GlobalStyles = () => (
@@ -167,18 +167,6 @@ const GlobalStyles = () => (
       gap: 16px;
     }
     
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 8px 16px;
-      background: var(--glass);
-      border: 1px solid var(--stroke);
-      border-radius: 12px;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-    }
-    
     .user-avatar {
       width: 32px;
       height: 32px;
@@ -194,6 +182,92 @@ const GlobalStyles = () => (
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+
+    .user-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .user-dropdown-toggle {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      background: var(--glass);
+      border: 1px solid var(--stroke);
+      border-radius: 12px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .user-dropdown-toggle:hover {
+      background: rgba(255, 255, 255, 0.8);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: var(--glass);
+      border: 1px solid var(--stroke);
+      border-radius: 12px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+      min-width: 160px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      z-index: 1000;
+    }
+
+    .user-dropdown-menu.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .user-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border-bottom: 1px solid var(--stroke);
+    }
+
+    .user-dropdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .user-dropdown-item:hover {
+      background: rgba(166, 193, 238, 0.1);
+      color: var(--brand2);
+    }
+
+    .user-dropdown-item.logout {
+      color: #e74c3c;
+    }
+
+    .user-dropdown-item.logout:hover {
+      background: rgba(231, 76, 60, 0.1);
+      color: #c0392b;
+    }
+
+    .user-dropdown-item svg {
+      width: 16px;
+      height: 16px;
     }
     
     .btn-start {
@@ -413,6 +487,15 @@ const GlobalStyles = () => (
         section { padding: 80px 0; }
         .container { padding: 0 20px; }
         .main-header nav { display: none; }
+        
+        .user-dropdown-menu {
+          right: -20px;
+          min-width: 140px;
+        }
+        
+        .user-name {
+          max-width: 80px;
+        }
     }
   `}</style>
 );
@@ -422,7 +505,9 @@ function HomePage() {
   const [visibleBubbles, setVisibleBubbles] = useState([]);
   const [isDateButtonActive, setIsDateButtonActive] = useState(false);
   const [user, setUser] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const chatAnimated = useRef(false);
+  const dropdownRef = useRef(null);
 
   // 사용자 세션 확인 함수
   const checkUser = async () => {
@@ -446,6 +531,20 @@ function HomePage() {
   // useEffect를 사용하여 컴포넌트가 렌더링된 후 스크립트 로직을 실행합니다.
   useEffect(() => {
     checkUser();
+  }, []);
+
+  // 드롭다운 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   useEffect(() => {
@@ -527,6 +626,19 @@ function HomePage() {
       { type: 'me', text: '그럼 토요일 어떠세요?' },
   ];
 
+  // 로그아웃 핸들러
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      setUser(null);
+      setIsDropdownOpen(false);
+      // 페이지 새로고침하여 상태 초기화
+      window.location.reload();
+    } catch (error) {
+      console.error('로그아웃 중 오류:', error);
+    }
+  };
+
   // JSX: HTML과 유사하지만 JavaScript가 통합된 형태입니다.
   // class -> className, style 속성은 객체로, 주석은 {/**/}으로 변경됩니다.
   return (
@@ -551,14 +663,37 @@ function HomePage() {
           </div>
           <div className="header-right">
             {user ? (
-              <div className="user-info">
-                <img 
-                  src={user.user_metadata?.avatar_url || 'https://placehold.co/32x32/e0e8ff/7d7d7d?text=U'} 
-                  alt="프로필" 
-                  className="user-avatar"
-                />
-                <span className="user-name">{user.user_metadata?.full_name || user.email}</span>
-                <a href="/persona" className="btn btn-start">시작하기</a>
+              <div className="user-dropdown" ref={dropdownRef}>
+                <div 
+                  className="user-dropdown-toggle"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                >
+                  <img 
+                    src={user.user_metadata?.avatar_url || 'https://placehold.co/32x32/e0e8ff/7d7d7d?text=U'} 
+                    alt="프로필" 
+                    className="user-avatar"
+                  />
+                  <span className="user-name">{user.user_metadata?.full_name || user.email}</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="6,9 12,15 18,9"></polyline>
+                  </svg>
+                </div>
+                <div className={`user-dropdown-menu ${isDropdownOpen ? 'open' : ''}`}>
+                  <a href="/persona" className="user-dropdown-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                    </svg>
+                    시작하기
+                  </a>
+                  <button onClick={handleLogout} className="user-dropdown-item logout">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                      <polyline points="16,17 21,12 16,7"></polyline>
+                      <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    로그아웃
+                  </button>
+                </div>
               </div>
             ) : (
               <a href="/login" className="btn btn-login">로그인</a>
