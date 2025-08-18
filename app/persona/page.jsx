@@ -7,7 +7,7 @@ import { getCurrentSession, restoreSessionFromUrl, signOut } from '../../lib/sup
 // 페르소나 데이터
 const allPersonas = [
     { gender: 'female', name: '이서아', age: 28, mbti: 'ENFP', job: '마케터', personality: ['활발함', '긍정적'], image: '/img/woman1_insta.webp' },
-    { gender: 'female', name: '김연진', age: 25, mbti: 'ESFJ', job: '대학생', personality: ['사교적', '다정함'], image: '/img/woman2_insta.webp' },
+    { gender: 'female', name: '김연진', age: 24, mbti: 'ESFJ', job: '대학생', personality: ['사교적', '다정함'], image: '/img/woman2_insta.webp' },
     { gender: 'female', name: '이진아', age: 34, mbti: 'INFJ', job: '디자이너', personality: ['통찰력', '따뜻함'], image: '/img/woman3_insta.webp' },
     { gender: 'female', name: '박지은', age: 29, mbti: 'ISFP', job: '상담사', personality: ['예술적', '온화함'], image: '/img/woman4_insta.webp' },
     { gender: 'female', name: '최소희', age: 26, mbti: 'ESTP', job: '필라테스 강사', personality: ['에너제틱', '모험적'], image: '/img/woman5_insta.webp' },
@@ -15,7 +15,7 @@ const allPersonas = [
     { gender: 'male', name: '박찬수', age: 29, mbti: 'ENTP', job: '개발자', personality: ['도전적', '창의적'], image: '/img/man2_insta.webp' },
     { gender: 'male', name: '박도윤', age: 32, mbti: 'INTP', job: '연구원', personality: ['분석적', '지적 호기심'], image: '/img/man3_insta.webp' },
     { gender: 'male', name: '강태오', age: 27, mbti: 'ESFP', job: '배우 지망생', personality: ['자유로운 영혼', '즉흥적'], image: '/img/man4_insta.webp' },
-    { gender: 'male', name: '서지훈', age: 30, mbti: 'ISFJ', job: '대학생', personality: ['헌신적', '차분함'], image: '/img/man5_insta.webp' },
+    { gender: 'male', name: '서지훈', age: 30, mbti: 'ISFJ', job: '대학원생', personality: ['헌신적', '차분함'], image: '/img/man5_insta.webp' },
 ];
 
 // 페르소나 카드 컴포넌트
@@ -48,6 +48,9 @@ function PersonaPage() {
     const [trackStyle, setTrackStyle] = useState({ transform: 'translate3d(0, -50%, 0)' });
     const [isDateStartActive, setIsDateStartActive] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+    const [isConnectingToRunpot, setIsConnectingToRunpot] = useState(false);
+    const [loadingStep, setLoadingStep] = useState(0); // 0: 준비중, 1: 만나러가는중
+    const [loadingProgress, setLoadingProgress] = useState(0);
     
     const router = useRouter();
     const trackRef = useRef(null);
@@ -126,6 +129,103 @@ function PersonaPage() {
     };
     const openProfileModal = () => setIsProfileModalOpen(true);
     const closeProfileModal = () => setIsProfileModalOpen(false);
+
+    // runpot 서버로 연결하는 함수
+    const connectToRunpot = async () => {
+        if (!user || !selectedPersona) {
+            console.error('사용자 또는 페르소나 정보가 없습니다.');
+            return;
+        }
+
+        try {
+            setIsConnectingToRunpot(true);
+            setLoadingStep(0);
+            setLoadingProgress(0);
+            
+            // 현재 세션에서 JWT 토큰 가져오기
+            const session = await getCurrentSession();
+            if (!session) {
+                console.error('세션이 없습니다.');
+                return;
+            }
+
+            // 프로그레스 시뮬레이션 - 준비 단계
+            const progressInterval = setInterval(() => {
+                setLoadingProgress(prev => {
+                    if (prev < 50) {
+                        return prev + 2;
+                    } else if (prev >= 50 && loadingStep === 0) {
+                        setLoadingStep(1);
+                        return prev;
+                    } else if (prev < 100) {
+                        return prev + 1;
+                    } else {
+                        clearInterval(progressInterval);
+                        return prev;
+                    }
+                });
+            }, 100);
+
+            // runpot 서버로 전송할 데이터 준비
+            const requestData = {
+                user_id: session.user.id,
+                email: session.user.email,
+                access_token: session.access_token,
+                refresh_token: session.refresh_token,
+                persona: {
+                    name: selectedPersona.name,
+                    age: selectedPersona.age,
+                    mbti: selectedPersona.mbti,
+                    job: selectedPersona.job,
+                    personality: selectedPersona.personality,
+                    gender: selectedPersona.gender,
+                    image: selectedPersona.image
+                }
+            };
+
+            console.log('runpot 서버로 연결 시도:', requestData);
+
+            // runpot 서버로 POST 요청
+            const response = await fetch('/api/runpot/connect', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log('runpot 서버 연결 성공:', result);
+                
+                // 프로그레스 완료
+                setLoadingProgress(100);
+                
+                // 백엔드에서 받은 URL로 리다이렉트
+                if (result.redirectUrl) {
+                    setTimeout(() => {
+                        window.location.href = result.redirectUrl;
+                    }, 500);
+                } else {
+                    console.log('리다이렉트 URL이 없습니다. 백엔드에서 처리 중...');
+                }
+            } else {
+                console.error('runpot 서버 연결 실패:', response.status, response.statusText);
+                const errorData = await response.text();
+                console.error('에러 상세:', errorData);
+                clearInterval(progressInterval);
+            }
+        } catch (error) {
+            console.error('runpot 서버 연결 중 오류:', error);
+        } finally {
+            setTimeout(() => {
+                setIsConnectingToRunpot(false);
+                setLoadingStep(0);
+                setLoadingProgress(0);
+            }, 1000);
+        }
+    };
 
     const updateSlider = useCallback((index) => {
         if (!trackRef.current || !coverflowRef.current) return;
@@ -354,7 +454,27 @@ function PersonaPage() {
                                         ))}
                                     </div>
                                     <div className="phone-footer">
-                                        <button className={`date-start-button ${isDateStartActive ? 'active' : ''}`}>데이트 시작하기</button>
+                                        {isConnectingToRunpot ? (
+                                            <div className="loading-container">
+                                                <div className="loading-text">
+                                                    {loadingStep === 0 ? '데이트 준비중...' : '데이트 상대 만나러 가는중...'}
+                                                </div>
+                                                <div className="progress-bar">
+                                                    <div 
+                                                        className="progress-fill" 
+                                                        style={{ width: `${loadingProgress}%` }}
+                                                    ></div>
+                                                </div>
+                                                <div className="progress-text">{loadingProgress}%</div>
+                                            </div>
+                                        ) : (
+                                            <button 
+                                                className={`date-start-button ${isDateStartActive ? 'active' : ''}`}
+                                                onClick={connectToRunpot}
+                                            >
+                                                데이트 시작하기
+                                            </button>
+                                        )}
                                     </div>
                                     <div className="phone-home-indicator"></div>
                                 </div>
