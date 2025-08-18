@@ -189,8 +189,8 @@ function HomePage() {
         <div className="container">
           <div className="header-left">
             <a href="/" className="logo">
-                              <img src="/dys_logo.webp" alt="데연소 로고" />
-              데연소
+              <img src="/dys_logo.webp" alt="데연소 로고" />
+              데연소<span className="logo-subtitle">(데이트 연습소)</span>
             </a>
             <nav>
               <a href="#problem">공감</a>
