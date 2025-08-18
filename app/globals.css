@@ -11,6 +11,7 @@
     --brand3: #e6b3ff;
     --radius: 24px;
     --transition-speed: 0.5s;
+    --header-height: 84px;
 }
 
 /* --- 기본 설정 --- */
@@ -21,7 +22,7 @@
 html, body {
     margin: 0;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
-    background: var(--bg);
+    background: linear-gradient(180deg, #f7f8fc 0%, #eef2ff 100%);
     color: var(--text);
     overflow-x: hidden;
     scroll-behavior: smooth;
@@ -1850,17 +1851,18 @@ section[id] {
 
 .persona-container { 
     display: flex; 
-    height: 100vh; 
+    height: calc(100vh - var(--header-height));
+    margin-top: var(--header-height);
 }
 
 .persona-container .sidebar {
-    width: 300px;
+    width: 260px;
     height: 100%;
     background: var(--glass);
     border-right: 1px solid var(--stroke);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    padding: 20px;
+    padding: 20px 16px;
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
@@ -1893,6 +1895,54 @@ section[id] {
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+.modal-card {
+    width: 100%;
+    max-width: 420px;
+    background: rgba(255,255,255,0.95);
+    border: 1px solid var(--stroke);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    overflow: hidden;
+}
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--stroke);
+}
+.modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+}
+.modal-body { padding: 20px; }
+.modal-profile { display: flex; gap: 12px; align-items: center; }
+.modal-profile img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; }
+.modal-profile .name { font-weight: 700; }
+.modal-profile .email { color: var(--muted); font-size: 14px; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-top: 1px solid var(--stroke); }
+
+.btn.btn-secondary { background: #e5e7eb; color: #111827; }
+.btn.btn-danger { background: #ef4444; color: white; }
+
 .persona-container .sidebar nav a svg { 
     width: 20px; 
     height: 20px; 
@@ -1903,6 +1953,15 @@ section[id] {
     display: flex; 
     align-items: center; 
     gap: 12px; 
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 12px 8px;
+    border-radius: 12px;
+    transition: background 0.2s ease;
+}
+.persona-container .sidebar .profile:hover {
+    background: rgba(255,255,255,0.8);
 }
 
 .persona-container .sidebar .profile img { 
@@ -1920,7 +1979,7 @@ section[id] {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px;
+    padding: 32px 32px 40px 32px;
     overflow: hidden;
     position: relative;
 }
@@ -2126,17 +2185,17 @@ section[id] {
     pointer-events: none; 
 }
 
-.persona-selection-container .main-header { 
+.persona-selection-container .section-header { 
     text-align: center; 
     margin-bottom: 20px; 
 }
 
-.persona-selection-container .main-header h1 { 
+.persona-selection-container .section-header h1 { 
     font-size: 28px; 
     margin: 0 0 10px 0; 
 }
 
-.persona-selection-container .main-header p { 
+.persona-selection-container .section-header p { 
     color: var(--muted); 
     margin: 0; 
 }
