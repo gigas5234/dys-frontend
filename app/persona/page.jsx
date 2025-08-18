@@ -127,6 +127,26 @@ function PersonaPage() {
     const openProfileModal = () => setIsProfileModalOpen(true);
     const closeProfileModal = () => setIsProfileModalOpen(false);
 
+    // 스튜디오로 이동하는 함수
+    const goToStudio = (personaData) => {
+        if (!user) return;
+        
+        const params = new URLSearchParams({
+            user_id: user.id,
+            email: user.email,
+            token: user.access_token,
+            persona_name: personaData.name || '김세아',
+            persona_age: personaData.age || '28',
+            persona_mbti: personaData.mbti || 'ENFP',
+            persona_job: personaData.job || '마케터',
+            persona_personality: personaData.personality.join(',') || '활발함,부정적',
+            persona_image: personaData.image || '/img/persona/woman1_insta.webp'
+        });
+        
+        const studioUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/dys_studio/studio_calibration.html?${params.toString()}`;
+        window.location.href = studioUrl;
+    };
+
     const updateSlider = useCallback((index) => {
         if (!trackRef.current || !coverflowRef.current) return;
         
@@ -354,7 +374,12 @@ function PersonaPage() {
                                         ))}
                                     </div>
                                     <div className="phone-footer">
-                                        <button className={`date-start-button ${isDateStartActive ? 'active' : ''}`}>데이트 시작하기</button>
+                                        <button 
+                                            className={`date-start-button ${isDateStartActive ? 'active' : ''}`}
+                                            onClick={() => goToStudio(selectedPersona)}
+                                        >
+                                            데이트 시작하기
+                                        </button>
                                     </div>
                                     <div className="phone-home-indicator"></div>
                                 </div>
