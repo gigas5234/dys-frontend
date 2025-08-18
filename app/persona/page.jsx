@@ -667,11 +667,9 @@ function PersonaPage() {
                     setLoadingStep(2);
                 }, 2000);
                 
-                // 4초 후 더미 URL로 새 창 열기
+                // 4초 후 현재 창에서 이동
                 setTimeout(() => {
-                    window.open('https://example.com/dys_studio', '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
-                    setShowLoading(false);
-                    setIsConnectingToRunpod(false);
+                    window.location.href = 'https://example.com/dys_studio';
                 }, 4000);
                 return;
             } else {
@@ -730,8 +728,8 @@ function PersonaPage() {
 
             const finalUrl = `${studioUrl}&${personaParams.toString()}`;
             
-            // 새 창에서 런팟 스튜디오 열기
-            window.open(finalUrl, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+            // 현재 창에서 런팟 스튜디오로 이동
+            window.location.href = finalUrl;
             
         } catch (error) {
             console.error('런팟 연결 오류:', error);
