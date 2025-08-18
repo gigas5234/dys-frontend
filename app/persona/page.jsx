@@ -129,21 +129,35 @@ function PersonaPage() {
 
     // 스튜디오로 이동하는 함수
     const goToStudio = (personaData) => {
-        if (!user) return;
+        console.log('goToStudio 함수 호출됨');
+        console.log('user:', user);
+        console.log('personaData:', personaData);
+        
+        if (!user) {
+            console.log('사용자 정보가 없습니다.');
+            return;
+        }
+        
+        if (!personaData) {
+            console.log('페르소나 데이터가 없습니다.');
+            return;
+        }
         
         const params = new URLSearchParams({
             user_id: user.id,
             email: user.email,
             token: user.access_token,
-            persona_name: personaData.name || '김세아',
-            persona_age: personaData.age || '28',
-            persona_mbti: personaData.mbti || 'ENFP',
-            persona_job: personaData.job || '마케터',
-            persona_personality: personaData.personality.join(',') || '활발함,부정적',
-            persona_image: personaData.image || '/img/persona/woman1_insta.webp'
+            persona_name: personaData.name,
+            persona_age: personaData.age.toString(),
+            persona_mbti: personaData.mbti,
+            persona_job: personaData.job,
+            persona_personality: personaData.personality.join(','),
+            persona_image: personaData.image
         });
         
         const studioUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/dys_studio/studio_calibration.html?${params.toString()}`;
+        console.log('이동할 URL:', studioUrl);
+        
         window.location.href = studioUrl;
     };
 
@@ -376,7 +390,11 @@ function PersonaPage() {
                                     <div className="phone-footer">
                                         <button 
                                             className={`date-start-button ${isDateStartActive ? 'active' : ''}`}
-                                            onClick={() => goToStudio(selectedPersona)}
+                                            onClick={() => {
+                                                console.log('데이트 시작하기 버튼 클릭됨');
+                                                console.log('selectedPersona:', selectedPersona);
+                                                goToStudio(selectedPersona);
+                                            }}
                                         >
                                             데이트 시작하기
                                         </button>
