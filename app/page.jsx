@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { getCurrentSession, restoreSessionFromUrl, signOut } from '../lib/supabase';
 
 // 모든 스타일을 컴포넌트 내에 포함시킵니다.
@@ -159,6 +160,13 @@ const GlobalStyles = () => (
     .btn-login:hover {
       transform: translateY(-3px);
       box-shadow: 0 6px 25px rgba(166, 193, 238, 0.4);
+    }
+    
+    /* 버튼 스타일 통일 */
+    button.btn {
+      font-family: inherit;
+      background: inherit;
+      color: inherit;
     }
     
     .header-right {
@@ -524,6 +532,7 @@ function HomePage() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const chatAnimated = useRef(false);
   const dropdownRef = useRef(null);
+  const router = useRouter();
 
   // 사용자 세션 확인 함수
   const checkUser = async () => {
@@ -648,10 +657,29 @@ function HomePage() {
       await signOut();
       setUser(null);
       setIsDropdownOpen(false);
-      // 페이지 새로고침하여 상태 초기화
-      window.location.reload();
+      // 상태 초기화 후 메인 페이지로 이동
+      setTimeout(() => {
+        router.push('/');
+      }, 100);
     } catch (error) {
       console.error('로그아웃 중 오류:', error);
+      setUser(null);
+      setIsDropdownOpen(false);
+      // 에러가 발생해도 메인 페이지로 이동
+      setTimeout(() => {
+        router.push('/');
+      }, 100);
+    }
+  };
+
+  // 시작하기 버튼 클릭 핸들러
+  const handleStartButton = () => {
+    if (user) {
+      // 로그인된 경우 데이트 준비 화면으로 이동
+      router.push('/persona');
+    } else {
+      // 로그인되지 않은 경우 로그인 페이지로 이동
+      router.push('/login');
     }
   };
 
@@ -723,7 +751,7 @@ function HomePage() {
             <div className="slogan reveal">설렘은 현실로, 실수는 연습으로.</div>
             <h1 className="reveal" style={{transitionDelay: '0.1s'}}>AI 소통 코칭으로<br/>당신의 매력을 발견하세요</h1>
             <p className="reveal" style={{transitionDelay: '0.2s'}}>관계에 대한 막연한 두려움이 있으신가요? 데연소는 실패의 부담이 없는 안전한 공간에서 당신의 소통 능력을 과학적으로 진단하고 잠재된 매력을 찾아드립니다.</p>
-            <a href="/price" className="btn btn-cta reveal" style={{transitionDelay: '0.3s'}}>지금 시작하기</a>
+            <button onClick={handleStartButton} className="btn btn-cta reveal" style={{transitionDelay: '0.3s'}}>지금 시작하기</button>
         </section>
 
         <section id="problem" className="problem-section">
@@ -880,7 +908,7 @@ function HomePage() {
             <div className="container">
                 <h2>이제, 설렘을 현실로 만들 시간</h2>
                 <p>가상 훈련을 현실의 성공으로, 실패의 두려움을 자신감의 초석으로 바꿔보세요. 데연소가 당신의 잠재된 매력을 찾아드릴게요.</p>
-                <a href="/price" className="btn btn-cta">데연소 시작하기</a>
+                <button onClick={handleStartButton} className="btn btn-cta">데연소 시작하기</button>
             </div>
         </div>
       </main>
