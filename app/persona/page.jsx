@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { getCurrentSession, signOut } from '../../lib/supabase';
+import { getCurrentSession, signOut, sendAuthToBackend, getIframeUrl } from '../../lib/supabase';
 
 // 페이지에 필요한 모든 스타일을 포함하는 컴포넌트입니다.
 const GlobalStyles = () => (
@@ -288,6 +288,75 @@ const GlobalStyles = () => (
         pointer-events: auto;
         animation: pulse 1.5s infinite;
     }
+    
+    .date-start-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        animation: none;
+    }
+    
+    /* 로딩 오버레이 스타일 */
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .loading-overlay.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .loading-content {
+        background: var(--glass);
+        border: 1px solid var(--stroke);
+        border-radius: var(--radius);
+        padding: 40px;
+        text-align: center;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: var(--shadow);
+        max-width: 400px;
+        width: 90%;
+    }
+    
+    .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 3px solid rgba(166, 193, 238, 0.3);
+        border-top: 3px solid var(--brand2);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+    }
+    
+    .loading-text {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 10px;
+    }
+    
+    .loading-subtext {
+        font-size: 14px;
+        color: var(--muted);
+        opacity: 0.8;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
     @keyframes pulse {
         0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(251, 194, 235, 0.7); }
         70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(251, 194, 235, 0); }
@@ -490,6 +559,12 @@ function PersonaPage() {
     const [user, setUser] = useState(null);
     const [showSettings, setShowSettings] = useState(false);
     const [isDateButtonActive, setIsDateButtonActive] = useState(false); // 데이트 시작하기 버튼 활성화 상태
+    const [isConnectingToRunpod, setIsConnectingToRunpod] = useState(false); // 런팟 연결 상태
+    const [showLoading, setShowLoading] = useState(false); // 로딩 오버레이 표시
+    const [loadingStep, setLoadingStep] = useState(1); // 로딩 단계 (1: 준비 중, 2: 장소로 이동 중)
+    
+    // Vercel에 환경변수로 등록: NEXT_PUBLIC_BACKEND_URL = https://<runpod-프록시-URL>
+    const RUNPOD_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://placeholder-runpod-url.com';
     
     const trackRef = useRef(null);
     const coverflowRef = useRef(null);
@@ -574,6 +649,95 @@ function PersonaPage() {
         } catch (error) {
             console.error('Logout error:', error);
             router.push('/'); // 에러가 발생해도 메인 페이지로 리다이렉트
+        }
+    };
+
+    // 데이트 시작하기 버튼 클릭 핸들러
+    const handleDateStart = async () => {
+        if (!RUNPOD_URL || RUNPOD_URL === 'https://placeholder-runpod-url.com') {
+            console.error('런팟 서버 URL이 설정되지 않음:', RUNPOD_URL);
+            // 개발 환경에서는 더미 모드로 동작
+            if (process.env.NODE_ENV === 'development') {
+                console.log('개발 환경: 더미 모드로 동작');
+                setShowLoading(true);
+                setLoadingStep(1);
+                
+                // 2초 후 두 번째 단계로
+                setTimeout(() => {
+                    setLoadingStep(2);
+                }, 2000);
+                
+                // 4초 후 더미 URL로 새 창 열기
+                setTimeout(() => {
+                    window.open('https://example.com/dys_studio', '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+                    setShowLoading(false);
+                    setIsConnectingToRunpod(false);
+                }, 4000);
+                return;
+            } else {
+                setShowLoading(false);
+                setIsConnectingToRunpod(false);
+                alert('런팟 서버 URL이 설정되지 않았습니다. 관리자에게 문의하세요.');
+                return;
+            }
+        }
+
+        // URL 유효성 검사
+        try {
+            new URL(RUNPOD_URL);
+        } catch (e) {
+            console.error('잘못된 런팟 서버 URL 형식:', RUNPOD_URL);
+            setShowLoading(false);
+            setIsConnectingToRunpod(false);
+            alert('잘못된 런팟 서버 URL 형식입니다. 관리자에게 문의하세요.');
+            return;
+        }
+
+        if (!user) {
+            setShowLoading(false);
+            setIsConnectingToRunpod(false);
+            alert('로그인이 필요합니다.');
+            return;
+        }
+
+        setIsConnectingToRunpod(true);
+        setShowLoading(true);
+        setLoadingStep(1);
+
+        try {
+            // 백엔드로 인증 정보 전송
+            const authSuccess = await sendAuthToBackend(RUNPOD_URL);
+            if (!authSuccess) {
+                throw new Error('인증 정보 전송 실패');
+            }
+
+            // 두 번째 단계로 이동
+            setLoadingStep(2);
+
+            // dys_studio 엔드포인트로 iframe URL 생성
+            const studioUrl = await getIframeUrl(RUNPOD_URL, 'dys_studio');
+            
+            // 선택된 페르소나 정보를 URL 파라미터로 전달
+            const selectedPersona = currentPersonas[selectedIndex];
+            const personaParams = new URLSearchParams({
+                persona_name: selectedPersona.name,
+                persona_age: selectedPersona.age,
+                persona_mbti: selectedPersona.mbti,
+                persona_job: selectedPersona.job,
+                persona_personality: selectedPersona.personality.join(','),
+                persona_image: selectedPersona.image
+            });
+
+            const finalUrl = `${studioUrl}&${personaParams.toString()}`;
+            
+            // 새 창에서 런팟 스튜디오 열기
+            window.open(finalUrl, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+            
+        } catch (error) {
+            console.error('런팟 연결 오류:', error);
+            setShowLoading(false);
+            setIsConnectingToRunpod(false);
+            alert('런팟 서버 연결에 실패했습니다. 다시 시도해주세요.');
         }
     };
 
@@ -685,7 +849,13 @@ function PersonaPage() {
                                         ))}
                                     </div>
                                     <div className="phone-footer">
-                                        <button className={`date-start-button ${isDateButtonActive ? 'active' : ''}`}>데이트 시작하기</button>
+                                        <button 
+                                            className={`date-start-button ${isDateButtonActive ? 'active' : ''}`}
+                                            onClick={handleDateStart}
+                                            disabled={isConnectingToRunpod}
+                                        >
+                                            {isConnectingToRunpod ? '연결 중...' : '데이트 시작하기'}
+                                        </button>
                                     </div>
                                     <div className="phone-home-indicator"></div>
                                 </div>
@@ -742,6 +912,19 @@ function PersonaPage() {
                         <button className="btn-logout" onClick={handleLogout}>
                             로그아웃
                         </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* 로딩 오버레이 */}
+            <div className={`loading-overlay ${showLoading ? 'show' : ''}`}>
+                <div className="loading-content">
+                    <div className="loading-spinner"></div>
+                    <div className="loading-text">
+                        {loadingStep === 1 ? '데이트 준비 중...' : '데이트 장소로 나가는 중...'}
+                    </div>
+                    <div className="loading-subtext">
+                        {loadingStep === 1 ? 'AI 파트너와 연결을 준비하고 있습니다' : '곧 데이트가 시작됩니다'}
                     </div>
                 </div>
             </div>
