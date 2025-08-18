@@ -48,6 +48,9 @@ function PersonaPage() {
     const [trackStyle, setTrackStyle] = useState({ transform: 'translate3d(0, -50%, 0)' });
     const [isDateStartActive, setIsDateStartActive] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadingProgress, setLoadingProgress] = useState(0);
+    const [loadingStep, setLoadingStep] = useState(0);
     
     const router = useRouter();
     const trackRef = useRef(null);
@@ -127,8 +130,14 @@ function PersonaPage() {
     const openProfileModal = () => setIsProfileModalOpen(true);
     const closeProfileModal = () => setIsProfileModalOpen(false);
 
+    // 로딩 단계 정의
+    const loadingSteps = [
+        { text: '데이트 준비하기', duration: 2000 },
+        { text: '데이트 장소로 나가는 중..', duration: 1500 }
+    ];
+
     // 스튜디오로 이동하는 함수
-    const goToStudio = (personaData) => {
+    const goToStudio = async (personaData) => {
         console.log('goToStudio 함수 호출됨');
         console.log('user:', user);
         console.log('personaData:', personaData);
@@ -142,7 +151,40 @@ function PersonaPage() {
             console.log('페르소나 데이터가 없습니다.');
             return;
         }
-        
+
+        // 로딩 시작
+        setIsLoading(true);
+        setLoadingProgress(0);
+        setLoadingStep(0);
+
+        // 로딩 단계별 진행
+        for (let i = 0; i < loadingSteps.length; i++) {
+            setLoadingStep(i);
+            
+            // 프로그레스 바 애니메이션
+            const stepDuration = loadingSteps[i].duration;
+            const startProgress = (i / loadingSteps.length) * 100;
+            const endProgress = ((i + 1) / loadingSteps.length) * 100;
+            
+            const startTime = Date.now();
+            const animateProgress = () => {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / stepDuration, 1);
+                const currentProgress = startProgress + (endProgress - startProgress) * progress;
+                setLoadingProgress(currentProgress);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animateProgress);
+                }
+            };
+            
+            animateProgress();
+            
+            // 단계별 대기
+            await new Promise(resolve => setTimeout(resolve, stepDuration));
+        }
+
+        // 로딩 완료 후 이동
         const params = new URLSearchParams({
             user_id: user.id,
             email: user.email,
@@ -460,6 +502,28 @@ function PersonaPage() {
                         <div className="modal-footer">
                             <button className="btn btn-secondary" onClick={closeProfileModal}>닫기</button>
                             <button className="btn btn-danger" onClick={handleLogout}>로그아웃</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {isLoading && (
+                <div className="loading-overlay">
+                    <div className="loading-container">
+                        <div className="loading-content">
+                            <div className="loading-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                                </svg>
+                            </div>
+                            <h3 className="loading-title">{loadingSteps[loadingStep]?.text || '준비 중...'}</h3>
+                            <div className="loading-progress">
+                                <div className="progress-bar">
+                                    <div 
+                                        className="progress-fill" 
+                                        style={{ width: `${loadingProgress}%` }}
+                                    ></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
