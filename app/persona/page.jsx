@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { getCurrentSession, signOut } from '../../lib/supabase';
+import { getCurrentSession, restoreSessionFromUrl, signOut } from '../../lib/supabase';
 
 // 페르소나 데이터
 const allPersonas = [
@@ -56,6 +56,15 @@ function PersonaPage() {
     const checkUser = async () => {
         try {
             setLoading(true);
+            // URL에서 토큰 복원 시도 (OAuth 이후 직접 접근 대비)
+            const restored = await restoreSessionFromUrl();
+            if (restored) {
+                setUser(restored.user);
+                setLoading(false);
+                return;
+            }
+
+            // 기존 세션 확인
             const session = await getCurrentSession();
             setUser(session?.user || null);
             setLoading(false);
@@ -168,7 +177,7 @@ function PersonaPage() {
     };
 
     // 로그인되지 않은 사용자는 홈으로 리다이렉트
-    if (isClient && !user) {
+    if (isClient && !loading && !user) {
         router.push('/login');
         return null;
     }
