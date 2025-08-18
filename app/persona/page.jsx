@@ -207,7 +207,7 @@ function PersonaPage() {
             console.log('runpot 서버로 연결 시도:', requestData);
 
             // runpot 서버로 POST 요청
-            const response = await fetch('/api/runpot/connect', {
+            const response = await fetch('/api/connect', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
