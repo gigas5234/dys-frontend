@@ -1,6 +1,7 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { getCurrentSession, restoreSessionFromUrl, signOut } from '../../lib/supabase';
 
 // 페이지에 필요한 모든 스타일을 포함하는 컴포넌트입니다.
 const GlobalStyles = () => (
@@ -114,6 +115,131 @@ const GlobalStyles = () => (
     .btn { padding: 10px 22px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; }
     .btn-login { background: var(--text); color: white; }
     .btn-login:hover { background: #000; transform: translateY(-2px); }
+    
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    
+    .user-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .user-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .user-dropdown-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .user-dropdown-toggle:hover {
+      background: rgba(255, 255, 255, 1);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      border-color: rgba(166, 193, 238, 0.3);
+    }
+
+    .user-dropdown-toggle svg {
+      transition: transform 0.3s ease;
+    }
+
+    .user-dropdown-toggle.open svg {
+      transform: rotate(180deg);
+    }
+
+    .user-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 16px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      min-width: 180px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px) scale(0.95);
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    .user-dropdown-menu.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+
+    .user-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .user-dropdown-item:not(:last-child) {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .user-dropdown-item:hover {
+      background: rgba(166, 193, 238, 0.08);
+      color: var(--brand2);
+      transform: translateX(4px);
+    }
+
+    .user-dropdown-item.logout {
+      color: #dc3545;
+    }
+
+    .user-dropdown-item.logout:hover {
+      background: rgba(220, 53, 69, 0.08);
+      color: #c82333;
+    }
+
+    .user-dropdown-item svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
     
     /* --- 가격 페이지 스타일 --- */
     .pricing-section {
@@ -304,12 +430,76 @@ const GlobalStyles = () => (
         .container { padding: 0 20px; }
         .main-header nav { display: none; }
         .pricing-grid { gap: 50px; }
+        
+        .user-dropdown-menu {
+          right: -20px;
+          min-width: 140px;
+        }
+        
+        .user-name {
+          max-width: 80px;
+        }
     }
   `}</style>
 );
 
 // 가격 페이지를 위한 React 컴포넌트입니다.
 function PricingPage() {
+  const [user, setUser] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // 사용자 세션 확인 함수
+  const checkUser = async () => {
+    try {
+      // URL에서 토큰이 있는지 확인하고 세션 복원 시도
+      const restoredSession = await restoreSessionFromUrl();
+      if (restoredSession) {
+        setUser(restoredSession.user);
+        return;
+      }
+      
+      // 기존 세션 확인
+      const session = await getCurrentSession();
+      setUser(session?.user || null);
+    } catch (error) {
+      console.error('Error checking user session:', error);
+      setUser(null);
+    }
+  };
+
+  // useEffect를 사용하여 컴포넌트가 렌더링된 후 스크립트 로직을 실행합니다.
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  // 드롭다운 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // 로그아웃 핸들러
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      setUser(null);
+      setIsDropdownOpen(false);
+      // 페이지 새로고침하여 상태 초기화
+      window.location.reload();
+    } catch (error) {
+      console.error('로그아웃 중 오류:', error);
+    }
+  };
+
   return (
     <>
       <GlobalStyles />
@@ -330,7 +520,44 @@ function PricingPage() {
               <a href="/price" className="active">가격</a>
             </nav>
           </div>
-          <a href="/login" className="btn btn-login">로그인</a>
+          <div className="header-right">
+            {user ? (
+              <div className="user-dropdown" ref={dropdownRef}>
+                <div 
+                  className={`user-dropdown-toggle ${isDropdownOpen ? 'open' : ''}`}
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                >
+                  <img 
+                    src={user.user_metadata?.avatar_url || 'https://placehold.co/32x32/e0e8ff/7d7d7d?text=U'} 
+                    alt="프로필" 
+                    className="user-avatar"
+                  />
+                  <span className="user-name">{user.user_metadata?.full_name || user.email}</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="6,9 12,15 18,9"></polyline>
+                  </svg>
+                </div>
+                <div className={`user-dropdown-menu ${isDropdownOpen ? 'open' : ''}`}>
+                  <a href="/persona" className="user-dropdown-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                    </svg>
+                    시작하기
+                  </a>
+                  <button onClick={handleLogout} className="user-dropdown-item logout">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                      <polyline points="16,17 21,12 16,7"></polyline>
+                      <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    로그아웃
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <a href="/login" className="btn btn-login">로그인</a>
+            )}
+          </div>
         </div>
       </header>
 

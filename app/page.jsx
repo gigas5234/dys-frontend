@@ -192,82 +192,98 @@ const GlobalStyles = () => (
     .user-dropdown-toggle {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 8px 16px;
-      background: var(--glass);
-      border: 1px solid var(--stroke);
-      border-radius: 12px;
+      gap: 10px;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
     .user-dropdown-toggle:hover {
-      background: rgba(255, 255, 255, 0.8);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 1);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      border-color: rgba(166, 193, 238, 0.3);
+    }
+
+    .user-dropdown-toggle svg {
+      transition: transform 0.3s ease;
+    }
+
+    .user-dropdown-toggle.open svg {
+      transform: rotate(180deg);
     }
 
     .user-dropdown-menu {
       position: absolute;
-      top: 100%;
+      top: calc(100% + 8px);
       right: 0;
-      margin-top: 8px;
-      background: var(--glass);
-      border: 1px solid var(--stroke);
-      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 16px;
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-      min-width: 160px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      min-width: 180px;
       opacity: 0;
       visibility: hidden;
-      transform: translateY(-10px);
+      transform: translateY(-8px) scale(0.95);
       transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       z-index: 1000;
+      overflow: hidden;
     }
 
     .user-dropdown-menu.open {
       opacity: 1;
       visibility: visible;
-      transform: translateY(0);
+      transform: translateY(0) scale(1);
     }
 
     .user-dropdown-item {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 12px 16px;
+      padding: 14px 18px;
       color: var(--text);
       text-decoration: none;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 500;
       transition: all 0.2s ease;
-      border-bottom: 1px solid var(--stroke);
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
     }
 
-    .user-dropdown-item:last-child {
-      border-bottom: none;
+    .user-dropdown-item:not(:last-child) {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     }
 
     .user-dropdown-item:hover {
-      background: rgba(166, 193, 238, 0.1);
+      background: rgba(166, 193, 238, 0.08);
       color: var(--brand2);
+      transform: translateX(4px);
     }
 
     .user-dropdown-item.logout {
-      color: #e74c3c;
+      color: #dc3545;
     }
 
     .user-dropdown-item.logout:hover {
-      background: rgba(231, 76, 60, 0.1);
-      color: #c0392b;
+      background: rgba(220, 53, 69, 0.08);
+      color: #c82333;
     }
 
     .user-dropdown-item svg {
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
     }
     
     .btn-start {
@@ -665,7 +681,7 @@ function HomePage() {
             {user ? (
               <div className="user-dropdown" ref={dropdownRef}>
                 <div 
-                  className="user-dropdown-toggle"
+                  className={`user-dropdown-toggle ${isDropdownOpen ? 'open' : ''}`}
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
                   <img 
