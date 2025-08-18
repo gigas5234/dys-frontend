@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getCurrentSession, restoreSessionFromUrl, signOut, supabase } from '../../lib/supabase';
+import { getCurrentSession, restoreSessionFromUrl, signOut } from '../../lib/supabase';
 
 // 페르소나 데이터
 const allPersonas = [
@@ -48,9 +48,6 @@ function PersonaPage() {
     const [trackStyle, setTrackStyle] = useState({ transform: 'translate3d(0, -50%, 0)' });
     const [isDateStartActive, setIsDateStartActive] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-    const [isConnectingToRunpot, setIsConnectingToRunpot] = useState(false);
-    const [loadingStep, setLoadingStep] = useState(0); // 0: 준비중, 1: 만나러가는중
-    const [loadingProgress, setLoadingProgress] = useState(0);
     
     const router = useRouter();
     const trackRef = useRef(null);
@@ -129,127 +126,6 @@ function PersonaPage() {
     };
     const openProfileModal = () => setIsProfileModalOpen(true);
     const closeProfileModal = () => setIsProfileModalOpen(false);
-
-    // runpot 서버로 연결하는 함수
-    const connectToRunpot = async () => {
-        if (!user || !selectedPersona) {
-            console.error('사용자 또는 페르소나 정보가 없습니다.');
-            return;
-        }
-
-        try {
-            setIsConnectingToRunpot(true);
-            setLoadingStep(0);
-            setLoadingProgress(0);
-            
-            // 현재 세션에서 JWT 토큰 가져오기 (더 안전한 방법)
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                console.error('세션이 없습니다.');
-                return;
-            }
-
-            // 토큰 유효성 검증
-            if (!session.access_token || session.access_token.length < 100) {
-                console.error('유효하지 않은 access_token입니다.');
-                return;
-            }
-
-            // refresh_token이 너무 짧으면 경고만 표시하고 계속 진행
-            if (!session.refresh_token || session.refresh_token.length < 50) {
-                console.warn('refresh_token이 너무 짧습니다. access_token만 사용합니다.');
-            }
-
-            console.log('토큰 정보 확인:', {
-                access_token_length: session.access_token.length,
-                refresh_token_length: session.refresh_token?.length || 0,
-                user_id: session.user.id,
-                email: session.user.email
-            });
-
-            // 프로그레스 시뮬레이션 - 준비 단계
-            const progressInterval = setInterval(() => {
-                setLoadingProgress(prev => {
-                    if (prev < 50) {
-                        return prev + 2;
-                    } else if (prev >= 50 && loadingStep === 0) {
-                        setLoadingStep(1);
-                        return prev;
-                    } else if (prev < 100) {
-                        return prev + 1;
-                    } else {
-                        clearInterval(progressInterval);
-                        return prev;
-                    }
-                });
-            }, 100);
-
-            // runpot 서버로 전송할 데이터 준비
-            const requestData = {
-                user_id: session.user.id,
-                email: session.user.email,
-                access_token: session.access_token,
-                // refresh_token이 유효한 경우에만 포함
-                ...(session.refresh_token && session.refresh_token.length >= 50 && {
-                    refresh_token: session.refresh_token
-                }),
-                persona: {
-                    name: selectedPersona.name,
-                    age: selectedPersona.age,
-                    mbti: selectedPersona.mbti,
-                    job: selectedPersona.job,
-                    personality: selectedPersona.personality,
-                    gender: selectedPersona.gender,
-                    image: selectedPersona.image
-                }
-            };
-
-            console.log('runpot 서버로 연결 시도:', requestData);
-
-            // runpot 서버로 POST 요청
-            const response = await fetch('/api/connect', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${session.access_token}`
-                },
-                body: JSON.stringify(requestData)
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                console.log('runpot 서버 연결 성공:', result);
-                
-                // 프로그레스 완료
-                setLoadingProgress(100);
-                
-                // 백엔드에서 받은 URL로 리다이렉트
-                if (result.redirectUrl) {
-                    setTimeout(() => {
-                        window.location.href = result.redirectUrl;
-                    }, 500);
-                } else {
-                    console.log('리다이렉트 URL이 없습니다. 백엔드에서 처리 중...');
-                }
-            } else {
-                console.error('runpot 서버 연결 실패:', response.status, response.statusText);
-                const errorData = await response.json();
-                console.error('에러 상세:', errorData);
-                clearInterval(progressInterval);
-                
-                // 사용자에게 에러 메시지 표시
-                alert(`연결 실패: ${errorData.details || errorData.error || '알 수 없는 오류가 발생했습니다.'}`);
-            }
-        } catch (error) {
-            console.error('runpot 서버 연결 중 오류:', error);
-        } finally {
-            setTimeout(() => {
-                setIsConnectingToRunpot(false);
-                setLoadingStep(0);
-                setLoadingProgress(0);
-            }, 1000);
-        }
-    };
 
     const updateSlider = useCallback((index) => {
         if (!trackRef.current || !coverflowRef.current) return;
@@ -478,27 +354,7 @@ function PersonaPage() {
                                         ))}
                                     </div>
                                     <div className="phone-footer">
-                                        {isConnectingToRunpot ? (
-                                            <div className="loading-container">
-                                                <div className="loading-text">
-                                                    {loadingStep === 0 ? '데이트 준비중...' : '데이트 상대 만나러 가는중...'}
-                                                </div>
-                                                <div className="progress-bar">
-                                                    <div 
-                                                        className="progress-fill" 
-                                                        style={{ width: `${loadingProgress}%` }}
-                                                    ></div>
-                                                </div>
-                                                <div className="progress-text">{loadingProgress}%</div>
-                                            </div>
-                                        ) : (
-                                            <button 
-                                                className={`date-start-button ${isDateStartActive ? 'active' : ''}`}
-                                                onClick={connectToRunpot}
-                                            >
-                                                데이트 시작하기
-                                            </button>
-                                        )}
+                                        <button className={`date-start-button ${isDateStartActive ? 'active' : ''}`}>데이트 시작하기</button>
                                     </div>
                                     <div className="phone-home-indicator"></div>
                                 </div>
