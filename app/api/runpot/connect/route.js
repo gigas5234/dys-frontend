@@ -20,8 +20,19 @@ export async function POST(request) {
             persona_name: persona.name
         });
 
-        // runpot 서버 URL (환경 변수에서 가져오거나 기본값 사용)
-        const runpotServerUrl = process.env.RUNPOT_SERVER_URL || 'https://your-runpot-server.com';
+        // runpot 서버 URL 확인
+        const runpotServerUrl = process.env.RUNPOT_SERVER_URL;
+        
+        if (!runpotServerUrl) {
+            console.error('RUNPOT_SERVER_URL 환경 변수가 설정되지 않았습니다.');
+            return NextResponse.json({
+                success: false,
+                error: '서버 설정 오류',
+                details: 'RUNPOT_SERVER_URL 환경 변수가 설정되지 않았습니다. .env.local 파일에 RUNPOT_SERVER_URL을 설정해주세요.'
+            }, { status: 500 });
+        }
+
+        console.log('runpot 서버 URL:', runpotServerUrl);
         
         // runpot 서버로 전송할 데이터 준비
         const runpotRequestData = {
@@ -43,6 +54,7 @@ export async function POST(request) {
         };
 
         console.log('runpot 서버로 전송할 데이터:', runpotRequestData);
+        console.log('요청 URL:', `${runpotServerUrl}/api/dys_studio/connect`);
 
         // runpot 서버로 POST 요청
         const response = await fetch(`${runpotServerUrl}/api/dys_studio/connect`, {
@@ -80,11 +92,23 @@ export async function POST(request) {
 
     } catch (error) {
         console.error('runpot 연결 API 오류:', error);
+        console.error('에러 스택:', error.stack);
+        
+        // 더 자세한 에러 정보 제공
+        let errorDetails = error.message;
+        if (error.code === 'ENOTFOUND') {
+            errorDetails = '서버를 찾을 수 없습니다. URL을 확인해주세요.';
+        } else if (error.code === 'ECONNREFUSED') {
+            errorDetails = '서버 연결이 거부되었습니다. 서버가 실행 중인지 확인해주세요.';
+        } else if (error.code === 'ETIMEDOUT') {
+            errorDetails = '서버 연결 시간이 초과되었습니다.';
+        }
         
         return NextResponse.json({
             success: false,
             error: '서버 내부 오류',
-            details: error.message
+            details: errorDetails,
+            errorCode: error.code || 'UNKNOWN'
         }, { status: 500 });
     }
 }

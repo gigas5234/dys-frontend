@@ -212,9 +212,12 @@ function PersonaPage() {
                 }
             } else {
                 console.error('runpot 서버 연결 실패:', response.status, response.statusText);
-                const errorData = await response.text();
+                const errorData = await response.json();
                 console.error('에러 상세:', errorData);
                 clearInterval(progressInterval);
+                
+                // 사용자에게 에러 메시지 표시
+                alert(`연결 실패: ${errorData.details || errorData.error || '알 수 없는 오류가 발생했습니다.'}`);
             }
         } catch (error) {
             console.error('runpot 서버 연결 중 오류:', error);
