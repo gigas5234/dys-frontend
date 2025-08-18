@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getCurrentSession, restoreSessionFromUrl, signOut } from '../../lib/supabase';
+import { getCurrentSession, restoreSessionFromUrl, signOut, supabase } from '../../lib/supabase';
 
 // 페르소나 데이터
 const allPersonas = [
@@ -142,12 +142,30 @@ function PersonaPage() {
             setLoadingStep(0);
             setLoadingProgress(0);
             
-            // 현재 세션에서 JWT 토큰 가져오기
-            const session = await getCurrentSession();
+            // 현재 세션에서 JWT 토큰 가져오기 (더 안전한 방법)
+            const { data: { session } } = await supabase.auth.getSession();
             if (!session) {
                 console.error('세션이 없습니다.');
                 return;
             }
+
+            // 토큰 유효성 검증
+            if (!session.access_token || session.access_token.length < 100) {
+                console.error('유효하지 않은 access_token입니다.');
+                return;
+            }
+
+            // refresh_token이 너무 짧으면 경고만 표시하고 계속 진행
+            if (!session.refresh_token || session.refresh_token.length < 50) {
+                console.warn('refresh_token이 너무 짧습니다. access_token만 사용합니다.');
+            }
+
+            console.log('토큰 정보 확인:', {
+                access_token_length: session.access_token.length,
+                refresh_token_length: session.refresh_token?.length || 0,
+                user_id: session.user.id,
+                email: session.user.email
+            });
 
             // 프로그레스 시뮬레이션 - 준비 단계
             const progressInterval = setInterval(() => {
@@ -171,7 +189,10 @@ function PersonaPage() {
                 user_id: session.user.id,
                 email: session.user.email,
                 access_token: session.access_token,
-                refresh_token: session.refresh_token,
+                // refresh_token이 유효한 경우에만 포함
+                ...(session.refresh_token && session.refresh_token.length >= 50 && {
+                    refresh_token: session.refresh_token
+                }),
                 persona: {
                     name: selectedPersona.name,
                     age: selectedPersona.age,

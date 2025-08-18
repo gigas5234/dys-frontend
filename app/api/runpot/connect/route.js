@@ -1,12 +1,22 @@
 import { NextResponse } from 'next/server';
 
+// GET 메서드 (디버깅용)
+export async function GET() {
+    return NextResponse.json({
+        message: 'API endpoint is working',
+        method: 'GET',
+        timestamp: new Date().toISOString()
+    });
+}
+
+// POST 메서드
 export async function POST(request) {
     try {
         // 요청 데이터 파싱
         const requestData = await request.json();
         const { user_id, email, access_token, refresh_token, persona } = requestData;
 
-        // 필수 데이터 검증
+        // 필수 데이터 검증 (refresh_token은 선택사항)
         if (!user_id || !email || !access_token || !persona) {
             return NextResponse.json(
                 { error: '필수 데이터가 누락되었습니다.' },
@@ -39,7 +49,8 @@ export async function POST(request) {
             user_id,
             email,
             access_token,
-            refresh_token,
+            // refresh_token이 있는 경우에만 포함
+            ...(refresh_token && { refresh_token }),
             persona: {
                 name: persona.name,
                 age: persona.age,
