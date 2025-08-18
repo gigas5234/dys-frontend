@@ -1851,13 +1851,14 @@ section[id] {
 
 .persona-container { 
     display: flex; 
-    height: calc(100vh - var(--header-height));
+    min-height: calc(100vh - var(--header-height));
+    height: auto;
     margin-top: var(--header-height);
 }
 
 .persona-container .sidebar {
-    width: 260px;
-    height: 100%;
+    width: 240px;
+    height: calc(100vh - var(--header-height));
     background: var(--glass);
     border-right: 1px solid var(--stroke);
     backdrop-filter: blur(20px);
@@ -1979,7 +1980,7 @@ section[id] {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 32px 32px 40px 32px;
+    padding: 24px;
     overflow: hidden;
     position: relative;
 }

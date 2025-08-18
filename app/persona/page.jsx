@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getCurrentSession, restoreSessionFromUrl, signOut } from '../../lib/supabase';
 
@@ -45,7 +45,7 @@ function PersonaPage() {
     const [isChatActive, setIsChatActive] = useState(false);
     const [chatMessages, setChatMessages] = useState([]);
     const [activeFilter, setActiveFilter] = useState('all');
-    const [trackStyle, setTrackStyle] = useState({});
+    const [trackStyle, setTrackStyle] = useState({ transform: 'translate3d(0, -50%, 0)' });
     const [isDateStartActive, setIsDateStartActive] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
     
@@ -151,6 +151,22 @@ function PersonaPage() {
     useEffect(() => {
         updateSlider(0);
     }, [currentPersonas, updateSlider]);
+
+    // 레이아웃이 그려진 직후에 정확한 위치 계산 (초기 진입 시 하단 배치 방지)
+    useLayoutEffect(() => {
+        let raf1 = requestAnimationFrame(() => {
+            updateSlider(0);
+            // 이미지 로딩/폰트 적용 이후 한 번 더 보정
+            var raf2 = requestAnimationFrame(() => updateSlider(0));
+            raf1 = raf2;
+        });
+        const handleWindowLoad = () => updateSlider(0);
+        window.addEventListener('load', handleWindowLoad);
+        return () => {
+            cancelAnimationFrame(raf1);
+            window.removeEventListener('load', handleWindowLoad);
+        };
+    }, [updateSlider]);
 
     useEffect(() => {
         const handleResize = () => updateSlider(selectedIndex);
