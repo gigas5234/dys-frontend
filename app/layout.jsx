@@ -1,3 +1,5 @@
+import './globals.css';
+
 export const metadata = {
     title: "데연소",
     description: "Start → Runpod webcam feedback"
@@ -7,11 +9,12 @@ export const metadata = {
   return (
     <html lang="ko">
       <head>
+        <link rel="icon" href="/favicon.ico" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
-      <body style={{ margin: 0, fontFamily: "'Inter', system-ui, -apple-system, Segoe UI, Roboto, Apple SD Gothic Neo, Malgun Gothic" }}>
+      <body>
         {children}
       </body>
     </html>

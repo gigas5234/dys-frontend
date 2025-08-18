@@ -3,481 +3,49 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getCurrentSession, restoreSessionFromUrl, signOut } from '../../lib/supabase';
 
-// 페이지에 필요한 모든 스타일을 포함하는 컴포넌트입니다.
-const GlobalStyles = () => (
-  <style>{`
-    /* --- 기본 스타일 변수 (메인 페이지와 동일) --- */
-    :root {
-        --bg: #f7f8fc;
-        --glass: rgba(255, 255, 255, 0.75);
-        --stroke: rgba(0, 0, 0, 0.08);
-        --shadow: 0 12px 50px rgba(0, 0, 0, 0.12);
-        --text: #2c3e50;
-        --muted: rgba(44, 62, 80, 0.65);
-        --brand1: #fbc2eb;
-        --brand2: #a6c1ee;
-        --brand3: #e6b3ff;
-        --radius: 24px;
-    }
-
-    /* --- 기본 설정 --- */
-    * {
-        box-sizing: border-box;
-    }
-
-    html, body {
-        margin: 0;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        overflow-x: hidden;
-        scroll-behavior: smooth;
-        word-break: keep-all;
-    }
-
-    /* --- 배경 하이라이트 애니메이션 --- */
-    .background-highlight {
-        content: '';
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        width: 70vw;
-        height: 70vh;
-        min-width: 800px;
-        min-height: 800px;
-        background: radial-gradient(circle, var(--brand1) 0%, var(--brand2) 50%, var(--brand3) 100%);
-        opacity: 0.15;
-        filter: blur(120px);
-        transform-origin: center;
-        animation: backgroundHighlight 25s ease-in-out infinite alternate;
-        z-index: -1;
-    }
-
-    @keyframes backgroundHighlight {
-        0% { transform: translate(-50%, -50%) rotate(0deg) scale(1.2); }
-        100% { transform: translate(-50%, -50%) rotate(360deg) scale(1.4); }
-    }
-
-    .container {
-        width: 100%;
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 40px;
-    }
-    
-    /* --- 헤더 (메인 페이지와 동일) --- */
-    .main-header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        padding: 20px 0;
-        z-index: 1000;
-        background: rgba(247, 248, 252, 0.8);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid var(--stroke);
-    }
-    
-    .main-header .container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        max-width: none;
-    }
-    
-    .header-left {
-        display: flex;
-        align-items: center;
-        gap: 40px;
-    }
-    
-    .main-header .logo { 
-        display: flex; 
-        align-items: center; 
-        gap: 14px; 
-        font-size: 32px; 
-        font-weight: 700; 
-        color: var(--text); 
-        text-decoration: none;
-        letter-spacing: -0.5px;
-    }
-    .main-header .logo img {
-        width: 38px;
-        height: 38px;
-        object-fit: contain;
-    }
-    .main-header nav { display: flex; gap: 30px; }
-    .main-header nav a { font-weight: 600; color: var(--muted); text-decoration: none; transition: color 0.3s ease; }
-    .main-header nav a:hover { color: var(--text); }
-    .main-header nav a.active { color: var(--text); font-weight: 700; }
-
-    .btn { padding: 10px 22px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; }
-    .btn-login { background: var(--text); color: white; }
-    .btn-login:hover { background: #000; transform: translateY(-2px); }
-    
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    
-    .user-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-    
-    .user-name {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      max-width: 120px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .user-dropdown {
-      position: relative;
-      display: inline-block;
-    }
-
-    .user-dropdown-toggle {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 16px;
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      border-radius: 16px;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-
-    .user-dropdown-toggle:hover {
-      background: rgba(255, 255, 255, 1);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-      border-color: rgba(166, 193, 238, 0.3);
-    }
-
-    .user-dropdown-toggle svg {
-      transition: transform 0.3s ease;
-    }
-
-    .user-dropdown-toggle.open svg {
-      transform: rotate(180deg);
-    }
-
-    .user-dropdown-menu {
-      position: absolute;
-      top: calc(100% + 8px);
-      right: 0;
-      background: rgba(255, 255, 255, 0.95);
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      border-radius: 16px;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-      min-width: 180px;
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-8px) scale(0.95);
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      z-index: 1000;
-      overflow: hidden;
-    }
-
-    .user-dropdown-menu.open {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0) scale(1);
-    }
-
-    .user-dropdown-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 18px;
-      color: var(--text);
-      text-decoration: none;
-      font-size: 15px;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      border: none;
-      background: none;
-      width: 100%;
-      text-align: left;
-      cursor: pointer;
-    }
-
-    .user-dropdown-item:not(:last-child) {
-      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-    }
-
-    .user-dropdown-item:hover {
-      background: rgba(166, 193, 238, 0.08);
-      color: var(--brand2);
-      transform: translateX(4px);
-    }
-
-    .user-dropdown-item.logout {
-      color: #dc3545;
-    }
-
-    .user-dropdown-item.logout:hover {
-      background: rgba(220, 53, 69, 0.08);
-      color: #c82333;
-    }
-
-    .user-dropdown-item svg {
-      width: 18px;
-      height: 18px;
-      flex-shrink: 0;
-    }
-    
-    /* --- 가격 페이지 스타일 --- */
-    .pricing-section {
-        padding: 180px 0 120px;
-        text-align: center;
-    }
-    .section-title {
-        margin-bottom: 70px;
-    }
-    .section-title h1 {
-        font-size: 48px;
-        font-weight: 800;
-        margin-bottom: 15px;
-        line-height: 1.3;
-    }
-    .section-title p {
-        font-size: 18px;
-        color: var(--muted);
-        max-width: 600px;
-        margin: 0 auto;
-        line-height: 1.7;
-    }
-    .pricing-grid {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        gap: 30px;
-        flex-wrap: wrap;
-    }
-    .plan-card {
-        background: var(--glass);
-        border: 1px solid var(--stroke);
-        border-radius: var(--radius);
-        padding: 40px;
-        width: 100%;
-        max-width: 400px;
-        text-align: left;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        position: relative;
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-    }
-    .plan-card:hover {
-        transform: translateY(-8px);
-        box-shadow: var(--shadow);
-    }
-
-    .plan-card.premium {
-        border: 1px solid transparent;
-        background-image: linear-gradient(var(--glass), var(--glass)), linear-gradient(135deg, var(--brand2), var(--brand1));
-        background-origin: border-box;
-        background-clip: padding-box, border-box;
-        box-shadow: 0 16px 60px rgba(166, 193, 238, 0.3);
-    }
-    .plan-badge {
-        position: absolute;
-        top: -18px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: linear-gradient(135deg, var(--brand2), var(--brand1));
-        color: white;
-        padding: 8px 20px;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: 700;
-    }
-    .plan-card h2 {
-        font-size: 28px;
-        margin-top: 0;
-        margin-bottom: 5px;
-    }
-    .plan-card .price {
-        font-size: 44px;
-        font-weight: 800;
-        margin: 10px 0;
-        display: flex;
-        align-items: baseline;
-    }
-    .plan-card .price small {
-        font-size: 16px;
-        font-weight: 500;
-        color: var(--muted);
-        margin-left: 8px;
-    }
-    .plan-card .description {
-        color: var(--muted);
-        margin-bottom: 35px;
-        min-height: 44px;
-        font-size: 15px;
-        line-height: 1.6;
-    }
-    .feature-list {
-        list-style: none;
-        padding: 0;
-        margin: 0 0 40px 0;
-    }
-    .feature-list li {
-        margin-bottom: 16px;
-        display: flex;
-        align-items: flex-start;
-        gap: 12px;
-        font-size: 16px;
-    }
-    .feature-list li svg {
-        width: 20px;
-        height: 20px;
-        color: var(--brand2);
-        flex-shrink: 0;
-        margin-top: 3px;
-    }
-    .plan-card .btn-cta {
-        width: 100%;
-        padding: 16px;
-        font-size: 17px;
-        border-radius: 12px;
-        background: var(--text);
-        color: white;
-        text-decoration: none;
-        display: block;
-        text-align: center;
-        border: none;
-        cursor: pointer;
-        font-family: inherit;
-    }
-    .plan-card .btn-cta:hover {
-         background: #000;
-         transform: translateY(-2px);
-         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-    .plan-card.premium .btn-cta {
-        background: linear-gradient(135deg, var(--brand2), var(--brand1));
-    }
-    .plan-card.premium .btn-cta:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(166, 193, 238, 0.4);
-    }
-
-    /* FAQ 섹션 */
-    .faq-section {
-        padding: 80px 0;
-        text-align: center;
-    }
-    .faq-section h2 {
-        font-size: 32px;
-        margin-bottom: 50px;
-    }
-    .faq-container {
-        max-width: 700px;
-        margin: 0 auto;
-        text-align: left;
-    }
-    .faq-item {
-        border-bottom: 1px solid var(--stroke);
-    }
-    .faq-item summary {
-        font-size: 18px;
-        font-weight: 600;
-        padding: 20px 0;
-        cursor: pointer;
-        list-style: none;
-        position: relative;
-        padding-right: 30px;
-    }
-    .faq-item summary::-webkit-details-marker {
-        display: none;
-    }
-    .faq-item summary::after {
-        content: '+';
-        position: absolute;
-        right: 5px;
-        font-size: 24px;
-        color: var(--muted);
-        transition: transform 0.2s;
-    }
-    .faq-item[open] summary::after {
-        transform: rotate(45deg);
-    }
-    .faq-item p {
-        padding: 0 10px 20px 10px;
-        line-height: 1.7;
-        color: var(--muted);
-    }
-
-    /* --- 푸터 --- */
-    .main-footer { text-align: center; padding: 60px 0; color: var(--muted); font-size: 14px; }
-    
-    @media (max-width: 992px) {
-        .pricing-grid { align-items: stretch; }
-    }
-    @media (max-width: 768px) {
-        .container { padding: 0 20px; }
-        .main-header nav { display: none; }
-        .pricing-grid { gap: 50px; }
-        
-        .user-dropdown-menu {
-          right: -20px;
-          min-width: 140px;
-        }
-        
-        .user-name {
-          max-width: 80px;
-        }
-    }
-  `}</style>
-);
-
-// 가격 페이지를 위한 React 컴포넌트입니다.
-function PricingPage() {
+function PricePage() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isClient, setIsClient] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // 사용자 세션 확인 함수
+  // 사용자 세션 확인
   const checkUser = async () => {
     try {
+      setLoading(true);
+      
       // URL에서 토큰이 있는지 확인하고 세션 복원 시도
       const restoredSession = await restoreSessionFromUrl();
       if (restoredSession) {
         setUser(restoredSession.user);
+        setLoading(false);
         return;
       }
       
       // 기존 세션 확인
       const session = await getCurrentSession();
       setUser(session?.user || null);
+      setLoading(false);
     } catch (error) {
       console.error('Error checking user session:', error);
       setUser(null);
+      setLoading(false);
     }
   };
 
-  // useEffect를 사용하여 컴포넌트가 렌더링된 후 스크립트 로직을 실행합니다.
+  // 컴포넌트 마운트 시 실행
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    setIsClient(true);
     checkUser();
   }, []);
 
   // 드롭다운 외부 클릭 시 닫기
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
@@ -490,29 +58,32 @@ function PricingPage() {
     };
   }, []);
 
-  // 로그아웃 핸들러
+  // 로그아웃 처리
   const handleLogout = async () => {
     try {
       await signOut();
       setUser(null);
-      setIsDropdownOpen(false);
-      // 페이지 새로고침 대신 상태만 초기화
-      // window.location.reload(); // 제거
     } catch (error) {
-      console.error('로그아웃 중 오류:', error);
+      console.error('Logout error:', error);
     }
   };
 
+  if (loading) {
+    return (
+      <div className="login-loading">
+        <div className="loading-spinner"></div>
+        <p>로딩 중...</p>
+      </div>
+    );
+  }
+
   return (
     <>
-      <GlobalStyles />
-      <div className="background-highlight"></div>
-
       <header className="main-header">
         <div className="container">
           <div className="header-left">
             <a href="/" className="logo">
-                              <img src="/dys_logo.webp" alt="데연소 로고" />
+              <img src="/dys_logo.webp" alt="데연소 로고" />
               데연소
             </a>
             <nav>
@@ -523,12 +94,16 @@ function PricingPage() {
               <a href="/price" className="active">가격</a>
             </nav>
           </div>
-          <div className="header-right">
-            {user ? (
+          <div className="header-right" suppressHydrationWarning>
+            {isClient && user ? (
               <div className="user-dropdown" ref={dropdownRef}>
                 <div 
                   className={`user-dropdown-toggle ${isDropdownOpen ? 'open' : ''}`}
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  role="button"
+                  aria-haspopup="menu"
+                  aria-expanded={isDropdownOpen}
+                  aria-controls="user-menu"
+                  onClick={() => setIsDropdownOpen(o => !o)}
                 >
                   <img 
                     src={user.user_metadata?.avatar_url || 'https://placehold.co/32x32/e0e8ff/7d7d7d?text=U'} 
@@ -540,14 +115,14 @@ function PricingPage() {
                     <polyline points="6,9 12,15 18,9"></polyline>
                   </svg>
                 </div>
-                <div className={`user-dropdown-menu ${isDropdownOpen ? 'open' : ''}`}>
-                  <a href="/persona" className="user-dropdown-item">
+                <div id="user-menu" className={`user-dropdown-menu ${isDropdownOpen ? 'open' : ''}`} role="menu">
+                  <a href="/persona" className="user-dropdown-item" role="menuitem">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                     </svg>
                     시작하기
                   </a>
-                  <button onClick={handleLogout} className="user-dropdown-item logout">
+                  <button onClick={handleLogout} className="user-dropdown-item logout" role="menuitem">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                       <polyline points="16,17 21,12 16,7"></polyline>
@@ -591,12 +166,7 @@ function PricingPage() {
                     <span>기본 분석 리포트 (종합 점수)</span>
                   </li>
                 </ul>
-                                 <button 
-                   onClick={() => user ? window.location.href = '/persona' : window.location.href = '/login'} 
-                   className="btn-cta"
-                 >
-                   {user ? '데이트 준비하기' : '무료로 시작하기'}
-                 </button>
+                <a href="#" className="btn-cta">무료로 시작하기</a>
               </div>
 
               <div className="plan-card premium">
@@ -622,12 +192,7 @@ function PricingPage() {
                     <span>모든 도전 모드 시나리오 이용 가능</span>
                   </li>
                 </ul>
-                                 <button 
-                   onClick={() => user ? window.location.href = '/persona' : window.location.href = '/login'} 
-                   className="btn-cta"
-                 >
-                   {user ? '데이트 준비하기' : '프리미엄 구독하기'}
-                 </button>
+                <a href="#" className="btn-cta">프리미엄 구독하기</a>
               </div>
             </div>
           </div>
@@ -661,6 +226,4 @@ function PricingPage() {
   );
 }
 
-// 이 컴포넌트를 다른 파일에서 import하여 사용할 수 있도록 export합니다.
-// 여기서는 단일 파일이므로 App으로 이름을 유지합니다.
-export default PricingPage;
+export default PricePage;

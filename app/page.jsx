@@ -3,575 +3,72 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getCurrentSession, restoreSessionFromUrl, signOut, isReturnFromBackend, cleanReturnParams } from '../lib/supabase';
 
-// 모든 스타일을 컴포넌트 내에 포함시킵니다.
-const GlobalStyles = () => (
-  <style>{`
-    /* --- 기본 스타일 변수 (기존 테마 유지) --- */
-    :root {
-        --bg: #f7f8fc;
-        --glass: rgba(255, 255, 255, 0.6);
-        --stroke: rgba(0, 0, 0, 0.08);
-        --shadow: 0 12px 50px rgba(0, 0, 0, 0.12);
-        --text: #2c3e50;
-        --muted: rgba(44, 62, 80, 0.65);
-        --brand1: #fbc2eb;
-        --brand2: #a6c1ee;
-        --brand3: #e6b3ff;
-        --radius: 24px;
-        --transition-speed: 0.5s;
-    }
-
-    /* --- 기본 설정 --- */
-    * {
-        box-sizing: border-box;
-    }
-
-    html, body {
-        margin: 0;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        overflow-x: hidden;
-        scroll-behavior: smooth;
-        word-break: keep-all;
-    }
-
-    /* --- 배경 하이라이트 애니메이션 (스크롤 패럴랙스 효과 추가) --- */
-    .background-highlight {
-        content: '';
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        width: 70vw;
-        height: 70vh;
-        min-width: 800px;
-        min-height: 800px;
-        background: radial-gradient(circle, var(--brand1) 0%, var(--brand2) 50%, var(--brand3) 100%);
-        opacity: 0.15;
-        filter: blur(120px);
-        transform-origin: center;
-        animation: backgroundHighlight 25s ease-in-out infinite alternate;
-        z-index: -1;
-        will-change: transform; /* GPU 가속 활성화 */
-    }
-
-    @keyframes backgroundHighlight {
-        0% { transform: translate(-50%, -50%) rotate(0deg) scale(1.2); }
-        100% { transform: translate(-50%, -50%) rotate(360deg) scale(1.4); }
-    }
-
-    .container {
-        width: 100%;
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 40px;
-    }
-    
-    /* --- 스크롤 기반 애니메이션 --- */
-    .reveal {
-        opacity: 0;
-        transform: translateY(40px);
-        transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        will-change: opacity, transform;
-    }
-    .reveal.visible {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    
-    /* --- 공통 섹션 스타일 --- */
-    section {
-        padding: 120px 0;
-        position: relative;
-    }
-    section[id] {
-        scroll-margin-top: 100px;
-    }
-    
-    .section-title h2 {
-        font-size: 42px;
-        font-weight: 800;
-        margin-bottom: 15px;
-        line-height: 1.3;
-    }
-    
-    .section-title p {
-        font-size: 18px;
-        color: var(--muted);
-        max-width: 700px;
-        margin: 0 auto;
-        line-height: 1.7;
-    }
-    .section-title {
-        text-align: center;
-        margin-bottom: 80px;
-    }
-
-    /* --- 헤더 --- */
-    .main-header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        padding: 20px 0;
-        z-index: 1000;
-        background: rgba(247, 248, 252, 0.8);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid var(--stroke);
-        transition: transform 0.3s ease-out;
-    }
-    
-    .main-header .container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        max-width: none;
-    }
-    
-    .header-left {
-        display: flex;
-        align-items: center;
-        gap: 40px;
-    }
-    
-    .main-header .logo { 
-        display: flex; 
-        align-items: center; 
-        gap: 14px; 
-        font-size: 32px; 
-        font-weight: 700; 
-        color: var(--text); 
-        text-decoration: none;
-        letter-spacing: -0.5px;
-    }
-    .main-header .logo img {
-        width: 38px;
-        height: 38px;
-        object-fit: contain;
-    }
-    .main-header nav { display: flex; gap: 30px; }
-    .main-header nav a { font-weight: 600; color: var(--muted); text-decoration: none; transition: color 0.3s ease; }
-    .main-header nav a:hover { color: var(--text); }
-    
-    .btn { padding: 10px 22px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; }
-    .btn-login { background: var(--text); color: white; }
-    .btn-login:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 25px rgba(166, 193, 238, 0.4);
-    }
-    
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    
-    .user-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-    
-    .user-name {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      max-width: 120px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .user-dropdown {
-      position: relative;
-      display: inline-block;
-    }
-
-    .user-dropdown-toggle {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 16px;
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      border-radius: 16px;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-
-    .user-dropdown-toggle:hover {
-      background: rgba(255, 255, 255, 1);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-      border-color: rgba(166, 193, 238, 0.3);
-    }
-
-    .user-dropdown-toggle svg {
-      transition: transform 0.3s ease;
-    }
-
-    .user-dropdown-toggle.open svg {
-      transform: rotate(180deg);
-    }
-
-    .user-dropdown-menu {
-      position: absolute;
-      top: calc(100% + 8px);
-      right: 0;
-      background: rgba(255, 255, 255, 0.95);
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      border-radius: 16px;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-      min-width: 180px;
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-8px) scale(0.95);
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      z-index: 1000;
-      overflow: hidden;
-    }
-
-    .user-dropdown-menu.open {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0) scale(1);
-    }
-
-    .user-dropdown-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 18px;
-      color: var(--text);
-      text-decoration: none;
-      font-size: 15px;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      border: none;
-      background: none;
-      width: 100%;
-      text-align: left;
-      cursor: pointer;
-    }
-
-    .user-dropdown-item:not(:last-child) {
-      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-    }
-
-    .user-dropdown-item:hover {
-      background: rgba(166, 193, 238, 0.08);
-      color: var(--brand2);
-      transform: translateX(4px);
-    }
-
-    .user-dropdown-item.logout {
-      color: #dc3545;
-    }
-
-    .user-dropdown-item.logout:hover {
-      background: rgba(220, 53, 69, 0.08);
-      color: #c82333;
-    }
-
-    .user-dropdown-item svg {
-      width: 18px;
-      height: 18px;
-      flex-shrink: 0;
-    }
-    
-    .btn-start {
-      background: linear-gradient(135deg, var(--brand2), var(--brand1));
-      color: white;
-      padding: 8px 16px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 14px;
-      transition: all 0.3s ease;
-    }
-    
-    .btn-start:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(166, 193, 238, 0.4);
-    }
-    .btn-cta { background: linear-gradient(135deg, var(--brand2), var(--brand1)); color: white; padding: 18px 35px; font-size: 18px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: none; cursor: pointer; font-family: inherit; }
-    .btn-cta:hover { transform: translateY(-3px); box-shadow: 0 6px 25px rgba(166, 193, 238, 0.4); }
-
-    /* --- 히어로 섹션 --- */
-    .hero-section { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 100vh; }
-    .hero-section .slogan { font-size: 22px; font-weight: 600; margin-bottom: 15px; background: linear-gradient(135deg, var(--brand2), var(--brand1)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .hero-section h1 { font-size: 58px; font-weight: 800; margin: 0 0 20px 0; line-height: 1.2; max-width: 800px; }
-    .hero-section p { font-size: 20px; color: var(--muted); max-width: 600px; margin-bottom: 40px; line-height: 1.7; }
-    
-    /* --- 문제 제기 섹션 --- */
-    .problem-section { background: rgba(255,255,255,0.2); }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; text-align: center; }
-    .stat-card { background: var(--glass); border: 1px solid var(--stroke); border-radius: var(--radius); padding: 40px 30px; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); transition: transform 0.4s ease, box-shadow 0.4s ease; }
-    .stat-card:hover { transform: translateY(-8px); box-shadow: var(--shadow); }
-    .stat-card .number { font-size: 60px; font-weight: 800; background: linear-gradient(135deg, var(--brand2), var(--brand1)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
-    .stat-card .description { font-size: 16px; color: var(--muted); line-height: 1.6; }
-
-    /* --- 공감 문구 섹션 --- */
-    .empathy-section { text-align: center; }
-    .empathy-section h2 { font-size: 38px; line-height: 1.4; max-width: 800px; margin: 0 auto 20px; }
-    .empathy-section p { font-size: 18px; color: var(--muted); max-width: 650px; margin: 0 auto; line-height: 1.8; }
-    
-    .highlight-text {
-        font-weight: 800;
-        font-size: 1.15em;
-        background: linear-gradient(135deg, var(--brand2), var(--brand1));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        display: inline-block;
-        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-        -webkit-text-stroke: 0.5px rgba(44, 62, 80, 0.5);
-        animation: pulse-effect 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse-effect {
-        0%, 100% {
-            opacity: 1;
-            transform: scale(1);
-        }
-        50% {
-            opacity: 0.5;
-            transform: scale(1.02);
-        }
-    }
-
-    /* --- 서비스 미리보기 섹션 --- */
-    .preview-section { background: #fff; }
-    .preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-    .preview-text { text-align: left; }
-    .preview-text h3 { font-size: 32px; margin-bottom: 15px; }
-    .preview-text p { font-size: 17px; color: var(--muted); line-height: 1.7; margin-bottom: 25px; }
-    
-    .interactive-mockup { display: flex; justify-content: center; align-items: center; }
-    .mockup-chat-container { width: 300px; height: 620px; background-image: linear-gradient(135deg, #393e41 0%, #1c1c1e 74%); border-radius: 48px; padding: 14px; box-shadow: 0 25px 60px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.1); transition: transform 0.5s ease; }
-    .mockup-chat-container:hover { transform: scale(1.03); }
-    .mockup-phone-screen { width: 100%; height: 100%; background: var(--bg); border-radius: 34px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-    .mockup-phone-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 28px; background: #1c1c1e; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 10; }
-    .mockup-phone-home-indicator { width: 130px; height: 5px; background: rgba(0,0,0,0.3); border-radius: 10px; position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); z-index: 10; }
-    
-    .mockup-phone-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: opacity 0.4s ease, transform 0.4s ease; }
-    .mockup-phone-profile { text-align: center; padding: 40px 20px 20px; }
-    .mockup-profile-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 4px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-    .mockup-profile-name { font-size: 20px; font-weight: 700; margin-bottom: 5px; }
-    .mockup-profile-info { font-size: 14px; color: var(--muted); }
-    .mockup-contact-btn { background: var(--brand2); color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; margin-top: 20px; transition: all 0.3s ease; }
-    .mockup-contact-btn:hover { background: #8aa9d6; transform: translateY(-2px); }
-    
-    .mockup-phone-chat-view { display: flex; flex-direction: column; height: 100%; }
-    .mockup-phone-header { padding: 10px 15px; padding-top: 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--stroke); flex-shrink: 0; }
-    .mockup-phone-header .name { font-weight: 600; }
-    .mockup-phone-chat-log { flex: 1; padding: 15px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
-    .mockup-phone-bubble { padding: 8px 12px; border-radius: 15px; max-width: 80%; line-height: 1.5; font-size: 13px; opacity: 0; transform: translateY(10px) scale(0.9); transition: opacity 0.5s ease, transform 0.5s ease; }
-    .mockup-phone-bubble.visible { opacity: 1; transform: translateY(0) scale(1); }
-    .mockup-phone-bubble.me { align-self: flex-end; background: var(--brand2); color: #fff; }
-    .mockup-phone-bubble.ai { align-self: flex-start; background: #fff; border: 1px solid var(--stroke); }
-    .mockup-phone-footer { padding: 15px; text-align: center; }
-    .date-start-button { width: 100%; padding: 12px; border: none; border-radius: 15px; background: linear-gradient(135deg, var(--brand2), var(--brand1)); color: #fff; font-size: 16px; font-weight: 600; cursor: default; opacity: 0; transform: scale(0.9); transition: all 0.3s ease; }
-    .date-start-button.active { opacity: 1; transform: scale(1); }
-
-    /* --- 과학적 근거 섹션 --- */
-    .science-section .content-wrapper { display: flex; align-items: center; gap: 60px; }
-    .venn-diagram-container { flex: 0 0 300px; position: relative; width: 300px; height: 300px; }
-    .venn-circle { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; color: white; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.3); backdrop-filter: blur(5px); transition: all 0.4s ease; }
-    .venn-diagram-container:hover .venn-circle { transform: scale(1.05); }
-    .venn-circle .percent { font-size: 40px; line-height: 1; }
-    .venn-circle .label { font-size: 18px; margin-top: 5px; }
-    
-    .venn-visual { width: 220px; height: 220px; background: rgba(166, 193, 238, 0.8); top: 0; left: 50%; transform: translateX(-50%); z-index: 1; }
-    .venn-vocal { width: 190px; height: 190px; background: rgba(230, 179, 255, 0.8); bottom: 0; left: 0; z-index: 2; }
-    .venn-verbal { width: 100px; height: 100px; background: rgba(251, 194, 235, 0.85); bottom: 10px; right: 10px; z-index: 3; }
-
-    .science-section .text-content { flex-grow: 1; }
-    .science-section .text-content h3 { font-size: 28px; font-weight: 700; margin-bottom: 20px; }
-    .science-section .text-content p { color: var(--muted); line-height: 1.8; margin-bottom: 25px; }
-    .analysis-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; }
-    .analysis-item { border-left: 3px solid; padding-left: 20px; }
-    .analysis-item.visual { border-color: #a6c1ee; }
-    .analysis-item.vocal { border-color: #e6b3ff; }
-    .analysis-item.verbal { border-color: #fbc2eb; }
-    .analysis-item h4 { margin: 0 0 5px 0; font-size: 18px; }
-    .analysis-item p { font-size: 15px; color: var(--muted); line-height: 1.6; margin: 0; }
-
-    /* --- 핵심 기능 섹션 --- */
-    .features-section { background: rgba(255,255,255,0.2); }
-    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-    .feature-card { background: var(--glass); border: 1px solid var(--stroke); border-radius: var(--radius); padding: 40px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); text-align: center; transition: transform 0.4s ease, box-shadow 0.4s ease; }
-    .feature-card:hover { transform: translateY(-10px); box-shadow: var(--shadow); }
-    .feature-card .icon { width: 50px; height: 50px; margin: 0 auto 20px auto; color: var(--brand2); }
-    .feature-card h3 { font-size: 22px; margin: 0 0 10px 0; }
-    .feature-card p { color: var(--muted); line-height: 1.6; }
-
-    /* --- 실제 후기 섹션 --- */
-    .reviews-section {
-        padding-top: 60px;
-        padding-bottom: 120px;
-    }
-    .reviews-wrapper {
-        position: relative;
-        overflow: hidden;
-        -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-        mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-    }
-    .review-track {
-        display: flex;
-        gap: 30px;
-        width: fit-content;
-        animation-timing-function: linear;
-        animation-iteration-count: infinite;
-    }
-    .review-track.scroll-left {
-        animation-name: scroll-left;
-        animation-duration: 50s;
-    }
-    .review-track.scroll-right {
-        animation-name: scroll-right;
-        animation-duration: 50s;
-    }
-    .reviews-wrapper:hover .review-track {
-        animation-play-state: paused;
-    }
-
-    @keyframes scroll-left {
-        from { transform: translateX(0); }
-        to { transform: translateX(-50%); }
-    }
-    @keyframes scroll-right {
-        from { transform: translateX(-50%); }
-        to { transform: translateX(0); }
-    }
-
-    .review-card {
-        width: 350px;
-        flex-shrink: 0;
-        background: var(--glass);
-        border: 1px solid var(--stroke);
-        border-radius: var(--radius);
-        padding: 30px;
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-    }
-    .review-card .stars {
-        color: #f5c518;
-        margin-bottom: 15px;
-        font-size: 18px;
-    }
-    .review-card .comment {
-        font-size: 16px;
-        line-height: 1.7;
-        margin-bottom: 20px;
-        color: var(--text);
-    }
-    .review-card .author {
-        font-weight: 600;
-        font-size: 15px;
-        text-align: right;
-        color: var(--muted);
-    }
-    
-    /* --- CTA 섹션 --- */
-    .cta-section { text-align: center; background: linear-gradient(135deg, var(--brand2), var(--brand1)); color: white; border-radius: var(--radius); padding: 80px 40px; margin: 120px 20px 0; }
-    .cta-section h2 { font-size: 36px; font-weight: 800; margin-bottom: 20px; color: white; }
-    .cta-section p { font-size: 18px; max-width: 600px; margin: 0 auto 40px auto; opacity: 0.9; }
-    .cta-section .btn-cta { background: white; color: var(--text); box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
-    .cta-section .btn-cta:hover { background: #f0f0f0; transform: translateY(-3px); box-shadow: 0 6px 25px rgba(0,0,0,0.25); }
-
-    /* --- 푸터 --- */
-    .main-footer { text-align: center; padding: 60px 0; color: var(--muted); font-size: 14px; }
-
-    /* --- 반응형 디자인 --- */
-    @media (max-width: 992px) {
-        .preview-grid { grid-template-columns: 1fr; gap: 40px; }
-        .preview-text { text-align: center; }
-        .science-section .content-wrapper { flex-direction: column; text-align: center; }
-        .analysis-grid { grid-template-columns: 1fr; gap: 30px; }
-        .analysis-item { text-align: left; }
-    }
-    @media (max-width: 768px) {
-        .hero-section h1, .section-title h2, .empathy-section h2 { font-size: 36px; }
-        section { padding: 80px 0; }
-        .container { padding: 0 20px; }
-        .main-header nav { display: none; }
-        
-        .user-dropdown-menu {
-          right: -20px;
-          min-width: 140px;
-        }
-        
-        .user-name {
-          max-width: 80px;
-        }
-    }
-  `}</style>
-);
-
 function HomePage() {
   const [isChatStarted, setIsChatStarted] = useState(false);
   const [visibleBubbles, setVisibleBubbles] = useState([]);
   const [isDateButtonActive, setIsDateButtonActive] = useState(false);
   const [user, setUser] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const chatAnimated = useRef(false);
+  const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const [isPageReady, setIsPageReady] = useState(true); // 로딩 화면 비활성화
+  const [showAnimations, setShowAnimations] = useState(false);
+  const hasAnimatedRef = useRef(false);
+  const cleanupRef = useRef(() => {});
   const dropdownRef = useRef(null);
 
   // 사용자 세션 확인 함수
   const checkUser = async () => {
     try {
-      // URL에서 토큰이 있는지 확인하고 세션 복원 시도
-      const restoredSession = await restoreSessionFromUrl();
-      if (restoredSession) {
-        setUser(restoredSession.user);
-        return;
-      }
+      setLoading(true);
       
-      // 기존 세션 확인
+      // 기존 세션 확인 (restoreSessionFromUrl은 이미 useEffect에서 호출됨)
       const session = await getCurrentSession();
       setUser(session?.user || null);
+      setLoading(false);
     } catch (error) {
       console.error('Error checking user session:', error);
       setUser(null);
+      setLoading(false);
     }
   };
 
   // useEffect를 사용하여 컴포넌트가 렌더링된 후 스크립트 로직을 실행합니다.
   useEffect(() => {
-    checkUser();
+    if (typeof window === 'undefined') return;
     
-    // 백엔드에서 돌아왔을 때의 처리
-    const handleReturnFromBackend = () => {
-      if (isReturnFromBackend()) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const sessionId = urlParams.get('session_id');
-        const timestamp = urlParams.get('timestamp');
-        
-        console.log('🔄 백엔드에서 돌아옴:', { sessionId, timestamp });
-        
-        // URL 파라미터 정리 (브라우저 히스토리에서 제거)
-        cleanReturnParams();
-        
-        // 세션 복원 시도 (setTimeout으로 지연시켜 무한 루프 방지)
-        setTimeout(() => {
-          checkUser();
-        }, 100);
+    setIsClient(true);
+    setMounted(true);
+    
+    // 한 번만 실행되도록 플래그 추가
+    let isInitialized = false;
+    
+    const run = async () => {
+      if (isInitialized) return;
+      isInitialized = true;
+      
+      try {
+        await restoreSessionFromUrl(); // URL만 처리
+        await checkUser();             // 세션 조회 1회
+        cleanReturnParams();           // URL 파라미터 정리
+      } catch (error) {
+        console.error('Error during initialization:', error);
       }
+      
+      // 0.5초 후에 애니메이션 시작
+      setTimeout(() => {
+        setShowAnimations(true);
+      }, 500);
     };
-    
-    handleReturnFromBackend();
-  }, []); // checkUser를 의존성에서 제거하여 무한 루프 방지
+    run();
+  }, []);
 
   // 드롭다운 외부 클릭 시 닫기
   useEffect(() => {
+    // 클라이언트에서만 실행
+    if (typeof window === 'undefined') return;
+    
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
@@ -584,7 +81,16 @@ function HomePage() {
     };
   }, []);
 
+  // 컴포넌트 언마운트 시 cleanup
+  useEffect(() => () => cleanupRef.current(), []);
+
   useEffect(() => {
+    // 클라이언트에서만 실행
+    if (typeof window === 'undefined') return;
+    
+    // 애니메이션이 활성화된 후에만 reveal 효과 적용
+    if (!showAnimations) return;
+    
     // 스크롤 시 나타나는 애니메이션 효과
     const revealElements = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
@@ -599,38 +105,40 @@ function HomePage() {
 
     revealElements.forEach(el => observer.observe(el));
 
-    // 스크롤 패럴랙스 효과
+    // 스크롤 패럴랙스 효과 (throttled)
     const parallaxElements = document.querySelectorAll('[data-parallax]');
-    const backgroundHighlight = document.querySelector('.background-highlight');
     
+    let ticking = false;
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      if (backgroundHighlight) {
-        backgroundHighlight.style.transform = `translate(-50%, -50%) translateY(${scrollY * 0.3}px)`;
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          parallaxElements.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            const elCenterY = rect.top + rect.height / 2;
+            const screenCenterY = window.innerHeight / 2;
+            const distanceFromCenter = elCenterY - screenCenterY;
+            const speed = parseFloat(el.dataset.parallax) || 0.5;
+            el.style.setProperty('--parallax', `${distanceFromCenter * -speed * 0.1}px`);
+          });
+          ticking = false;
+        });
+        ticking = true;
       }
-      parallaxElements.forEach(el => {
-        const rect = el.getBoundingClientRect();
-        const elCenterY = rect.top + rect.height / 2;
-        const screenCenterY = window.innerHeight / 2;
-        const distanceFromCenter = elCenterY - screenCenterY;
-        const speed = parseFloat(el.dataset.parallax) || 0.5;
-        el.style.transform = `translateY(${distanceFromCenter * -speed * 0.1}px)`;
-      });
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     // 컴포넌트가 언마운트될 때 이벤트 리스너를 정리합니다.
     return () => {
-      revealElements.forEach(el => observer.unobserve(el));
+      observer.disconnect();
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []); // 빈 배열을 전달하여 컴포넌트가 마운트될 때 한 번만 실행되도록 합니다.
+  }, [showAnimations]); // showAnimations가 변경될 때마다 실행
 
   // 채팅 애니메이션을 시작하는 함수
   const startChatAnimation = () => {
-    if (chatAnimated.current) return;
-    chatAnimated.current = true;
+    if (hasAnimatedRef.current) return;
+    hasAnimatedRef.current = true;
     setIsChatStarted(true);
 
     const chatMessages = [
@@ -641,18 +149,13 @@ function HomePage() {
       { type: 'me', text: '그럼 토요일 어떠세요?' },
     ];
 
-    let totalDelay = 0;
+    const timeouts = [];
     chatMessages.forEach((_, index) => {
-      const delay = (index + 1) * 800;
-      setTimeout(() => {
-        setVisibleBubbles(prev => [...prev, index]);
-      }, delay);
-      totalDelay = delay;
+      const t = setTimeout(() => setVisibleBubbles(p => [...p, index]), (index + 1) * 800);
+      timeouts.push(t);
     });
-
-    setTimeout(() => {
-      setIsDateButtonActive(true);
-    }, totalDelay + 800);
+    timeouts.push(setTimeout(() => setIsDateButtonActive(true), (chatMessages.length + 1) * 800));
+    cleanupRef.current = () => timeouts.forEach(clearTimeout);
   };
 
   const chatMessages = [
@@ -676,14 +179,13 @@ function HomePage() {
     }
   };
 
+
+
   // JSX: HTML과 유사하지만 JavaScript가 통합된 형태입니다.
   // class -> className, style 속성은 객체로, 주석은 {/**/}으로 변경됩니다.
   return (
     <>
-      <GlobalStyles />
-      <div className="background-highlight"></div>
-
-      <header className="main-header">
+      <header className={`main-header ${showAnimations ? 'fade-in' : ''}`}>
         <div className="container">
           <div className="header-left">
             <a href="/" className="logo">
@@ -698,12 +200,16 @@ function HomePage() {
               <a href="/price">가격</a>
             </nav>
           </div>
-          <div className="header-right">
-            {user ? (
+          <div className="header-right" suppressHydrationWarning>
+            {isClient && user ? (
               <div className="user-dropdown" ref={dropdownRef}>
                 <div 
                   className={`user-dropdown-toggle ${isDropdownOpen ? 'open' : ''}`}
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  role="button"
+                  aria-haspopup="menu"
+                  aria-expanded={isDropdownOpen}
+                  aria-controls="user-menu"
+                  onClick={() => setIsDropdownOpen(o => !o)}
                 >
                   <img 
                     src={user.user_metadata?.avatar_url || 'https://placehold.co/32x32/e0e8ff/7d7d7d?text=U'} 
@@ -715,14 +221,14 @@ function HomePage() {
                     <polyline points="6,9 12,15 18,9"></polyline>
                   </svg>
                 </div>
-                <div className={`user-dropdown-menu ${isDropdownOpen ? 'open' : ''}`}>
-                  <a href="/persona" className="user-dropdown-item">
+                <div id="user-menu" className={`user-dropdown-menu ${isDropdownOpen ? 'open' : ''}`} role="menu">
+                  <a href="/persona" className="user-dropdown-item" role="menuitem">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                     </svg>
                     시작하기
                   </a>
-                  <button onClick={handleLogout} className="user-dropdown-item logout">
+                  <button onClick={handleLogout} className="user-dropdown-item logout" role="menuitem">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                       <polyline points="16,17 21,12 16,7"></polyline>
@@ -739,17 +245,22 @@ function HomePage() {
         </div>
       </header>
 
-      <main>
+      <main className={showAnimations ? 'fade-in' : ''}>
         <section className="hero-section container">
             <div className="slogan reveal">설렘은 현실로, 실수는 연습으로.</div>
             <h1 className="reveal" style={{transitionDelay: '0.1s'}}>AI 소통 코칭으로<br/>당신의 매력을 발견하세요</h1>
             <p className="reveal" style={{transitionDelay: '0.2s'}}>관계에 대한 막연한 두려움이 있으신가요? 데연소는 실패의 부담이 없는 안전한 공간에서 당신의 소통 능력을 과학적으로 진단하고 잠재된 매력을 찾아드립니다.</p>
                          <button 
-               onClick={() => user ? window.location.href = '/persona' : window.location.href = '/login'} 
+               onClick={() => {
+                 if (typeof window !== 'undefined') {
+                   user ? window.location.href = '/persona' : window.location.href = '/login';
+                 }
+               }} 
                className="btn btn-cta reveal" 
                style={{transitionDelay: '0.3s'}}
+               suppressHydrationWarning
              >
-               {user ? '데이트 준비하기' : '지금 시작하기'}
+               {isClient && user ? '데이트 준비하기' : '지금 시작하기'}
              </button>
         </section>
 
@@ -875,27 +386,18 @@ function HomePage() {
             <div className="reviews-wrapper">
                 <div className="review-track scroll-left">
                     {/* 무한 루프 효과를 위해 리뷰 목록을 복제합니다. */}
-                    {[...Array(2)].map((_, i) => (
-                      <React.Fragment key={`left-${i}`}>
-                        <div className="review-card" key={`left-${i}-1`}><div className="stars">★★★★★</div><p className="comment">소개팅 전날 밤, AI랑 연습한 게 정말 큰 도움이 됐어요. 예전 같았으면 어색해서 말도 못했을 텐데, 자연스럽게 대화를 이어갈 수 있었습니다!</p><p className="author">- 김민준 (31세, 개발자)</p></div>
-                        <div className="review-card" key={`left-${i}-2`}><div className="stars">★★★★★</div><p className="comment">제가 어떤 표정을 짓는지, 목소리 톤이 어떤지 객관적으로 알 수 있어서 좋았어요. 리포트 보고 고칠 점을 명확히 알게 됐습니다.</p><p className="author">- 박서연 (28세, 마케터)</p></div>
-                        <div className="review-card" key={`left-${i}-3`}><div className="stars">★★★★☆</div><p className="comment">다양한 성격의 AI가 있어서 여러 상황을 연습하기 좋았어요. 다만 가끔 AI 답변이 조금 느릴 때가 있네요. 그래도 만족합니다.</p><p className="author">- 최현우 (34세, 회사원)</p></div>
-                        <div className="review-card" key={`left-${i}-4`}><div className="stars">★★★★★</div><p className="comment">솔직히 반신반의했는데, 그냥 대화만 하는 게 아니라 과학적으로 분석해준다는 점이 신뢰가 갔어요. 제 매력이 뭔지 알게 된 기분이에요.</p><p className="author">- 이지은 (29세, 디자이너)</p></div>
-                        <div className="review-card" key={`left-${i}-5`}><div className="stars">★★★★★</div><p className="comment">이런 서비스 만들어주셔서 감사합니다. 저처럼 내성적인 사람들한테는 정말 한 줄기 빛과 같아요. 자신감이 많이 생겼어요!</p><p className="author">- 정다솜 (26세, 대학원생)</p></div>
-                      </React.Fragment>
-                    ))}
-                </div>
-            </div>
-
-            <div className="reviews-wrapper" style={{marginTop: '30px'}}>
-                <div className="review-track scroll-right">
-                    {[...Array(2)].map((_, i) => (
-                      <React.Fragment key={`right-${i}`}>
-                        <div className="review-card" key={`right-${i}-1`}><div className="stars">★★★★★</div><p className="comment">실패해도 부담이 없다는 점이 가장 큰 장점이에요. 마음 편하게 여러 가지 시도를 해볼 수 있었어요.</p><p className="author">- 윤지호 (30세, 프리랜서)</p></div>
-                        <div className="review-card" key={`right-${i}-2`}><div className="stars">★★★★☆</div><p className="comment">리액션이나 질문 타이밍 같은 디테일한 부분을 연습하기에 좋네요.</p><p className="author">- 한소라 (27세, 간호사)</p></div>
-                        <div className="review-card" key={`right-${i}-3`}><div className="stars">★★★★★</div><p className="comment">드디어... 썸녀한테 애프터 신청 받았습니다. 다 데연소 덕분입니다. 진심으로요.</p><p className="author">- 강태민 (32세, 연구원)</p></div>
-                        <div className="review-card" key={`right-${i}-4`}><div className="stars">★★★★★</div><p className="comment">AI라고 어색할 줄 알았는데, 대화가 너무 자연스러워서 놀랐어요. 시간 가는 줄 모르고 연습했네요.</p><p className="author">- 신아영 (29세, 교사)</p></div>
-                        <div className="review-card" key={`right-${i}-5`}><div className="stars">★★★★☆</div><p className="comment">분석 리포트가 생각보다 훨씬 상세해서 놀랐습니다. 다음 업데이트도 기대돼요!</p><p className="author">- 문성혁 (35세, 공무원)</p></div>
+                    {[...Array(3)].map((_, i) => (
+                      <React.Fragment key={`review-${i}`}>
+                        <div className="review-card" key={`review-${i}-1`}><div className="stars">★★★★★</div><p className="comment">소개팅 전날 밤, AI랑 연습한 게 정말 큰 도움이 됐어요. 예전 같았으면 어색해서 말도 못했을 텐데, 자연스럽게 대화를 이어갈 수 있었습니다!</p><p className="author">- 김민준 (31세, 개발자)</p></div>
+                        <div className="review-card" key={`review-${i}-2`}><div className="stars">★★★★★</div><p className="comment">제가 어떤 표정을 짓는지, 목소리 톤이 어떤지 객관적으로 알 수 있어서 좋았어요. 리포트 보고 고칠 점을 명확히 알게 됐습니다.</p><p className="author">- 박서연 (28세, 마케터)</p></div>
+                        <div className="review-card" key={`review-${i}-3`}><div className="stars">★★★★☆</div><p className="comment">다양한 성격의 AI가 있어서 여러 상황을 연습하기 좋았어요. 다만 가끔 AI 답변이 조금 느릴 때가 있네요. 그래도 만족합니다.</p><p className="author">- 최현우 (34세, 회사원)</p></div>
+                        <div className="review-card" key={`review-${i}-4`}><div className="stars">★★★★★</div><p className="comment">솔직히 반신반의했는데, 그냥 대화만 하는 게 아니라 과학적으로 분석해준다는 점이 신뢰가 갔어요. 제 매력이 뭔지 알게 된 기분이에요.</p><p className="author">- 이지은 (29세, 디자이너)</p></div>
+                        <div className="review-card" key={`review-${i}-5`}><div className="stars">★★★★★</div><p className="comment">이런 서비스 만들어주셔서 감사합니다. 저처럼 내성적인 사람들한테는 정말 한 줄기 빛과 같아요. 자신감이 많이 생겼어요!</p><p className="author">- 정다솜 (26세, 대학원생)</p></div>
+                        <div className="review-card" key={`review-${i}-6`}><div className="stars">★★★★★</div><p className="comment">실패해도 부담이 없다는 점이 가장 큰 장점이에요. 마음 편하게 여러 가지 시도를 해볼 수 있었어요.</p><p className="author">- 윤지호 (30세, 프리랜서)</p></div>
+                        <div className="review-card" key={`review-${i}-7`}><div className="stars">★★★★☆</div><p className="comment">리액션이나 질문 타이밍 같은 디테일한 부분을 연습하기에 좋네요.</p><p className="author">- 한소라 (27세, 간호사)</p></div>
+                        <div className="review-card" key={`review-${i}-8`}><div className="stars">★★★★★</div><p className="comment">드디어... 썸녀한테 애프터 신청 받았습니다. 다 데연소 덕분입니다. 진심으로요.</p><p className="author">- 강태민 (32세, 연구원)</p></div>
+                        <div className="review-card" key={`review-${i}-9`}><div className="stars">★★★★★</div><p className="comment">AI라고 어색할 줄 알았는데, 대화가 너무 자연스러워서 놀랐어요. 시간 가는 줄 모르고 연습했네요.</p><p className="author">- 신아영 (29세, 교사)</p></div>
+                        <div className="review-card" key={`review-${i}-10`}><div className="stars">★★★★☆</div><p className="comment">분석 리포트가 생각보다 훨씬 상세해서 놀랐습니다. 다음 업데이트도 기대돼요!</p><p className="author">- 문성혁 (35세, 공무원)</p></div>
                       </React.Fragment>
                     ))}
                 </div>
@@ -908,10 +410,15 @@ function HomePage() {
                 <h2>이제, 설렘을 현실로 만들 시간</h2>
                 <p>가상 훈련을 현실의 성공으로, 실패의 두려움을 자신감의 초석으로 바꿔보세요. 데연소가 당신의 잠재된 매력을 찾아드릴게요.</p>
                                  <button 
-                   onClick={() => user ? window.location.href = '/persona' : window.location.href = '/login'} 
+                   onClick={() => {
+                     if (typeof window !== 'undefined') {
+                       user ? window.location.href = '/persona' : window.location.href = '/login';
+                     }
+                   }} 
                    className="btn btn-cta"
+                   suppressHydrationWarning
                  >
-                   {user ? '데이트 준비하기' : '데연소 시작하기'}
+                   {isClient && user ? '데이트 준비하기' : '데연소 시작하기'}
                  </button>
             </div>
         </div>
