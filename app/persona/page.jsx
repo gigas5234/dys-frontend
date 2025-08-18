@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from
 import { useRouter } from 'next/navigation';
 import { getCurrentSession, restoreSessionFromUrl, signOut } from '../../lib/supabase';
 
-// 페르소나 데이터
+// 페르소나 데이터 -> 페르소나가 많아지면 서버에서 관리 
 const allPersonas = [
     { gender: 'female', name: '이서아', age: 28, mbti: 'ENFP', job: '마케터', personality: ['활발함', '긍정적'], image: '/img/woman1_insta.webp' },
     { gender: 'female', name: '김연진', age: 24, mbti: 'ESFJ', job: '대학생', personality: ['사교적', '다정함'], image: '/img/woman2_insta.webp' },
