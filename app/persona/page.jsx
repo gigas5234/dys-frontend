@@ -809,7 +809,7 @@ function PersonaPage() {
             <div className="container">
                 <aside className="sidebar">
                     <div className="logo">
-                        <img src="/dys_logo.png" alt="데연소 로고" style={{ width: "32px", height: "32px", marginRight: "12px" }} />
+                        <img src="/dys_logo.webp" alt="데연소 로고" style={{ width: "32px", height: "32px", marginRight: "12px" }} />
                         데연소 데이트 준비
                     </div>
                     <nav>

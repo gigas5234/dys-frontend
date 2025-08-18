@@ -521,7 +521,7 @@ function LoginPage() {
             <header className="main-header">
                 <div className="header-left">
                     <a href="/" className="logo">
-                        <img src="/dys_logo.png" alt="데연소 로고" />
+                        <img src="/dys_logo.webp" alt="데연소 로고" />
                         데연소
                     </a>
                     <nav>
