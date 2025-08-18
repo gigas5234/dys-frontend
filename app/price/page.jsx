@@ -360,6 +360,9 @@ const GlobalStyles = () => (
         text-decoration: none;
         display: block;
         text-align: center;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
     }
     .plan-card .btn-cta:hover {
          background: #000;
@@ -493,8 +496,8 @@ function PricingPage() {
       await signOut();
       setUser(null);
       setIsDropdownOpen(false);
-      // 페이지 새로고침하여 상태 초기화
-      window.location.reload();
+      // 페이지 새로고침 대신 상태만 초기화
+      // window.location.reload(); // 제거
     } catch (error) {
       console.error('로그아웃 중 오류:', error);
     }
@@ -588,7 +591,12 @@ function PricingPage() {
                     <span>기본 분석 리포트 (종합 점수)</span>
                   </li>
                 </ul>
-                <a href="/login" className="btn-cta">무료로 시작하기</a>
+                                 <button 
+                   onClick={() => user ? window.location.href = '/persona' : window.location.href = '/login'} 
+                   className="btn-cta"
+                 >
+                   {user ? '데이트 준비하기' : '무료로 시작하기'}
+                 </button>
               </div>
 
               <div className="plan-card premium">
@@ -614,7 +622,12 @@ function PricingPage() {
                     <span>모든 도전 모드 시나리오 이용 가능</span>
                   </li>
                 </ul>
-                <a href="/login" className="btn-cta">프리미엄 구독하기</a>
+                                 <button 
+                   onClick={() => user ? window.location.href = '/persona' : window.location.href = '/login'} 
+                   className="btn-cta"
+                 >
+                   {user ? '데이트 준비하기' : '프리미엄 구독하기'}
+                 </button>
               </div>
             </div>
           </div>
