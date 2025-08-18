@@ -22,7 +22,7 @@
 html, body {
     margin: 0;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
-    background: linear-gradient(180deg, #f7f8fc 0%, #eef2ff 100%);
+    background: #ffffff;
     color: var(--text);
     overflow-x: hidden;
     scroll-behavior: smooth;

@@ -88,6 +88,20 @@ function PersonaPage() {
         checkUser();
     }, []);
 
+    // 헤더 높이를 측정하여 CSS 변수로 반영 (레이아웃 오프셋 정확화)
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const updateHeaderHeight = () => {
+            const header = document.querySelector('.main-header');
+            if (!header) return;
+            const height = Math.round(header.getBoundingClientRect().height);
+            document.documentElement.style.setProperty('--header-height', `${height}px`);
+        };
+        updateHeaderHeight();
+        window.addEventListener('resize', updateHeaderHeight);
+        return () => window.removeEventListener('resize', updateHeaderHeight);
+    }, []);
+
     // 드롭다운 외부 클릭 시 닫기
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -289,7 +303,6 @@ function PersonaPage() {
             </header>
             <div className="persona-container">
                 <aside className="sidebar">
-                    <div className="logo">데연소</div>
                     <nav>
                         <a href="#" className="active">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M3.783 2.826L12 1l8.217 1.826a1 1 0 0 1 .783.976v9.987a6 6 0 0 1-2.672 4.992L12 23l-6.328-4.219A6 6 0 0 1 3 13.79V3.802a1 1 0 0 1 .783-.976zM5 4.604v9.185a4 4 0 0 0 1.781 3.328L12 20.597l5.219-3.48A4 4 0 0 0 19 13.79V4.604L12 3.05 5 4.604z"></path></svg>
