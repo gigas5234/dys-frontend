@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import { getCurrentSession, restoreSessionFromUrl, signOut } from '../lib/supabase';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { getCurrentSession, restoreSessionFromUrl, signOut, isReturnFromBackend, cleanReturnParams } from '../lib/supabase';
 
 // 모든 스타일을 컴포넌트 내에 포함시킵니다.
 const GlobalStyles = () => (
@@ -526,7 +526,7 @@ function HomePage() {
   const dropdownRef = useRef(null);
 
   // 사용자 세션 확인 함수
-  const checkUser = async () => {
+  const checkUser = useCallback(async () => {
     try {
       // URL에서 토큰이 있는지 확인하고 세션 복원 시도
       const restoredSession = await restoreSessionFromUrl();
@@ -542,12 +542,33 @@ function HomePage() {
       console.error('Error checking user session:', error);
       setUser(null);
     }
-  };
+  }, []);
 
   // useEffect를 사용하여 컴포넌트가 렌더링된 후 스크립트 로직을 실행합니다.
   useEffect(() => {
     checkUser();
-  }, []);
+    
+    // 백엔드에서 돌아왔을 때의 처리
+    const handleReturnFromBackend = () => {
+      if (isReturnFromBackend()) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        const timestamp = urlParams.get('timestamp');
+        
+        console.log('🔄 백엔드에서 돌아옴:', { sessionId, timestamp });
+        
+        // URL 파라미터 정리 (브라우저 히스토리에서 제거)
+        cleanReturnParams();
+        
+        // 세션 복원 시도 (setTimeout으로 지연시켜 무한 루프 방지)
+        setTimeout(() => {
+          checkUser();
+        }, 100);
+      }
+    };
+    
+    handleReturnFromBackend();
+  }, []); // checkUser를 의존성에서 제거하여 무한 루프 방지
 
   // 드롭다운 외부 클릭 시 닫기
   useEffect(() => {
@@ -643,7 +664,7 @@ function HomePage() {
   ];
 
   // 로그아웃 핸들러
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     try {
       await signOut();
       setUser(null);
@@ -653,7 +674,7 @@ function HomePage() {
     } catch (error) {
       console.error('로그아웃 중 오류:', error);
     }
-  };
+  }, []);
 
   // JSX: HTML과 유사하지만 JavaScript가 통합된 형태입니다.
   // class -> className, style 속성은 객체로, 주석은 {/**/}으로 변경됩니다.

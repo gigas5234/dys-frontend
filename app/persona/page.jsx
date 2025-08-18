@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { getCurrentSession, signOut, sendAuthToBackend, getIframeUrl } from '../../lib/supabase';
+import { getCurrentSession, signOut, sendAuthToBackend, getIframeUrl, createReturnUrl } from '../../lib/supabase';
 
 // 페이지에 필요한 모든 스타일을 포함하는 컴포넌트입니다.
 const GlobalStyles = () => (
@@ -572,11 +572,15 @@ function PersonaPage() {
     const chatTimeoutRef = useRef(null);
     const router = useRouter();
 
-    const updateSlider = (index) => {
+    const updateSlider = useCallback((index, updateState = true) => {
         if (!trackRef.current || !coverflowRef.current) return;
         
         const newIndex = Math.max(0, Math.min(index, currentPersonas.length - 1));
-        setSelectedIndex(newIndex);
+        
+        // 상태 업데이트가 필요한 경우에만 setSelectedIndex 호출
+        if (updateState && newIndex !== selectedIndex) {
+            setSelectedIndex(newIndex);
+        }
 
         const cards = trackRef.current.children;
         if (!cards.length || !cards[newIndex]) return;
@@ -590,17 +594,17 @@ function PersonaPage() {
 
         const translateX = (containerWidth / 2) - cardLeft - (cardWidth / 2);
         setTrackStyle({ transform: `translate3d(${translateX}px, -50%, 0)` });
-    };
+    }, [selectedIndex, currentPersonas.length]);
 
     useEffect(() => {
         updateSlider(0);
     }, [currentPersonas]);
 
     useEffect(() => {
-        const handleResize = () => updateSlider(selectedIndex);
+        const handleResize = () => updateSlider(selectedIndex, false); // 상태 업데이트 없이 위치만 조정
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
-    }, [selectedIndex]);
+    }, [selectedIndex]); // selectedIndex만 의존성으로 유지
 
     // 채팅 메시지가 추가될 때마다 자동 스크롤
     useEffect(() => {
@@ -611,7 +615,7 @@ function PersonaPage() {
     }, [chatMessages]);
 
     // 사용자 세션 확인 함수
-    const checkUser = async () => {
+    const checkUser = useCallback(async () => {
         try {
             if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
                 // 환경변수가 설정되지 않은 경우 더미 사용자로 설정
@@ -635,14 +639,14 @@ function PersonaPage() {
             console.error('Error checking user session:', error);
             router.push('/login');
         }
-    };
+    }, [router]);
 
     // 사용자 세션 확인
     useEffect(() => {
         checkUser();
-    }, []);
+    }, []); // checkUser를 의존성에서 제거하여 무한 루프 방지
 
-    const handleLogout = async () => {
+    const handleLogout = useCallback(async () => {
         try {
             await signOut();
             router.push('/'); // 메인 페이지로 리다이렉트
@@ -650,10 +654,10 @@ function PersonaPage() {
             console.error('Logout error:', error);
             router.push('/'); // 에러가 발생해도 메인 페이지로 리다이렉트
         }
-    };
+    }, [router]);
 
     // 데이트 시작하기 버튼 클릭 핸들러
-    const handleDateStart = async () => {
+    const handleDateStart = useCallback(async () => {
         if (!RUNPOD_URL || RUNPOD_URL === 'https://placeholder-runpod-url.com') {
             console.error('런팟 서버 URL이 설정되지 않음:', RUNPOD_URL);
             // 개발 환경에서는 더미 모드로 동작
@@ -667,9 +671,10 @@ function PersonaPage() {
                     setLoadingStep(2);
                 }, 2000);
                 
-                // 4초 후 현재 창에서 이동
+                // 4초 후 현재 창에서 이동 (return_url 파라미터 포함)
                 setTimeout(() => {
-                    window.location.href = 'https://example.com/dys_studio';
+                    const returnUrl = encodeURIComponent(window.location.origin);
+                    window.location.href = `https://example.com/dys_studio?return_url=${returnUrl}`;
                 }, 4000);
                 return;
             } else {
@@ -717,13 +722,24 @@ function PersonaPage() {
             
             // 선택된 페르소나 정보를 URL 파라미터로 전달
             const selectedPersona = currentPersonas[selectedIndex];
-            const personaParams = new URLSearchParams({
+            const returnUrl = createReturnUrl(user.id, {
                 persona_name: selectedPersona.name,
                 persona_age: selectedPersona.age,
                 persona_mbti: selectedPersona.mbti,
                 persona_job: selectedPersona.job,
                 persona_personality: selectedPersona.personality.join(','),
                 persona_image: selectedPersona.image
+            });
+            
+            const personaParams = new URLSearchParams({
+                persona_name: selectedPersona.name,
+                persona_age: selectedPersona.age,
+                persona_mbti: selectedPersona.mbti,
+                persona_job: selectedPersona.job,
+                persona_personality: selectedPersona.personality.join(','),
+                persona_image: selectedPersona.image,
+                // 백엔드에서 프론트엔드로 돌아올 때 사용할 URL
+                return_url: encodeURIComponent(returnUrl)
             });
 
             const finalUrl = `${studioUrl}&${personaParams.toString()}`;
@@ -737,9 +753,9 @@ function PersonaPage() {
             setIsConnectingToRunpod(false);
             alert('런팟 서버 연결에 실패했습니다. 다시 시도해주세요.');
         }
-    };
+    }, [user, currentPersonas, selectedIndex, RUNPOD_URL]);
 
-    const handleFilterClick = (filter) => {
+    const handleFilterClick = useCallback((filter) => {
         if (isAnimating.current || activeFilter === filter) return;
         
         setActiveFilter(filter);
@@ -750,17 +766,17 @@ function PersonaPage() {
             : allPersonas.filter(p => p.gender === filter);
         
         setCurrentPersonas(filtered);
-    };
+    }, [activeFilter, allPersonas]);
 
-    const handleCardClick = (index) => {
+    const handleCardClick = useCallback((index) => {
         if (index === selectedIndex) {
             startChatView(index);
         } else {
             updateSlider(index);
         }
-    };
+    }, [selectedIndex, updateSlider]);
 
-    const startChatView = (index) => {
+    const startChatView = useCallback((index) => {
         if (isAnimating.current) return;
         isAnimating.current = true;
         
@@ -773,9 +789,9 @@ function PersonaPage() {
         }, 500); // 폰 애니메이션과 함께 나타나도록
 
         setTimeout(() => { isAnimating.current = false; }, 500);
-    };
+    }, [currentPersonas, createNewChat]);
 
-    const createNewChat = (persona) => {
+    const createNewChat = useCallback((persona) => {
         clearTimeout(chatTimeoutRef.current);
         setChatMessages([]);
 
@@ -799,7 +815,7 @@ function PersonaPage() {
                 setChatMessages(prev => [...prev, msg]);
             }, delay);
         });
-    };
+    }, [user]);
 
     const selectedPersona = currentPersonas[selectedIndex];
 
