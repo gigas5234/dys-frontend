@@ -190,7 +190,7 @@ function HomePage() {
           <div className="header-left">
             <a href="/" className="logo">
               <img src="/dys_logo.webp" alt="데연소 로고" />
-              데연소<span className="logo-subtitle">(데이트 연습소)</span>
+              데연소
             </a>
             <nav>
               <a href="#problem">공감</a>
@@ -273,7 +273,7 @@ function HomePage() {
                 <div className="stats-grid">
                     <div className="stat-card reveal" data-parallax="0.1"><div className="number">75.8%</div><p className="description">현재 연애를 하고 있지 않은 20-50대 성인 남녀의 비율.</p></div>
                     <div className="stat-card reveal" data-parallax="0.2" style={{transitionDelay: '0.15s'}}><div className="number">35.4%</div><p className="description">지금까지 연애 경험이 전혀 없는 20대의 비율.</p></div>
-                    <div className="stat-card reveal" data-parallax="0.1" style={{transitionDelay: '0.3s'}}><div className="number">ZERO</div><p className="description">만날 기회는 줄고, 편하게 연습할 기회는 사라졌습니다. 데연소는 실패의 부담감을 덜어주는 환경을 제공합니다.</p></div>
+                    <div className="stat-card reveal" data-parallax="0.1" style={{transitionDelay: '0.3s'}}><div className="number">ZERO</div><p className="description">만날 기회는 줄고, 편하게 연습할 기회는 사라졌습니다. 데연소(데이트 연습소)는 실패의 부담감을 덜어주는 환경을 제공합니다.</p></div>
                 </div>
             </div>
         </section>

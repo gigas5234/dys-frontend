@@ -144,7 +144,7 @@ function PricePage() {
           <div className="container">
             <div className="section-title">
               <h1>성장을 위한 당신의 플랜</h1>
-              <p>실패의 두려움을 자신감의 초석으로 바꿔보세요. '데연소'가 당신의 잠재된 매력을 찾아드릴게요.</p>
+              <p>"놓치면 후회할 성장의 기회, 프리미엄에서 시작하세요."</p>
             </div>
 
             <div className="pricing-grid">
@@ -172,7 +172,7 @@ function PricePage() {
               <div className="plan-card premium">
                 <div className="plan-badge">추천 플랜</div>
                 <h2>Premium</h2>
-                <div className="price">₩9,900<small>/ 월 (예상)</small></div>
+                <div className="price">₩9,900<small>/ 월</small></div>
                 <p className="description">모든 기능을 제한 없이 이용하여 당신의 성장을 극대화하세요.</p>
                 <ul className="feature-list">
                   <li>
