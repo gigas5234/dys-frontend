@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { getCurrentSession, signOut, sendAuthToBackend, getIframeUrl, createReturnUrl } from '../../lib/supabase';
 
@@ -572,7 +572,7 @@ function PersonaPage() {
     const chatTimeoutRef = useRef(null);
     const router = useRouter();
 
-    const updateSlider = useCallback((index, updateState = true) => {
+    const updateSlider = (index, updateState = true) => {
         if (!trackRef.current || !coverflowRef.current) return;
         
         const newIndex = Math.max(0, Math.min(index, currentPersonas.length - 1));
@@ -594,7 +594,7 @@ function PersonaPage() {
 
         const translateX = (containerWidth / 2) - cardLeft - (cardWidth / 2);
         setTrackStyle({ transform: `translate3d(${translateX}px, -50%, 0)` });
-    }, [selectedIndex, currentPersonas.length]);
+    };
 
     useEffect(() => {
         updateSlider(0);
@@ -615,7 +615,7 @@ function PersonaPage() {
     }, [chatMessages]);
 
     // 사용자 세션 확인 함수
-    const checkUser = useCallback(async () => {
+    const checkUser = async () => {
         try {
             if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
                 // 환경변수가 설정되지 않은 경우 더미 사용자로 설정
@@ -639,14 +639,14 @@ function PersonaPage() {
             console.error('Error checking user session:', error);
             router.push('/login');
         }
-    }, [router]);
+    };
 
     // 사용자 세션 확인
     useEffect(() => {
         checkUser();
     }, []); // checkUser를 의존성에서 제거하여 무한 루프 방지
 
-    const handleLogout = useCallback(async () => {
+    const handleLogout = async () => {
         try {
             await signOut();
             router.push('/'); // 메인 페이지로 리다이렉트
@@ -654,10 +654,10 @@ function PersonaPage() {
             console.error('Logout error:', error);
             router.push('/'); // 에러가 발생해도 메인 페이지로 리다이렉트
         }
-    }, [router]);
+    };
 
     // 데이트 시작하기 버튼 클릭 핸들러
-    const handleDateStart = useCallback(async () => {
+    const handleDateStart = async () => {
         if (!RUNPOD_URL || RUNPOD_URL === 'https://placeholder-runpod-url.com') {
             console.error('런팟 서버 URL이 설정되지 않음:', RUNPOD_URL);
             // 개발 환경에서는 더미 모드로 동작
@@ -753,9 +753,9 @@ function PersonaPage() {
             setIsConnectingToRunpod(false);
             alert('런팟 서버 연결에 실패했습니다. 다시 시도해주세요.');
         }
-    }, [user, currentPersonas, selectedIndex, RUNPOD_URL]);
+    };
 
-    const handleFilterClick = useCallback((filter) => {
+    const handleFilterClick = (filter) => {
         if (isAnimating.current || activeFilter === filter) return;
         
         setActiveFilter(filter);
@@ -766,35 +766,29 @@ function PersonaPage() {
             : allPersonas.filter(p => p.gender === filter);
         
         setCurrentPersonas(filtered);
-    }, [activeFilter, allPersonas]);
+    };
 
-    const handleCardClick = useCallback((index) => {
+    const handleCardClick = (index) => {
         if (index === selectedIndex) {
             startChatView(index);
         } else {
             updateSlider(index);
         }
-    }, [selectedIndex, updateSlider]);
+    };
 
-    const startChatView = useCallback((index) => {
+
+
+    const startChatView = (index) => {
         if (isAnimating.current) return;
         isAnimating.current = true;
         
         setIsChatActive(true);
-        createNewChat(currentPersonas[index]);
         
-        // 데이트 시작하기 버튼을 즉시 활성화
-        setTimeout(() => {
-            setIsDateButtonActive(true);
-        }, 500); // 폰 애니메이션과 함께 나타나도록
-
-        setTimeout(() => { isAnimating.current = false; }, 500);
-    }, [currentPersonas, createNewChat]);
-
-    const createNewChat = useCallback((persona) => {
+        // createNewChat 로직을 직접 여기에 포함
         clearTimeout(chatTimeoutRef.current);
         setChatMessages([]);
 
+        const persona = currentPersonas[index];
         const messages = [
             { role: 'me', text: `안녕하세요. ${user?.user_metadata?.full_name || '사용자'}이라고 합니다.` },
             { role: 'ai', text: `네, 안녕하세요. 저는 ${persona.name}이라고 합니다.` },
@@ -815,7 +809,14 @@ function PersonaPage() {
                 setChatMessages(prev => [...prev, msg]);
             }, delay);
         });
-    }, [user]);
+        
+        // 데이트 시작하기 버튼을 즉시 활성화
+        setTimeout(() => {
+            setIsDateButtonActive(true);
+        }, 500); // 폰 애니메이션과 함께 나타나도록
+
+        setTimeout(() => { isAnimating.current = false; }, 500);
+    };
 
     const selectedPersona = currentPersonas[selectedIndex];
 

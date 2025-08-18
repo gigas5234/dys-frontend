@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getCurrentSession, restoreSessionFromUrl, signOut, isReturnFromBackend, cleanReturnParams } from '../lib/supabase';
 
 // 모든 스타일을 컴포넌트 내에 포함시킵니다.
@@ -526,7 +526,7 @@ function HomePage() {
   const dropdownRef = useRef(null);
 
   // 사용자 세션 확인 함수
-  const checkUser = useCallback(async () => {
+  const checkUser = async () => {
     try {
       // URL에서 토큰이 있는지 확인하고 세션 복원 시도
       const restoredSession = await restoreSessionFromUrl();
@@ -542,7 +542,7 @@ function HomePage() {
       console.error('Error checking user session:', error);
       setUser(null);
     }
-  }, []);
+  };
 
   // useEffect를 사용하여 컴포넌트가 렌더링된 후 스크립트 로직을 실행합니다.
   useEffect(() => {
@@ -664,7 +664,7 @@ function HomePage() {
   ];
 
   // 로그아웃 핸들러
-  const handleLogout = useCallback(async () => {
+  const handleLogout = async () => {
     try {
       await signOut();
       setUser(null);
@@ -674,7 +674,7 @@ function HomePage() {
     } catch (error) {
       console.error('로그아웃 중 오류:', error);
     }
-  }, []);
+  };
 
   // JSX: HTML과 유사하지만 JavaScript가 통합된 형태입니다.
   // class -> className, style 속성은 객체로, 주석은 {/**/}으로 변경됩니다.
