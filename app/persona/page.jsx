@@ -53,6 +53,8 @@ function PersonaPage() {
     const [loadingStep, setLoadingStep] = useState(0);
     const [showWarningModal, setShowWarningModal] = useState(false);
     const [userPlan, setUserPlan] = useState('basic'); // 사용자 플랜 정보
+    const [showSessionEndModal, setShowSessionEndModal] = useState(false);
+    const [sessionEndData, setSessionEndData] = useState(null);
     
     const router = useRouter();
     const trackRef = useRef(null);
@@ -66,6 +68,43 @@ function PersonaPage() {
     const getUserPlan = (user) => {
         if (!user) return 'basic';
         return user.user_metadata?.subscription_plan || 'basic';
+    };
+
+    // 세션 종료 결과 처리
+    const handleSessionEndResult = () => {
+        if (typeof window === 'undefined') return;
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionEnd = urlParams.get('session_end');
+        const success = urlParams.get('success');
+        const error = urlParams.get('error');
+        const sessionId = urlParams.get('session_id');
+        
+        if (sessionEnd === 'true') {
+            if (success === 'true') {
+                // 성공적인 세션 종료
+                const sessionData = {
+                    session_id: sessionId,
+                    success: true,
+                    message: '데이트 세션이 성공적으로 종료되었습니다!'
+                };
+                setSessionEndData(sessionData);
+                setShowSessionEndModal(true);
+            } else {
+                // 에러가 있는 경우
+                const errorData = {
+                    success: false,
+                    message: error || '세션 종료 중 오류가 발생했습니다.',
+                    error: error
+                };
+                setSessionEndData(errorData);
+                setShowSessionEndModal(true);
+            }
+            
+            // URL 파라미터 정리
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
     };
 
     // 사용자 세션 확인
@@ -101,6 +140,7 @@ function PersonaPage() {
         
         setIsClient(true);
         checkUser();
+        handleSessionEndResult();
     }, []);
 
     // 헤더 높이를 측정하여 CSS 변수로 반영 (레이아웃 오프셋 정확화)
@@ -142,6 +182,7 @@ function PersonaPage() {
     const openProfileModal = () => setIsProfileModalOpen(true);
     const closeProfileModal = () => setIsProfileModalOpen(false);
     const closeWarningModal = () => setShowWarningModal(false);
+    const closeSessionEndModal = () => setShowSessionEndModal(false);
 
     // 로딩 단계 정의
     const loadingSteps = [
@@ -245,11 +286,11 @@ function PersonaPage() {
         const container = coverflowRef.current;
         const selectedCard = cards[newIndex];
         
-        // 성능 최적화: 한 번에 계산
-        const containerRect = container.getBoundingClientRect();
-        const cardRect = selectedCard.getBoundingClientRect();
-        
-        const translateX = (containerRect.width / 2) - cardRect.left + containerRect.left - (cardRect.width / 2);
+        const containerWidth = container.offsetWidth;
+        const cardWidth = selectedCard.offsetWidth;
+        const cardLeft = selectedCard.offsetLeft;
+
+        const translateX = (containerWidth / 2) - cardLeft - (cardWidth / 2);
         setTrackStyle({ transform: `translate3d(${translateX}px, -50%, 0)` });
 
     }, [currentPersonas.length]);
@@ -260,31 +301,24 @@ function PersonaPage() {
 
     // 레이아웃이 그려진 직후에 정확한 위치 계산 (초기 진입 시 하단 배치 방지)
     useLayoutEffect(() => {
-        // 성능 최적화: 단일 requestAnimationFrame 사용
-        const rafId = requestAnimationFrame(() => {
+        let raf1 = requestAnimationFrame(() => {
             updateSlider(0);
+            // 이미지 로딩/폰트 적용 이후 한 번 더 보정
+            var raf2 = requestAnimationFrame(() => updateSlider(0));
+            raf1 = raf2;
         });
-        
+        const handleWindowLoad = () => updateSlider(0);
+        window.addEventListener('load', handleWindowLoad);
         return () => {
-            cancelAnimationFrame(rafId);
+            cancelAnimationFrame(raf1);
+            window.removeEventListener('load', handleWindowLoad);
         };
     }, [updateSlider]);
 
     useEffect(() => {
-        // 성능 최적화: 디바운스된 resize 핸들러
-        let timeoutId;
-        const handleResize = () => {
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => {
-                updateSlider(selectedIndex);
-            }, 100);
-        };
-        
+        const handleResize = () => updateSlider(selectedIndex);
         window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-            clearTimeout(timeoutId);
-        };
+        return () => window.removeEventListener('resize', handleResize);
     }, [selectedIndex, updateSlider]);
 
     const handleFilterClick = (filter) => {
@@ -603,6 +637,45 @@ function PersonaPage() {
                         </div>
                         <div className="modal-footer">
                             <button className="btn btn-primary" onClick={closeWarningModal}>확인</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showSessionEndModal && sessionEndData && (
+                <div className="modal-overlay" role="dialog" aria-modal="true">
+                    <div className={`modal-card ${sessionEndData.success ? 'success-modal' : 'error-modal'}`}>
+                        <div className="modal-header">
+                            <h3>
+                                {sessionEndData.success ? '✅ 세션 완료' : '⚠️ 세션 종료 오류'}
+                            </h3>
+                            <button className="modal-close" aria-label="닫기" onClick={closeSessionEndModal}>×</button>
+                        </div>
+                        <div className="modal-body">
+                            <div className="session-end-content">
+                                <div className={`session-end-icon ${sessionEndData.success ? 'success' : 'error'}`}>
+                                    {sessionEndData.success ? (
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                            <polyline points="22,4 12,14.01 9,11.01"/>
+                                        </svg>
+                                    ) : (
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                            <line x1="12" y1="9" x2="12" y2="13"/>
+                                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                                        </svg>
+                                    )}
+                                </div>
+                                <p className="session-end-message">{sessionEndData.message}</p>
+                                {sessionEndData.session_id && (
+                                    <p className="session-id">세션 ID: {sessionEndData.session_id}</p>
+                                )}
+                            </div>
+                        </div>
+                        <div className="modal-footer">
+                            <button className="btn btn-primary" onClick={closeSessionEndModal}>
+                                확인
+                            </button>
                         </div>
                     </div>
                 </div>
