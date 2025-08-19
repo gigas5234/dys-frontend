@@ -774,7 +774,7 @@ section[id] {
     opacity: 1; 
     transform: scale(1); 
     cursor: pointer;
-    animation: buttonPulse 2s ease-in-out infinite, buttonShine 3s ease-in-out infinite;
+    animation: buttonPulse 2s ease-in-out infinite, buttonShine 3s ease-in-out infinite, clickMe 1.5s ease-in-out infinite;
 }
 
 .date-start-button.active::before {
@@ -799,6 +799,27 @@ section[id] {
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
     animation: buttonShine 3s ease-in-out infinite;
+}
+
+.date-start-button.active .click-indicator {
+    position: absolute;
+    top: -40px;
+    right: -10px;
+    width: 30px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: clickIndicator 2s ease-in-out infinite;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.date-start-button.active .click-indicator::before {
+    content: '👆';
+    font-size: 16px;
+    animation: fingerTap 1s ease-in-out infinite;
 }
 
 @keyframes buttonPulse {
@@ -837,14 +858,48 @@ section[id] {
     }
 }
 
+@keyframes clickMe {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+@keyframes clickIndicator {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(-5px) scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+@keyframes fingerTap {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.9);
+    }
+}
+
 .date-start-button.active:hover {
-    transform: scale(1.08);
-    box-shadow: 0 12px 35px rgba(166, 193, 238, 0.6), 0 0 40px rgba(166, 193, 238, 0.4);
-    animation: buttonPulse 1s ease-in-out infinite, buttonShine 2s ease-in-out infinite;
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(166, 193, 238, 0.5), 0 0 30px rgba(166, 193, 238, 0.3);
+    animation: buttonPulse 1.5s ease-in-out infinite, buttonShine 2s ease-in-out infinite;
 }
 
 .date-start-button.active:hover::before {
-    animation: rippleEffect 1s ease-out infinite;
+    animation: rippleEffect 1.5s ease-out infinite;
+}
+
+.date-start-button.active:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
 }
 
 /* --- 과학적 근거 섹션 --- */
