@@ -245,11 +245,11 @@ function PersonaPage() {
         const container = coverflowRef.current;
         const selectedCard = cards[newIndex];
         
-        const containerWidth = container.offsetWidth;
-        const cardWidth = selectedCard.offsetWidth;
-        const cardLeft = selectedCard.offsetLeft;
-
-        const translateX = (containerWidth / 2) - cardLeft - (cardWidth / 2);
+        // 성능 최적화: 한 번에 계산
+        const containerRect = container.getBoundingClientRect();
+        const cardRect = selectedCard.getBoundingClientRect();
+        
+        const translateX = (containerRect.width / 2) - cardRect.left + containerRect.left - (cardRect.width / 2);
         setTrackStyle({ transform: `translate3d(${translateX}px, -50%, 0)` });
 
     }, [currentPersonas.length]);
@@ -260,24 +260,31 @@ function PersonaPage() {
 
     // 레이아웃이 그려진 직후에 정확한 위치 계산 (초기 진입 시 하단 배치 방지)
     useLayoutEffect(() => {
-        let raf1 = requestAnimationFrame(() => {
+        // 성능 최적화: 단일 requestAnimationFrame 사용
+        const rafId = requestAnimationFrame(() => {
             updateSlider(0);
-            // 이미지 로딩/폰트 적용 이후 한 번 더 보정
-            var raf2 = requestAnimationFrame(() => updateSlider(0));
-            raf1 = raf2;
         });
-        const handleWindowLoad = () => updateSlider(0);
-        window.addEventListener('load', handleWindowLoad);
+        
         return () => {
-            cancelAnimationFrame(raf1);
-            window.removeEventListener('load', handleWindowLoad);
+            cancelAnimationFrame(rafId);
         };
     }, [updateSlider]);
 
     useEffect(() => {
-        const handleResize = () => updateSlider(selectedIndex);
+        // 성능 최적화: 디바운스된 resize 핸들러
+        let timeoutId;
+        const handleResize = () => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                updateSlider(selectedIndex);
+            }, 100);
+        };
+        
         window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            clearTimeout(timeoutId);
+        };
     }, [selectedIndex, updateSlider]);
 
     const handleFilterClick = (filter) => {
