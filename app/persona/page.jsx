@@ -485,7 +485,6 @@ function PersonaPage() {
                                             }}
                                         >
                                             데이트 시작하기
-                                            {isDateStartActive && <div className="click-indicator"></div>}
                                         </button>
                                     </div>
                                     <div className="phone-home-indicator"></div>
