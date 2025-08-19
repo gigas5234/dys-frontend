@@ -337,7 +337,7 @@ function HomePage() {
                             <div className="mockup-phone-screen">
                                 <div className="mockup-phone-notch"></div>
                                 <div className="mockup-phone-view mockup-phone-profile" style={{opacity: isChatStarted ? 0 : 1, transform: isChatStarted ? 'translateX(-20px)' : 'none', pointerEvents: isChatStarted ? 'none' : 'auto'}}>
-                                    <img src="https://images.pexels.com/photos/1386604/pexels-photo-1386604.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" className="mockup-profile-img" alt="AI Persona"/>
+                                    <img src="/img/woman1_insta.webp" className="mockup-profile-img" alt="AI Persona"/>
                                     <div className="mockup-profile-name">이서아</div>
                                     <div className="mockup-profile-info">28세 · ENFP · 마케터</div>
                                     <button className="mockup-contact-btn" onClick={startChatAnimation}>연락 보내기</button>
