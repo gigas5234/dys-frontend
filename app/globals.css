@@ -2752,3 +2752,14 @@ section[id] {
     font-family: monospace;
     margin: 0;
 }
+
+.error-code {
+    font-size: 14px;
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-family: monospace;
+    margin: 0;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}

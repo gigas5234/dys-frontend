@@ -79,7 +79,38 @@ function PersonaPage() {
         const success = urlParams.get('success');
         const error = urlParams.get('error');
         const sessionId = urlParams.get('session_id');
+        const userId = urlParams.get('user_id');
+        const email = urlParams.get('email');
         
+        // 에러 파라미터가 있는 경우 (백엔드에서 오는 에러)
+        if (error) {
+            const errorMessages = {
+                'session_end_failed': '세션 종료 중 오류가 발생했습니다.',
+                'network_error': '네트워크 연결 오류가 발생했습니다.',
+                'server_error': '서버 오류가 발생했습니다.',
+                'timeout': '요청 시간이 초과되었습니다.',
+                'invalid_session': '유효하지 않은 세션입니다.',
+                'user_not_found': '사용자 정보를 찾을 수 없습니다.'
+            };
+            
+            const errorData = {
+                success: false,
+                message: errorMessages[error] || `오류가 발생했습니다: ${error}`,
+                error: error,
+                session_id: sessionId,
+                user_id: userId,
+                email: email
+            };
+            setSessionEndData(errorData);
+            setShowSessionEndModal(true);
+            
+            // URL 파라미터 정리
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+            return;
+        }
+        
+        // 기존 세션 종료 처리 (session_end 파라미터가 있는 경우)
         if (sessionEnd === 'true') {
             if (success === 'true') {
                 // 성공적인 세션 종료
@@ -669,6 +700,12 @@ function PersonaPage() {
                                 <p className="session-end-message">{sessionEndData.message}</p>
                                 {sessionEndData.session_id && (
                                     <p className="session-id">세션 ID: {sessionEndData.session_id}</p>
+                                )}
+                                {sessionEndData.user_id && (
+                                    <p className="session-id">사용자 ID: {sessionEndData.user_id}</p>
+                                )}
+                                {sessionEndData.error && (
+                                    <p className="error-code">에러 코드: {sessionEndData.error}</p>
                                 )}
                             </div>
                         </div>
