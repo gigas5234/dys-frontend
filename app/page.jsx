@@ -160,11 +160,14 @@ function HomePage() {
     setIsChatStarted(true);
 
     const chatMessages = [
-      { type: 'me', text: '안녕하세요!' },
-      { type: 'ai', text: '네, 안녕하세요!' },
-      { type: 'me', text: '혹시 이번 주말에 시간 괜찮으세요?' },
-      { type: 'ai', text: '네, 주말 좋아요!' },
-      { type: 'me', text: '그럼 토요일 어떠세요?' },
+      { type: 'me', text: '안녕하세요! 이서아님?' },
+      { type: 'ai', text: '네, 안녕하세요! 맞아요 😊' },
+      { type: 'me', text: '프로필 보니까 마케터라고 하시네요!' },
+      { type: 'ai', text: '네, 브랜드 마케팅을 하고 있어요. 혹시 이번 주말에 시간 괜찮으세요?' },
+      { type: 'me', text: '네, 주말 좋아요! 토요일 오후는 어떠세요?' },
+      { type: 'ai', text: '토요일 오후 괜찮아요! 어디서 뵙는 게 좋을까요?' },
+      { type: 'me', text: '조용한 카페는 어떠세요? 강남역 근처에 좋은 곳 알아요!' },
+      { type: 'ai', text: '좋아요! 그럼 토요일 오후 2시에 뵙겠습니다 ☕' },
     ];
 
     const timeouts = [];
@@ -177,11 +180,14 @@ function HomePage() {
   };
 
   const chatMessages = [
-      { type: 'me', text: '안녕하세요!' },
-      { type: 'ai', text: '네, 안녕하세요!' },
-      { type: 'me', text: '혹시 이번 주말에 시간 괜찮으세요?' },
-      { type: 'ai', text: '네, 주말 좋아요!' },
-      { type: 'me', text: '그럼 토요일 어떠세요?' },
+      { type: 'me', text: '안녕하세요! 이서아님?' },
+      { type: 'ai', text: '네, 안녕하세요! 맞아요 😊' },
+      { type: 'me', text: '프로필 보니까 마케터라고 하시네요!' },
+      { type: 'ai', text: '네, 브랜드 마케팅을 하고 있어요. 혹시 이번 주말에 시간 괜찮으세요?' },
+      { type: 'me', text: '네, 주말 좋아요! 토요일 오후는 어떠세요?' },
+      { type: 'ai', text: '토요일 오후 괜찮아요! 어디서 뵙는 게 좋을까요?' },
+      { type: 'me', text: '조용한 카페는 어떠세요? 강남역 근처에 좋은 곳 알아요!' },
+      { type: 'ai', text: '좋아요! 그럼 토요일 오후 2시에 뵙겠습니다 ☕' },
   ];
 
   // 로그아웃 핸들러
@@ -332,12 +338,12 @@ function HomePage() {
                                 <div className="mockup-phone-notch"></div>
                                 <div className="mockup-phone-view mockup-phone-profile" style={{opacity: isChatStarted ? 0 : 1, transform: isChatStarted ? 'translateX(-20px)' : 'none', pointerEvents: isChatStarted ? 'none' : 'auto'}}>
                                     <img src="https://images.pexels.com/photos/1386604/pexels-photo-1386604.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" className="mockup-profile-img" alt="AI Persona"/>
-                                    <div className="mockup-profile-name">이지은</div>
-                                    <div className="mockup-profile-info">29세 · ISFP · 디자이너</div>
+                                    <div className="mockup-profile-name">이서아</div>
+                                    <div className="mockup-profile-info">28세 · ENFP · 마케터</div>
                                     <button className="mockup-contact-btn" onClick={startChatAnimation}>연락 보내기</button>
                                 </div>
                                 <div className="mockup-phone-view mockup-phone-chat-view" style={{opacity: isChatStarted ? 1 : 0, transform: isChatStarted ? 'translateX(0)' : 'translateX(20px)', pointerEvents: isChatStarted ? 'auto' : 'none'}}>
-                                    <div className="mockup-phone-header"><span className="mockup-phone-header-name">이지은</span></div>
+                                    <div className="mockup-phone-header"><span className="mockup-phone-header-name">이서아</span></div>
                                     <div className="mockup-phone-chat-log">
                                         {chatMessages.map((msg, index) => (
                                             <div key={index} className={`mockup-phone-bubble ${msg.type} ${visibleBubbles.includes(index) ? 'visible' : ''}`}>{msg.text}</div>
@@ -418,16 +424,16 @@ function HomePage() {
                     {/* 무한 루프 효과를 위해 리뷰 목록을 복제합니다. */}
                     {[...Array(3)].map((_, i) => (
                       <React.Fragment key={`review-${i}`}>
-                        <div className="review-card" key={`review-${i}-1`}><div className="stars">★★★★★</div><p className="comment">소개팅 전날 밤, AI랑 연습한 게 정말 큰 도움이 됐어요. 예전 같았으면 어색해서 말도 못했을 텐데, 자연스럽게 대화를 이어갈 수 있었습니다!</p><p className="author">- 김민준 (31세, 개발자)</p></div>
-                        <div className="review-card" key={`review-${i}-2`}><div className="stars">★★★★★</div><p className="comment">제가 어떤 표정을 짓는지, 목소리 톤이 어떤지 객관적으로 알 수 있어서 좋았어요. 리포트 보고 고칠 점을 명확히 알게 됐습니다.</p><p className="author">- 박서연 (28세, 마케터)</p></div>
-                        <div className="review-card" key={`review-${i}-3`}><div className="stars">★★★★☆</div><p className="comment">다양한 성격의 AI가 있어서 여러 상황을 연습하기 좋았어요. 다만 가끔 AI 답변이 조금 느릴 때가 있네요. 그래도 만족합니다.</p><p className="author">- 최현우 (34세, 회사원)</p></div>
-                        <div className="review-card" key={`review-${i}-4`}><div className="stars">★★★★★</div><p className="comment">솔직히 반신반의했는데, 그냥 대화만 하는 게 아니라 과학적으로 분석해준다는 점이 신뢰가 갔어요. 제 매력이 뭔지 알게 된 기분이에요.</p><p className="author">- 이지은 (29세, 디자이너)</p></div>
-                        <div className="review-card" key={`review-${i}-5`}><div className="stars">★★★★★</div><p className="comment">이런 서비스 만들어주셔서 감사합니다. 저처럼 내성적인 사람들한테는 정말 한 줄기 빛과 같아요. 자신감이 많이 생겼어요!</p><p className="author">- 정다솜 (26세, 대학원생)</p></div>
-                        <div className="review-card" key={`review-${i}-6`}><div className="stars">★★★★★</div><p className="comment">실패해도 부담이 없다는 점이 가장 큰 장점이에요. 마음 편하게 여러 가지 시도를 해볼 수 있었어요.</p><p className="author">- 윤지호 (30세, 프리랜서)</p></div>
-                        <div className="review-card" key={`review-${i}-7`}><div className="stars">★★★★☆</div><p className="comment">리액션이나 질문 타이밍 같은 디테일한 부분을 연습하기에 좋네요.</p><p className="author">- 한소라 (27세, 간호사)</p></div>
-                        <div className="review-card" key={`review-${i}-8`}><div className="stars">★★★★★</div><p className="comment">드디어... 썸녀한테 애프터 신청 받았습니다. 다 데연소 덕분입니다. 진심으로요.</p><p className="author">- 강태민 (32세, 연구원)</p></div>
-                        <div className="review-card" key={`review-${i}-9`}><div className="stars">★★★★★</div><p className="comment">AI라고 어색할 줄 알았는데, 대화가 너무 자연스러워서 놀랐어요. 시간 가는 줄 모르고 연습했네요.</p><p className="author">- 신아영 (29세, 교사)</p></div>
-                        <div className="review-card" key={`review-${i}-10`}><div className="stars">★★★★☆</div><p className="comment">분석 리포트가 생각보다 훨씬 상세해서 놀랐습니다. 다음 업데이트도 기대돼요!</p><p className="author">- 문성혁 (35세, 공무원)</p></div>
+                        <div className="review-card" key={`review-${i}-1`}><div className="stars">★★★★★</div><p className="comment">소개팅 전날 밤, AI랑 연습한 게 정말 큰 도움이 됐어요. 예전 같았으면 어색해서 말도 못했을 텐데, 자연스럽게 대화를 이어갈 수 있었습니다!</p><p className="author">- 김*준 (31세, 개발자)</p></div>
+                        <div className="review-card" key={`review-${i}-2`}><div className="stars">★★★★★</div><p className="comment">제가 어떤 표정을 짓는지, 목소리 톤이 어떤지 객관적으로 알 수 있어서 좋았어요. 리포트 보고 고칠 점을 명확히 알게 됐습니다.</p><p className="author">- 박*연 (28세, 마케터)</p></div>
+                        <div className="review-card" key={`review-${i}-3`}><div className="stars">★★★★☆</div><p className="comment">다양한 성격의 AI가 있어서 여러 상황을 연습하기 좋았어요. 다만 가끔 AI 답변이 조금 느릴 때가 있네요. 그래도 만족합니다.</p><p className="author">- 최*우 (34세, 회사원)</p></div>
+                        <div className="review-card" key={`review-${i}-4`}><div className="stars">★★★★★</div><p className="comment">솔직히 반신반의했는데, 그냥 대화만 하는 게 아니라 과학적으로 분석해준다는 점이 신뢰가 갔어요. 제 매력이 뭔지 알게 된 기분이에요.</p><p className="author">- 이*은 (29세, 디자이너)</p></div>
+                        <div className="review-card" key={`review-${i}-5`}><div className="stars">★★★★★</div><p className="comment">이런 서비스 만들어주셔서 감사합니다. 저처럼 내성적인 사람들한테는 정말 한 줄기 빛과 같아요. 자신감이 많이 생겼어요!</p><p className="author">- 정*솜 (26세, 대학원생)</p></div>
+                        <div className="review-card" key={`review-${i}-6`}><div className="stars">★★★★★</div><p className="comment">실패해도 부담이 없다는 점이 가장 큰 장점이에요. 마음 편하게 여러 가지 시도를 해볼 수 있었어요.</p><p className="author">- 윤*호 (30세, 프리랜서)</p></div>
+                        <div className="review-card" key={`review-${i}-7`}><div className="stars">★★★★☆</div><p className="comment">리액션이나 질문 타이밍 같은 디테일한 부분을 연습하기에 좋네요.</p><p className="author">- 한*라 (27세, 간호사)</p></div>
+                        <div className="review-card" key={`review-${i}-8`}><div className="stars">★★★★★</div><p className="comment">드디어... 썸녀한테 애프터 신청 받았습니다. 다 데연소 덕분입니다. 진심으로요.</p><p className="author">- 강*민 (32세, 연구원)</p></div>
+                        <div className="review-card" key={`review-${i}-9`}><div className="stars">★★★★★</div><p className="comment">AI라고 어색할 줄 알았는데, 대화가 너무 자연스러워서 놀랐어요. 시간 가는 줄 모르고 연습했네요.</p><p className="author">- 신*영 (29세, 교사)</p></div>
+                        <div className="review-card" key={`review-${i}-10`}><div className="stars">★★★★☆</div><p className="comment">분석 리포트가 생각보다 훨씬 상세해서 놀랐습니다. 다음 업데이트도 기대돼요!</p><p className="author">- 문*혁 (35세, 공무원)</p></div>
                       </React.Fragment>
                     ))}
                 </div>
