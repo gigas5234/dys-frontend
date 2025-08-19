@@ -14,9 +14,21 @@ function HomePage() {
   const [isClient, setIsClient] = useState(false);
   const [isPageReady, setIsPageReady] = useState(true); // 로딩 화면 비활성화
   const [showAnimations, setShowAnimations] = useState(false);
+  const [userPlan, setUserPlan] = useState('basic'); // 사용자 플랜 정보
   const hasAnimatedRef = useRef(false);
   const cleanupRef = useRef(() => {});
   const dropdownRef = useRef(null);
+
+  // 사용자 플랜 확인 함수
+  const getUserPlan = (user) => {
+    // 실제로는 서버에서 사용자의 구독 정보를 가져와야 함
+    // 현재는 기본값으로 'basic' 설정
+    if (!user) return 'basic';
+    
+    // 여기에 실제 구독 정보 확인 로직 추가
+    // 예: user.user_metadata?.subscription_plan || 'basic'
+    return user.user_metadata?.subscription_plan || 'basic';
+  };
 
   // 사용자 세션 확인 함수
   const checkUser = async () => {
@@ -26,6 +38,12 @@ function HomePage() {
       // 기존 세션 확인 (restoreSessionFromUrl은 이미 useEffect에서 호출됨)
       const session = await getCurrentSession();
       setUser(session?.user || null);
+      
+      // 사용자 플랜 설정
+      if (session?.user) {
+        setUserPlan(getUserPlan(session.user));
+      }
+      
       setLoading(false);
     } catch (error) {
       console.error('Error checking user session:', error);
@@ -203,6 +221,11 @@ function HomePage() {
           <div className="header-right" suppressHydrationWarning>
             {isClient && user ? (
               <div className="user-dropdown" ref={dropdownRef}>
+                <div className="plan-badge-header">
+                  <span className={`plan-type ${userPlan}`}>
+                    {userPlan === 'premium' ? 'Premium' : 'Basic'}
+                  </span>
+                </div>
                 <div 
                   className={`user-dropdown-toggle ${isDropdownOpen ? 'open' : ''}`}
                   role="button"

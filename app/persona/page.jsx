@@ -52,6 +52,7 @@ function PersonaPage() {
     const [loadingProgress, setLoadingProgress] = useState(0);
     const [loadingStep, setLoadingStep] = useState(0);
     const [showWarningModal, setShowWarningModal] = useState(false);
+    const [userPlan, setUserPlan] = useState('basic'); // 사용자 플랜 정보
     
     const router = useRouter();
     const trackRef = useRef(null);
@@ -61,6 +62,12 @@ function PersonaPage() {
     const dropdownRef = useRef(null);
     const chatLogRef = useRef(null);
 
+    // 사용자 플랜 확인 함수
+    const getUserPlan = (user) => {
+        if (!user) return 'basic';
+        return user.user_metadata?.subscription_plan || 'basic';
+    };
+
     // 사용자 세션 확인
     const checkUser = async () => {
         try {
@@ -69,6 +76,7 @@ function PersonaPage() {
             const restored = await restoreSessionFromUrl();
             if (restored) {
                 setUser(restored.user);
+                setUserPlan(getUserPlan(restored.user));
                 setLoading(false);
                 return;
             }
@@ -76,6 +84,9 @@ function PersonaPage() {
             // 기존 세션 확인
             const session = await getCurrentSession();
             setUser(session?.user || null);
+            if (session?.user) {
+                setUserPlan(getUserPlan(session.user));
+            }
             setLoading(false);
         } catch (error) {
             console.error('Error checking user session:', error);
@@ -371,6 +382,11 @@ function PersonaPage() {
                     <div className="header-right" suppressHydrationWarning>
                         {isClient && user ? (
                             <div className="user-dropdown" ref={dropdownRef}>
+                                <div className="plan-badge-header">
+                                    <span className={`plan-type ${userPlan}`}>
+                                        {userPlan === 'premium' ? 'Premium' : 'Basic'}
+                                    </span>
+                                </div>
                                 <div
                                     className={`user-dropdown-toggle ${isDropdownOpen ? 'open' : ''}`}
                                     role="button"
@@ -416,18 +432,29 @@ function PersonaPage() {
                 <aside className="sidebar">
                     <nav>
                         <a href="#" className="active">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M3.783 2.826L12 1l8.217 1.826a1 1 0 0 1 .783.976v9.987a6 6 0 0 1-2.672 4.992L12 23l-6.328-4.219A6 6 0 0 1 3 13.79V3.802a1 1 0 0 1 .783-.976zM5 4.604v9.185a4 4 0 0 0 1.781 3.328L12 20.597l5.219-3.48A4 4 0 0 0 19 13.79V4.604L12 3.05 5 4.604z"></path></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
                             <span>데이트 상대 선택</span>
                         </a>
                         <a href="#">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14,12.94a7,7,0,0,0,.05-1,7,7,0,0,0-.05-1l2.11-1.65a.5.5,0,0,0,.12-.64l-2-3.46a.5.5,0,0,0-.6-.22l-2.49,1a7.05,7.05,0,0,0-1.73-1l-.38-2.65A.5.5,0,0,0,11.5,1h-4a.5.5,0,0,0-.5.42L6.62,4.07a7,7,0,0,0-1.73,1l-2.49-1a.5.5,0,0,0-.6.22l-2,3.46a.5.5,0,0,0,.12.64L2.62,10a7,7,0,0,0,0,2L.42,13.65a.5.5,0,0,0-.12.64l2,3.46a.5.5,0,0,0,.6.22l2.49-1a7.05,7.05,0,0,0,1.73,1l.38,2.65A.5.5,0,0,0,7.5,21h4a.5.5,0,0,0,.5-.42l.38-2.65a7.05,7.05,0,0,0,1.73-1l2.49,1a.5.5,0,0,0,.6-.22l2-3.46a.5.5,0,0,0-.12-.64ZM9.5,15A3,3,0,1,1,12.5,12,3,3,0,0,1,9.5,15Z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M12 20h9"/>
+                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                            </svg>
+                            <span>피드백</span>
+                        </a>
+                        <a href="#">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                            </svg>
                             <span>설정</span>
                         </a>
                     </nav>
-                    <button type="button" className="profile" onClick={openProfileModal}>
-                        <img src={user?.user_metadata?.avatar_url || 'https://placehold.co/100x100/e0e8ff/7d7d7d?text=Me'} alt="Profile" />
-                        <div className="name">{user?.user_metadata?.full_name || user?.email?.split('@')[0] || '사용자'}</div>
-                    </button>
                 </aside>
 
                 <main className={`main-content ${isChatActive ? 'chat-active' : ''}`}>
@@ -478,8 +505,8 @@ function PersonaPage() {
                         </header>
                         <div className="filter-buttons">
                             <button className={activeFilter === 'all' ? 'active' : ''} onClick={() => handleFilterClick('all')}>전체</button>
-                            <button className={activeFilter === 'female' ? 'active' : ''} onClick={() => handleFilterClick('female')}>Female</button>
-                            <button className={activeFilter === 'male' ? 'active' : ''} onClick={() => handleFilterClick('male')}>Male</button>
+                            <button className={activeFilter === 'female' ? 'active' : ''} onClick={() => handleFilterClick('female')}>여성</button>
+                            <button className={activeFilter === 'male' ? 'active' : ''} onClick={() => handleFilterClick('male')}>남성</button>
                         </div>
                         <div className="persona-coverflow" ref={coverflowRef}>
                             <div className="persona-track" ref={trackRef} style={trackStyle}>
