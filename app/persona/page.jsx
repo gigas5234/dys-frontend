@@ -660,9 +660,14 @@ function PersonaPage() {
                             </div>
                         </header>
                         <div className="filter-buttons">
-                            <button className={activeFilter === 'all' ? 'active' : ''} onClick={() => handleFilterClick('all')}>전체</button>
-                            <button className={activeFilter === 'female' ? 'active' : ''} onClick={() => handleFilterClick('female')}>여성</button>
-                            <button className={activeFilter === 'male' ? 'active' : ''} onClick={() => handleFilterClick('male')}>남성</button>
+                            <div className="filter-button-group">
+                                <input type="radio" id="filter-all" name="filter" value="all" checked={activeFilter === 'all'} onChange={() => handleFilterClick('all')} />
+                                <label htmlFor="filter-all">전체</label>
+                                <input type="radio" id="filter-female" name="filter" value="female" checked={activeFilter === 'female'} onChange={() => handleFilterClick('female')} />
+                                <label htmlFor="filter-female">여성</label>
+                                <input type="radio" id="filter-male" name="filter" value="male" checked={activeFilter === 'male'} onChange={() => handleFilterClick('male')} />
+                                <label htmlFor="filter-male">남성</label>
+                            </div>
                         </div>
                         <div className="persona-coverflow" ref={coverflowRef}>
                             <div className="persona-track" ref={trackRef} style={trackStyle}>
