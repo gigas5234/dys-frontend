@@ -8,7 +8,14 @@ function PricePage() {
   const [loading, setLoading] = useState(true);
   const [isClient, setIsClient] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [userPlan, setUserPlan] = useState('basic'); // 사용자 플랜 정보
   const dropdownRef = useRef(null);
+
+  // 사용자 플랜 확인 함수
+  const getUserPlan = (user) => {
+    if (!user) return 'basic';
+    return user.user_metadata?.subscription_plan || 'basic';
+  };
 
   // 사용자 세션 확인
   const checkUser = async () => {
@@ -19,6 +26,7 @@ function PricePage() {
       const restoredSession = await restoreSessionFromUrl();
       if (restoredSession) {
         setUser(restoredSession.user);
+        setUserPlan(getUserPlan(restoredSession.user));
         setLoading(false);
         return;
       }
@@ -26,6 +34,9 @@ function PricePage() {
       // 기존 세션 확인
       const session = await getCurrentSession();
       setUser(session?.user || null);
+      if (session?.user) {
+        setUserPlan(getUserPlan(session.user));
+      }
       setLoading(false);
     } catch (error) {
       console.error('Error checking user session:', error);
@@ -97,6 +108,11 @@ function PricePage() {
           <div className="header-right" suppressHydrationWarning>
             {isClient && user ? (
               <div className="user-dropdown" ref={dropdownRef}>
+                <div className="plan-badge-header">
+                  <span className={`plan-type ${userPlan}`}>
+                    {userPlan === 'premium' ? 'Premium' : 'Basic'}
+                  </span>
+                </div>
                 <div 
                   className={`user-dropdown-toggle ${isDropdownOpen ? 'open' : ''}`}
                   role="button"
@@ -149,7 +165,7 @@ function PricePage() {
 
             <div className="pricing-grid">
               <div className="plan-card">
-                <h2>Free</h2>
+                <h2>Basic</h2>
                 <div className="price">₩0<small>/ 월</small></div>
                 <p className="description">'데연소'의 핵심 기능을 체험하고 싶으신 분들을 위한 플랜입니다.</p>
                 <ul className="feature-list">
@@ -166,7 +182,7 @@ function PricePage() {
                     <span>기본 분석 리포트 (종합 점수)</span>
                   </li>
                 </ul>
-                <a href="#" className="btn-cta">무료로 시작하기</a>
+                <a href="#" className="btn-cta">Basic으로 시작하기</a>
               </div>
 
               <div className="plan-card premium">
@@ -203,8 +219,8 @@ function PricePage() {
             <h2>자주 묻는 질문</h2>
             <div className="faq-container">
               <details className="faq-item">
-                <summary>무료 플랜의 5회 대화는 언제 초기화되나요?</summary>
-                <p>무료 대화 횟수는 매월 1일에 자동으로 초기화됩니다. 새로운 달이 시작되면 다시 5번의 대화 연습을 하실 수 있습니다.</p>
+                <summary>Basic 플랜의 5회 대화는 언제 초기화되나요?</summary>
+                <p>Basic 플랜의 대화 횟수는 매월 1일에 자동으로 초기화됩니다. 새로운 달이 시작되면 다시 5번의 대화 연습을 하실 수 있습니다.</p>
               </details>
               <details className="faq-item">
                 <summary>유료 구독은 언제든지 취소할 수 있나요?</summary>
