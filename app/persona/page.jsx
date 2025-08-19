@@ -51,6 +51,7 @@ function PersonaPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [loadingProgress, setLoadingProgress] = useState(0);
     const [loadingStep, setLoadingStep] = useState(0);
+    const [showWarningModal, setShowWarningModal] = useState(false);
     
     const router = useRouter();
     const trackRef = useRef(null);
@@ -129,6 +130,7 @@ function PersonaPage() {
     };
     const openProfileModal = () => setIsProfileModalOpen(true);
     const closeProfileModal = () => setIsProfileModalOpen(false);
+    const closeWarningModal = () => setShowWarningModal(false);
 
     // 로딩 단계 정의
     const loadingSteps = [
@@ -200,7 +202,24 @@ function PersonaPage() {
         const studioUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/dys_studio/studio_calibration.html?${params.toString()}`;
         console.log('이동할 URL:', studioUrl);
         
-        window.location.href = studioUrl;
+        try {
+            // 서버 연결 상태 확인
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/health`, {
+                method: 'GET',
+                timeout: 5000
+            });
+            
+            if (!response.ok) {
+                throw new Error('서버 연결 실패');
+            }
+            
+            // 연결 성공 시 페이지 이동
+            window.location.href = studioUrl;
+        } catch (error) {
+            console.error('RunPod 연결 실패:', error);
+            setIsLoading(false);
+            setShowWarningModal(true);
+        }
     };
 
     const updateSlider = useCallback((index) => {
@@ -524,6 +543,32 @@ function PersonaPage() {
                                     ></div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showWarningModal && (
+                <div className="modal-overlay" role="dialog" aria-modal="true">
+                    <div className="modal-card warning-modal">
+                        <div className="modal-header">
+                            <h3>⚠️ 데이트 상대가 준비 중입니다</h3>
+                            <button className="modal-close" aria-label="닫기" onClick={closeWarningModal}>×</button>
+                        </div>
+                        <div className="modal-body">
+                            <div className="warning-content">
+                                <div className="warning-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                        <line x1="12" y1="9" x2="12" y2="13"/>
+                                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                                    </svg>
+                                </div>
+                                <p>현재 서버에 일시적인 문제가 있어 데이트 상대를 준비하는 데 시간이 걸리고 있습니다.</p>
+                                <p>잠시 후 다시 시도해 주시거나, 다른 데이트 상대를 선택해 보세요.</p>
+                            </div>
+                        </div>
+                        <div className="modal-footer">
+                            <button className="btn btn-primary" onClick={closeWarningModal}>확인</button>
                         </div>
                     </div>
                 </div>
