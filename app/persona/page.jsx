@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getCurrentSession, restoreSessionFromUrl, signOut } from '../../lib/supabase';
+import { getCurrentSession, restoreSessionFromUrl, signOut, supabase } from '../../lib/supabase';
 
 // 페르소나 데이터 -> 페르소나가 많아지면 서버에서 관리 
 const allPersonas = [
@@ -55,6 +55,9 @@ function PersonaPage() {
     const [userPlan, setUserPlan] = useState('basic'); // 사용자 플랜 정보
     const [showSessionEndModal, setShowSessionEndModal] = useState(false);
     const [sessionEndData, setSessionEndData] = useState(null);
+    const [showSettingsModal, setShowSettingsModal] = useState(false);
+    const [userSettings, setUserSettings] = useState(null);
+    const [isLoadingSettings, setIsLoadingSettings] = useState(false);
     
     const router = useRouter();
     const trackRef = useRef(null);
@@ -214,6 +217,77 @@ function PersonaPage() {
     const closeProfileModal = () => setIsProfileModalOpen(false);
     const closeWarningModal = () => setShowWarningModal(false);
     const closeSessionEndModal = () => setShowSessionEndModal(false);
+    const closeSettingsModal = () => setShowSettingsModal(false);
+
+    // 사용자 설정 가져오기
+    const fetchUserSettings = async () => {
+        if (!user) return;
+        
+        try {
+            setIsLoadingSettings(true);
+            
+            const { data, error } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', user.id)
+                .single();
+            
+            if (error) {
+                console.error('Error fetching user settings:', error);
+                return;
+            }
+            
+            setUserSettings(data);
+        } catch (error) {
+            console.error('Error fetching user settings:', error);
+        } finally {
+            setIsLoadingSettings(false);
+        }
+    };
+
+    // MBTI 업데이트
+    const updateMBTI = async (newMBTI) => {
+        if (!user) return;
+        
+        try {
+            const { error } = await supabase
+                .from('users')
+                .update({ mbti: newMBTI })
+                .eq('id', user.id);
+            
+            if (error) {
+                console.error('Error updating MBTI:', error);
+                return;
+            }
+            
+            // 로컬 상태 업데이트
+            setUserSettings(prev => ({ ...prev, mbti: newMBTI }));
+        } catch (error) {
+            console.error('Error updating MBTI:', error);
+        }
+    };
+
+    // 캠 캘리브레이션 삭제
+    const deleteCamCalibration = async () => {
+        if (!user) return;
+        
+        try {
+            const { error } = await supabase
+                .from('users')
+                .update({ cam_calibration: false })
+                .eq('id', user.id);
+            
+            if (error) {
+                console.error('Error deleting cam calibration:', error);
+                return;
+            }
+            
+            // 로컬 상태 업데이트
+            setUserSettings(prev => ({ ...prev, cam_calibration: false }));
+        } catch (error) {
+            console.error('Error deleting cam calibration:', error);
+        }
+    };
 
     // 로딩 단계 정의
     const loadingSteps = [
@@ -484,6 +558,16 @@ function PersonaPage() {
                                         </svg>
                                         시작하기
                                     </a>
+                                    <button onClick={() => {
+                                        setShowSettingsModal(true);
+                                        fetchUserSettings();
+                                    }} className="user-dropdown-item" role="menuitem">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <circle cx="12" cy="12" r="3"/>
+                                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-1.82-.33l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                                        </svg>
+                                        설정
+                                    </button>
                                     <button onClick={handleLogout} className="user-dropdown-item logout" role="menuitem">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -711,6 +795,104 @@ function PersonaPage() {
                         </div>
                         <div className="modal-footer">
                             <button className="btn btn-primary" onClick={closeSessionEndModal}>
+                                확인
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {showSettingsModal && (
+                <div className="modal-overlay" role="dialog" aria-modal="true">
+                    <div className="modal-card settings-modal">
+                        <div className="modal-header">
+                            <h3>설정</h3>
+                            <button className="modal-close" aria-label="닫기" onClick={closeSettingsModal}>×</button>
+                        </div>
+                        <div className="modal-body">
+                            {isLoadingSettings ? (
+                                <div className="settings-loading">
+                                    <div className="loading-spinner"></div>
+                                    <p>설정을 불러오는 중...</p>
+                                </div>
+                            ) : userSettings ? (
+                                <div className="settings-content">
+                                    <div className="setting-group">
+                                        <label className="setting-label">이름</label>
+                                        <div className="setting-value">
+                                            {user?.user_metadata?.full_name || '이름 없음'}
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="setting-group">
+                                        <label className="setting-label">이메일</label>
+                                        <div className="setting-value">
+                                            {user?.email || '이메일 없음'}
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="setting-group">
+                                        <label className="setting-label">MBTI</label>
+                                        <select 
+                                            className="setting-input"
+                                            value={userSettings.mbti || ''}
+                                            onChange={(e) => updateMBTI(e.target.value)}
+                                        >
+                                            <option value="">MBTI를 선택하세요</option>
+                                            <option value="INTJ">INTJ</option>
+                                            <option value="INTP">INTP</option>
+                                            <option value="ENTJ">ENTJ</option>
+                                            <option value="ENTP">ENTP</option>
+                                            <option value="INFJ">INFJ</option>
+                                            <option value="INFP">INFP</option>
+                                            <option value="ENFJ">ENFJ</option>
+                                            <option value="ENFP">ENFP</option>
+                                            <option value="ISTJ">ISTJ</option>
+                                            <option value="ISFJ">ISFJ</option>
+                                            <option value="ESTJ">ESTJ</option>
+                                            <option value="ESFJ">ESFJ</option>
+                                            <option value="ISTP">ISTP</option>
+                                            <option value="ISFP">ISFP</option>
+                                            <option value="ESTP">ESTP</option>
+                                            <option value="ESFP">ESFP</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div className="setting-group">
+                                        <label className="setting-label">캠 캘리브레이션</label>
+                                        <div className="setting-value">
+                                            {userSettings.cam_calibration ? (
+                                                <div className="calibration-status">
+                                                    <span className="status-success">✅ 완료</span>
+                                                    <button 
+                                                        className="btn-delete-calibration"
+                                                        onClick={deleteCamCalibration}
+                                                    >
+                                                        삭제
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <span className="status-pending">⏳ 미완료</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="setting-group">
+                                        <label className="setting-label">멤버십</label>
+                                        <div className="setting-value">
+                                            <span className={`membership-badge ${userSettings.member_tier || 'basic'}`}>
+                                                {userSettings.member_tier === 'premium' ? 'Premium' : 'Basic'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="settings-error">
+                                    <p>설정을 불러올 수 없습니다.</p>
+                                </div>
+                            )}
+                        </div>
+                        <div className="modal-footer">
+                            <button className="btn btn-primary" onClick={closeSettingsModal}>
                                 확인
                             </button>
                         </div>
