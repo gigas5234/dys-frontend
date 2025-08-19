@@ -175,7 +175,7 @@ export default function SettingsPage() {
                 <div className="header-content">
                     <div className="logo">
                         <a href="/">
-                            <img src="/dys_logo.webp" alt="데연소" />
+                            <img src="/dys_logo.png" alt="데연소" />
                         </a>
                     </div>
                     
