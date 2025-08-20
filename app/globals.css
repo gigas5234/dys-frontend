@@ -1598,9 +1598,16 @@ section[id] {
   width: 100%;
   max-width: 420px;
   padding: 20px;
-  margin-top: 140px;
+  margin-top: 100px;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* 회원가입 페이지용 컨테이너 */
+.signup-container {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
 }
 
 .login-box {
@@ -2305,21 +2312,35 @@ section[id] {
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     font-size: 16px;
     font-weight: 600;
-    color: var(--brand1);
+    color: #000;
     transition: all 0.2s ease;
+    padding: 8px 12px;
+    border-radius: 20px;
+    min-height: 40px;
+    width: auto;
+    justify-content: flex-start;
 }
 
 .phone-header .back-button:hover {
-    color: var(--brand2);
+    background-color: rgba(0, 0, 0, 0.05);
     transform: translateX(-2px);
 }
 
+.phone-header .back-button:active {
+    background-color: rgba(0, 0, 0, 0.1);
+    transform: translateX(-1px);
+}
+
 .phone-header .back-button svg { 
-    width: 22px; 
-    height: 22px; 
+    width: 24px; 
+    height: 24px; 
+    background: #000;
+    border-radius: 50%;
+    padding: 4px;
+    color: white;
 }
 
 .phone-header .name { 
