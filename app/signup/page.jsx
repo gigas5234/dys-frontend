@@ -101,7 +101,8 @@ export default function SignupPage() {
                 </div>
             </header>
 
-            <div className="login-container">
+            <main className="auth-page">
+                <div className="login-container">
                 <div className="login-box">
                     <div className="login-header">
                         <div className="logo">데연소</div>
@@ -211,7 +212,8 @@ export default function SignupPage() {
                         <a href="/login">이미 계정이 있으신가요? 로그인하기</a>
                     </div>
                 </div>
-            </div>
+                </div>
+            </main>
         </>
     );
 }

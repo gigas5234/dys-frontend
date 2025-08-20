@@ -29,6 +29,12 @@ html, body {
     word-break: keep-all;
 }
 
+/* 고정 헤더 높이 보정이 필요한 페이지 래퍼 */
+.auth-page {
+  min-height: calc(100vh - var(--header-height));
+  padding-top: var(--header-height);
+}
+
 /* --- 페이지 로딩 화면 --- */
 .page-loading {
     position: fixed;
