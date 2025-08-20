@@ -387,7 +387,10 @@ export default function FeedbackPage() {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h10"/></svg>
               피드백 리포트
             </a>
-            
+            <a href="/settings">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              설정
+            </a>
           </nav>
         </aside>
 
@@ -576,20 +579,20 @@ export default function FeedbackPage() {
         .calendar-grid div { padding: 8px 4px; font-size: 14px; position: relative; }
         .calendar-day-name { font-weight: 600; color: var(--muted); font-size: 12px; }
         .calendar-day { cursor: pointer; border-radius: 50%; transition: background-color .2s, color .2s; border: 2px solid transparent; }
-        .calendar-day.today { font-weight: 700; border-color: var(--brand2); color: var(--brand2); }
-        .calendar-day.selected { background: var(--brand2); color: #fff; border-color: var(--brand2); }
-        .calendar-day:not(.selected):hover { background-color: rgba(0,0,0,0.05); }
-        .session-markers { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); display: flex; gap: 3px; }
-        .session-marker { width: 5px; height: 5px; border-radius: 50%; background: var(--brand2); }
+                 .calendar-day.today { font-weight: 700; border-color: var(--brand2); color: var(--brand2); }
+         .calendar-day.selected { background: var(--brand2); color: #fff; border-color: var(--brand2); }
+         .calendar-day:not(.selected):hover { background-color: rgba(0,0,0,0.05); }
+         .session-markers { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); display: flex; gap: 3px; }
+         .session-marker { width: 5px; height: 5px; border-radius: 50%; background: #fbc2eb; }
+         .calendar-day.selected .session-marker { background: #fff; }
+         .calendar-day.today:not(.selected) .session-marker { background: var(--brand2); }
 
         .session-list-wrapper h3 { font-size: 18px; font-weight: 700; margin: 0 0 20px 0; color: var(--text); padding-left: 10px; }
         .session-list-container { max-height: 300px; overflow-y: auto; padding-right: 5px; }
         .session-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: var(--radius); margin-bottom: 8px; cursor: pointer; transition: background-color .2s; }
         .session-item:last-child { margin-bottom: 0; }
         .session-item:hover { background-color: var(--color-primary-light); }
-                 .session-item.active { background-color: var(--brand2); color: white; }
-         .session-item.active .session-info h4 { color: white; }
-         .session-item.active .session-info p { color: rgba(255,255,255,0.8); }
+        .session-item.active { background-color: var(--color-primary-light); box-shadow: 0 0 0 2px var(--color-primary) inset; }
         .session-item img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
         .session-info h4 { margin: 0; font-size: 14px; font-weight: 700; color: var(--text); }
         .session-info p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
@@ -653,23 +656,23 @@ export default function FeedbackPage() {
          .encouragement-icon { font-size: 32px; }
          .coaching-encouragement p { font-size: 16px; line-height: 1.6; color: var(--text); margin: 0; font-weight: 500; }
          
-                   .user-dropdown { position: relative; }
-          .plan-badge-header { margin-bottom: 8px; }
-          .plan-type { display: inline-block; padding: 4px 8px; background: var(--brand2); color: white; border-radius: 4px; font-size: 12px; font-weight: 600; }
-          
-          .user-dropdown-toggle { display: flex; align-items: center; gap: 8px; background: none; border: none; cursor: pointer; padding: 8px 12px; border-radius: var(--radius); transition: background-color .2s; }
-          .user-dropdown-toggle:hover { background-color: rgba(0,0,0,0.05); }
-          .user-dropdown-toggle.open { background-color: rgba(0,0,0,0.05); }
-          .user-avatar { width: 24px; height: 24px; border-radius: 50%; }
-          .user-name { font-size: 14px; font-weight: 600; color: var(--text); }
-          
-          .user-dropdown-menu { position: absolute; top: 100%; right: 0; background: white; border: 1px solid var(--stroke); border-radius: var(--radius); box-shadow: var(--shadow); min-width: 200px; z-index: 1000; margin-top: 8px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all .2s; }
-          .user-dropdown-menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
-          
-          .user-dropdown-item { display: flex; align-items: center; gap: 8px; padding: 12px 16px; text-decoration: none; color: var(--text); font-size: 14px; transition: background-color .2s; border: none; background: none; width: 100%; text-align: left; cursor: pointer; }
-          .user-dropdown-item:hover { background-color: rgba(0,0,0,0.05); }
-          .user-dropdown-item.logout { color: #e74c3c; }
-          .user-dropdown-item.logout:hover { background-color: rgba(231, 76, 60, 0.1); }
+         .user-dropdown { position: relative; }
+         .plan-badge-header { margin-bottom: 8px; }
+         .plan-type { display: inline-block; padding: 4px 8px; background: var(--brand2); color: white; border-radius: 4px; font-size: 12px; font-weight: 600; }
+         
+         .user-dropdown-toggle { display: flex; align-items: center; gap: 8px; background: none; border: none; cursor: pointer; padding: 8px 12px; border-radius: var(--radius); transition: background-color .2s; }
+         .user-dropdown-toggle:hover { background-color: rgba(0,0,0,0.05); }
+         .user-dropdown-toggle.open { background-color: rgba(0,0,0,0.05); }
+         .user-avatar { width: 24px; height: 24px; border-radius: 50%; }
+         .user-name { font-size: 14px; font-weight: 600; color: var(--text); }
+         
+         .user-dropdown-menu { position: absolute; top: 100%; right: 0; background: white; border: 1px solid var(--stroke); border-radius: var(--radius); box-shadow: var(--shadow); min-width: 200px; z-index: 1000; margin-top: 8px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all .2s; }
+         .user-dropdown-menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
+         
+         .user-dropdown-item { display: flex; align-items: center; gap: 8px; padding: 12px 16px; text-decoration: none; color: var(--text); font-size: 14px; transition: background-color .2s; border: none; background: none; width: 100%; text-align: left; cursor: pointer; }
+         .user-dropdown-item:hover { background-color: rgba(0,0,0,0.05); }
+         .user-dropdown-item.logout { color: #e74c3c; }
+         .user-dropdown-item.logout:hover { background-color: rgba(231, 76, 60, 0.1); }
 
                  @media (max-width: 768px) {
            .history-card { grid-template-columns: 1fr; }
