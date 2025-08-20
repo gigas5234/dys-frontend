@@ -109,7 +109,20 @@ export default function FeedbackPage() {
   // 사용자 플랜 확인 함수
   const getUserPlan = (user) => {
     if (!user) return 'basic';
+    // user_metadata의 subscription_plan 또는 기본값으로 basic 반환
+    // 테스트용: 특정 이메일은 premium으로 설정
+    if (user.email === 'premium@test.com') {
+      return 'premium';
+    }
     return user.user_metadata?.subscription_plan || 'basic';
+  };
+
+  // 실제 사용자 플랜 가져오기 (설정에서 가져온 데이터 우선)
+  const getActualUserPlan = () => {
+    if (userSettings?.member_tier) {
+      return userSettings.member_tier;
+    }
+    return userPlan;
   };
 
   // 로그아웃 처리
@@ -136,6 +149,11 @@ export default function FeedbackPage() {
 
       if (error) throw error;
       setUserSettings(data);
+      
+      // member_tier가 있으면 userPlan도 업데이트
+      if (data?.member_tier) {
+        setUserPlan(data.member_tier);
+      }
     } catch (error) {
       console.error('설정 로드 오류:', error);
     } finally {
@@ -187,6 +205,13 @@ export default function FeedbackPage() {
       fetchUserSettings();
     }
   }, [showSettingsModal, user]);
+
+  // 사용자 정보가 로드되면 설정도 미리 로드
+  useEffect(() => {
+    if (user && !userSettings) {
+      fetchUserSettings();
+    }
+  }, [user]);
 
   const renderCalendar = (dateObj) => {
     if (!calendarBodyRef.current || !currentMonthRef.current) return;
@@ -453,8 +478,8 @@ export default function FeedbackPage() {
              {isClient && user ? (
                <div className="user-dropdown" ref={dropdownRef}>
                  <div className="plan-badge-header">
-                   <span className={`plan-type ${userPlan}`}>
-                     {userPlan === 'premium' ? 'Premium' : 'Basic'}
+                   <span className={`plan-type ${getActualUserPlan()}`}>
+                     {getActualUserPlan() === 'premium' ? 'Premium' : 'Basic'}
                    </span>
                  </div>
                  <div
@@ -561,7 +586,7 @@ export default function FeedbackPage() {
                     <div className="score-label">종합 매력 점수</div>
                   </div>
                   <div className="ai-comment">
-                    <h3>💡 코치의 한마디</h3>
+                    <h3>코치의 한마디</h3>
                     <p ref={aiSummaryRef} id="ai-summary"></p>
                   </div>
                 </div>
@@ -575,7 +600,7 @@ export default function FeedbackPage() {
               </section>
 
               <section className="card" style={{ animationDelay: "0.2s" }}>
-                <h2 className="section-title">✨ 최고의 순간</h2>
+                <h2 className="section-title">최고의 순간</h2>
                 <div className="key-moments-grid">
                   <div className="moment-card">
                     <img src="https://placehold.co/400x220/E9EFFF/4A72FF?text=Best+Smile" alt="최고의 미소 순간" />
@@ -595,7 +620,7 @@ export default function FeedbackPage() {
               </section>
 
               <section className="card" style={{ animationDelay: "0.3s" }}>
-                <h2 className="section-title">🤸 자세 & 표정 분석</h2>
+                <h2 className="section-title">자세 & 표정 분석</h2>
                 <div className="detail-analysis-grid">
                   <div className="metric-item">
                     <div className="metric-header">
@@ -633,7 +658,7 @@ export default function FeedbackPage() {
               </section>
 
               <section className="card" style={{ animationDelay: "0.4s" }}>
-                <h2 className="section-title">🎤 음성 & 대화 분석</h2>
+                <h2 className="section-title">음성 & 대화 분석</h2>
                 <div className="detail-analysis-grid">
                   <div className="metric-item">
                     <div className="metric-header">
@@ -650,10 +675,10 @@ export default function FeedbackPage() {
               </section>
 
                              <section className="card final-coaching" style={{ animationDelay: "0.5s" }}>
-                 <h2 className="section-title">💌 AI 종합 코칭</h2>
+                 <h2 className="section-title">AI 종합 코칭</h2>
                  <div className="coaching-content">
                    <div className="coaching-summary">
-                     <h3>🎯 이번 세션 핵심 포인트</h3>
+                     <h3>이번 세션 핵심 포인트</h3>
                      <p ref={finalCoachingRef} id="final-coaching-text"></p>
                    </div>
                    
@@ -668,7 +693,7 @@ export default function FeedbackPage() {
                      </div>
                      
                      <div className="coaching-section">
-                       <h4>🔧 개선할 점</h4>
+                       <h4>개선할 점</h4>
                        <ul>
                          <li>목소리 톤을 조금 더 자신감 있게 조절해보세요</li>
                          <li>자세를 더 안정적으로 유지하면 좋겠습니다</li>
@@ -677,7 +702,7 @@ export default function FeedbackPage() {
                      </div>
                      
                      <div className="coaching-section">
-                       <h4>📈 다음 세션 목표</h4>
+                       <h4>다음 세션 목표</h4>
                        <div className="next-goals">
                          <div className="goal-item">
                            <span className="goal-number">1</span>
@@ -895,18 +920,47 @@ export default function FeedbackPage() {
          
          .user-dropdown { position: relative; }
          .plan-badge-header { margin-bottom: 8px; }
-         .plan-type { display: inline-block; padding: 4px 8px; background: var(--brand2); color: white; border-radius: 4px; font-size: 12px; font-weight: 600; }
+         .plan-type { display: inline-block; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: white; background: #6b7280; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+         .plan-type.premium { background: linear-gradient(135deg, var(--brand2), var(--brand1)); box-shadow: 0 2px 8px rgba(166, 193, 238, 0.3); }
          
-         .user-dropdown-toggle { display: flex; align-items: center; gap: 8px; background: none; border: none; cursor: pointer; padding: 8px 12px; border-radius: var(--radius); transition: background-color .2s; }
-         .user-dropdown-toggle:hover { background-color: rgba(0,0,0,0.05); }
-         .user-dropdown-toggle.open { background-color: rgba(0,0,0,0.05); }
-         .user-avatar { width: 24px; height: 24px; border-radius: 50%; }
-         .user-name { font-size: 14px; font-weight: 600; color: var(--text); }
+         .membership-badge { display: inline-block; padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: white; background: #6b7280; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+         .membership-badge.premium { background: linear-gradient(135deg, var(--brand2), var(--brand1)); box-shadow: 0 2px 8px rgba(166, 193, 238, 0.3); }
          
-         .user-dropdown-menu { position: absolute; top: 100%; right: 0; background: white; border: 1px solid var(--stroke); border-radius: var(--radius); box-shadow: var(--shadow); min-width: 200px; z-index: 1000; margin-top: 8px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all .2s; }
-         .user-dropdown-menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
+         /* Premium 플랜 추가 스타일 */
+         .plan-type.premium, .membership-badge.premium {
+           background: linear-gradient(135deg, #a6c1ee 0%, #fbc2eb 100%);
+           box-shadow: 0 2px 8px rgba(166, 193, 238, 0.3);
+           position: relative;
+           overflow: hidden;
+         }
          
-         .user-dropdown-item { display: flex; align-items: center; gap: 8px; padding: 12px 16px; text-decoration: none; color: var(--text); font-size: 14px; transition: background-color .2s; border: none; background: none; width: 100%; text-align: left; cursor: pointer; }
+         .plan-type.premium::before, .membership-badge.premium::before {
+           content: '';
+           position: absolute;
+           top: 0;
+           left: -100%;
+           width: 100%;
+           height: 100%;
+           background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+           animation: shimmer 2s infinite;
+         }
+         
+         @keyframes shimmer {
+           0% { left: -100%; }
+           100% { left: 100%; }
+         }
+         
+         .user-dropdown-toggle { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 16px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
+         .user-dropdown-toggle:hover { background: rgba(255, 255, 255, 1); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); border-color: rgba(166, 193, 238, 0.3); }
+         .user-dropdown-toggle.open { background: rgba(255, 255, 255, 1); }
+         .user-avatar { width: 32px; height: 32px; border-radius: 50%; }
+         .user-name { font-size: 15px; font-weight: 600; color: var(--text); }
+         
+         .user-dropdown-menu { position: absolute; top: calc(100% + 8px); right: 0; background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 16px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15); min-width: 180px; opacity: 0; visibility: hidden; transform: translateY(-8px) scale(0.95); transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); z-index: 1000; overflow: hidden; }
+         .user-dropdown-menu.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+         
+         .user-dropdown-item { display: flex; align-items: center; gap: 12px; padding: 14px 18px; color: var(--text); text-decoration: none; font-size: 15px; font-weight: 500; transition: all 0.2s ease; border: none; background: none; width: 100%; text-align: left; cursor: pointer; }
+         .user-dropdown-item:not(:last-child) { border-bottom: 1px solid rgba(0, 0, 0, 0.06); }
          .user-dropdown-item:hover { background-color: rgba(0,0,0,0.05); }
          .user-dropdown-item.logout { color: #e74c3c; }
          .user-dropdown-item.logout:hover { background-color: rgba(231, 76, 60, 0.1); }
