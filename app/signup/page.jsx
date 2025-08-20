@@ -70,17 +70,16 @@ export default function SignupPage() {
             setSuccessMessage('회원 가입이 완료되었습니다');
             setTimeout(() => router.push('/login'), 1800);
         } catch (error) {
-            if (typeof error?.message === 'string') {
-                if (error.message.includes('already registered')) {
-                    setErrorMessage('이미 가입된 이메일입니다.');
-                } else if (error.message.toLowerCase().includes('password')) {
-                    setErrorMessage('비밀번호 형식이 올바르지 않습니다.');
-                } else {
-                    setErrorMessage('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
-                }
-            } else {
-                setErrorMessage('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
-            }
+            console.error('[SIGNUP] error:', error);
+            const msg = (error && error.message ? String(error.message) : '').toLowerCase();
+            let uiMessage = '회원가입 중 오류가 발생했습니다. 다시 시도해주세요.';
+
+            if (msg.includes('already registered')) uiMessage = '이미 가입된 이메일입니다.';
+            else if (msg.includes('signups not allowed')) uiMessage = '관리자 설정에서 이메일 회원가입이 비활성화되어 있습니다. Supabase Auth 설정을 확인해주세요.';
+            else if (msg.includes('invalid') && msg.includes('email')) uiMessage = '올바른 이메일 형식을 입력해주세요.';
+            else if (msg.includes('password should be at least') || msg.includes('password')) uiMessage = '비밀번호는 최소 6자 이상이어야 합니다.';
+
+            setErrorMessage(uiMessage);
         } finally {
             setIsSubmitting(false);
         }
@@ -89,7 +88,7 @@ export default function SignupPage() {
     return (
         <>
             <header className="main-header">
-                <div className="header-content">
+                <div className="container">
                     <div className="header-left">
                         <a href="/" className="logo">
                             <img src="/dys_logo.png" alt="데연소" />
