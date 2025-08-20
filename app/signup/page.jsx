@@ -93,7 +93,15 @@ export default function SignupPage() {
                     <div className="header-left">
                         <a href="/" className="logo">
                             <img src="/dys_logo.png" alt="데연소" />
+                            데연소
                         </a>
+                        <nav>
+                            <a href="/#problem">공감</a>
+                            <a href="/#preview">미리보기</a>
+                            <a href="/#science">과학적 분석</a>
+                            <a href="/#features">핵심 기능</a>
+                            <a href="/price">가격</a>
+                        </nav>
                     </div>
                     <div className="header-right">
                         <a href="/login" className="btn btn-login">로그인</a>
@@ -105,7 +113,7 @@ export default function SignupPage() {
                 <div className="login-container">
                 <div className="login-box">
                     <div className="login-header">
-                        <div className="logo"><img src="/dys_logo.png" alt="데연소" className="auth-logo-small" /></div>
+                        <div className="logo"><img src="/dys_logo.png" alt="데연소" className="auth-logo-small" /><span className="brand-text">데연소</span></div>
                         <div className="header-icon">
                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="#a6c1ee" strokeWidth="2" strokeMiterlimit="10"/>
