@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Chart from "chart.js/auto";
+import personas from "../../data/personas.json";
 
 export default function FeedbackPage() {
   const calendarBodyRef = useRef(null);
@@ -16,16 +17,11 @@ export default function FeedbackPage() {
   const speechBubbleContainerRef = useRef(null);
 
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const radarChartRef = useRef(null);
 
-  // 파트너/더미 데이터 (속도 항목 제거)
-  const aiPartners = [
-    { id: 1, gender: "female", name: "김세아", age: 28, mbti: "ENFP", job: "마케터", personality: ["활발함", "긍정적"], image: "/img/woman1_insta.webp" },
-    { id: 2, gender: "female", name: "박서진", age: 25, mbti: "ESFJ", job: "대학생", personality: ["사교적", "다정함"], image: "/img/woman2_insta.webp" },
-    { id: 3, gender: "female", name: "최유나", age: 34, mbti: "INFJ", job: "상담사", personality: ["통찰력", "따뜻함"], image: "/img/woman3_insta.webp" },
-    { id: 4, gender: "male", name: "이준영", age: 31, mbti: "ISTJ", job: "개발자", personality: ["논리적", "신중함"], image: "/img/man2_insta.webp" },
-    { id: 5, gender: "male", name: "정현우", age: 29, mbti: "ENTP", job: "스타트업 대표", personality: ["도전적", "창의적"], image: "/img/man3_insta.webp" }
-  ];
+  // 공통 persona 데이터 사용
+  const aiPartners = personas;
 
   const generateRandomReport = () => ({
     totalScore: 70 + Math.floor(Math.random() * 25),
@@ -56,8 +52,12 @@ export default function FeedbackPage() {
   const coachingHistory = [
     { date: "2025-08-18", partnerId: 1, report: generateRandomReport() },
     { date: "2025-08-20", partnerId: 2, report: generateRandomReport() },
-    { date: "2025-08-20", partnerId: 4, report: generateRandomReport() },
-    { date: "2025-08-21", partnerId: 3, report: generateRandomReport() }
+    { date: "2025-08-20", partnerId: 7, report: generateRandomReport() },
+    { date: "2025-08-21", partnerId: 3, report: generateRandomReport() },
+    { date: "2025-08-22", partnerId: 6, report: generateRandomReport() },
+    { date: "2025-08-22", partnerId: 8, report: generateRandomReport() },
+    { date: "2025-08-23", partnerId: 4, report: generateRandomReport() },
+    { date: "2025-08-23", partnerId: 9, report: generateRandomReport() }
   ];
 
   useEffect(() => {
@@ -331,9 +331,39 @@ export default function FeedbackPage() {
               <a href="/price">가격</a>
             </nav>
           </div>
-          <div className="header-right">
-            <a href="/login" className="btn btn-login">로그인</a>
-          </div>
+                     <div className="header-right">
+             <div className="user-dropdown">
+               <button className="user-button" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+                 <img src="/dys_logo.png" alt="프로필" className="user-avatar" />
+                 <span className="user-name">사용자</span>
+                 <svg className="dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                   <path d="M6 9l6 6 6-6"/>
+                 </svg>
+               </button>
+               {isDropdownOpen && (
+                 <div className="dropdown-menu">
+                   <div className="plan-badge-header">
+                     <span className="plan-type basic">Basic</span>
+                   </div>
+                   <a href="/settings" className="dropdown-item">
+                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                       <circle cx="12" cy="12" r="3"/>
+                       <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                     </svg>
+                     설정
+                   </a>
+                   <button className="dropdown-item logout" onClick={() => {}}>
+                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                       <polyline points="16,17 21,12 16,7"/>
+                       <line x1="21" y1="12" x2="9" y2="12"/>
+                     </svg>
+                     로그아웃
+                   </button>
+                 </div>
+               )}
+             </div>
+           </div>
         </div>
       </header>
 
@@ -474,10 +504,58 @@ export default function FeedbackPage() {
                 </div>
               </section>
 
-              <section className="card final-coaching" style={{ animationDelay: "0.5s" }}>
-                <h2 className="section-title">💌 AI 종합 코칭</h2>
-                <p ref={finalCoachingRef} id="final-coaching-text"></p>
-              </section>
+                             <section className="card final-coaching" style={{ animationDelay: "0.5s" }}>
+                 <h2 className="section-title">💌 AI 종합 코칭</h2>
+                 <div className="coaching-content">
+                   <div className="coaching-summary">
+                     <h3>🎯 이번 세션 핵심 포인트</h3>
+                     <p ref={finalCoachingRef} id="final-coaching-text"></p>
+                   </div>
+                   
+                   <div className="coaching-details">
+                     <div className="coaching-section">
+                       <h4>✨ 잘한 점</h4>
+                       <ul>
+                         <li>자연스러운 미소로 긍정적인 분위기를 조성했습니다</li>
+                         <li>상대방의 이야기에 적극적으로 귀 기울였습니다</li>
+                         <li>적절한 시선 접촉으로 신뢰감을 표현했습니다</li>
+                       </ul>
+                     </div>
+                     
+                     <div className="coaching-section">
+                       <h4>🔧 개선할 점</h4>
+                       <ul>
+                         <li>목소리 톤을 조금 더 자신감 있게 조절해보세요</li>
+                         <li>자세를 더 안정적으로 유지하면 좋겠습니다</li>
+                         <li>질문을 통해 대화를 더 활발하게 이끌어보세요</li>
+                       </ul>
+                     </div>
+                     
+                     <div className="coaching-section">
+                       <h4>📈 다음 세션 목표</h4>
+                       <div className="next-goals">
+                         <div className="goal-item">
+                           <span className="goal-number">1</span>
+                           <span className="goal-text">목소리 자신감 80점 이상 달성</span>
+                         </div>
+                         <div className="goal-item">
+                           <span className="goal-number">2</span>
+                           <span className="goal-text">자세 안정성 90% 이상 유지</span>
+                         </div>
+                         <div className="goal-item">
+                           <span className="goal-number">3</span>
+                           <span className="goal-text">적극적인 질문으로 대화 주도</span>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                   
+                   <div className="coaching-encouragement">
+                     <div className="encouragement-icon">💪</div>
+                     <p>매번 조금씩 개선해나가는 당신이 정말 대단해요! 다음 세션에서도 좋은 모습 보여주세요!</p>
+                   </div>
+                 </div>
+               </section>
             </div>
           </div>
         </main>
@@ -498,6 +576,16 @@ export default function FeedbackPage() {
         .calendar-day:not(.selected):hover { background-color: rgba(0,0,0,0.05); }
         .session-markers { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); display: flex; gap: 3px; }
         .session-marker { width: 5px; height: 5px; border-radius: 50%; background: var(--brand2); }
+
+        .session-list-wrapper h3 { font-size: 18px; font-weight: 700; margin: 0 0 20px 0; color: var(--text); padding-left: 10px; }
+        .session-list-container { max-height: 300px; overflow-y: auto; padding-right: 5px; }
+        .session-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: var(--radius); margin-bottom: 8px; cursor: pointer; transition: background-color .2s; }
+        .session-item:last-child { margin-bottom: 0; }
+        .session-item:hover { background-color: var(--color-primary-light); }
+        .session-item.active { background-color: var(--color-primary-light); box-shadow: 0 0 0 2px var(--color-primary) inset; }
+        .session-item img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+        .session-info h4 { margin: 0; font-size: 14px; font-weight: 700; color: var(--text); }
+        .session-info p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
 
         .report-header h1 { font-size: 28px; font-weight: 800; margin: 0 0 8px; }
         .report-header p { font-size: 15px; color: var(--muted); margin: 0; }
@@ -537,16 +625,52 @@ export default function FeedbackPage() {
         .moment-card-content h4 { margin: 0 0 8px; font-size: 16px; font-weight: 700; color: var(--text); }
         .moment-card-content p { margin: 0; font-size: 14px; color: var(--muted); }
 
-        .final-coaching p { font-size: 16px; line-height: 1.8; color: var(--text); }
+                 .final-coaching p { font-size: 16px; line-height: 1.8; color: var(--text); }
+         
+         .coaching-content { display: flex; flex-direction: column; gap: 24px; }
+         .coaching-summary h3 { font-size: 18px; font-weight: 700; margin: 0 0 12px; color: var(--text); }
+         .coaching-summary p { font-size: 16px; line-height: 1.7; color: var(--muted); margin: 0; }
+         
+         .coaching-details { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+         .coaching-section h4 { font-size: 16px; font-weight: 700; margin: 0 0 12px; color: var(--text); }
+         .coaching-section ul { margin: 0; padding-left: 20px; }
+         .coaching-section li { font-size: 14px; line-height: 1.6; color: var(--muted); margin-bottom: 8px; }
+         .coaching-section li:last-child { margin-bottom: 0; }
+         
+         .next-goals { display: flex; flex-direction: column; gap: 12px; }
+         .goal-item { display: flex; align-items: center; gap: 12px; }
+         .goal-number { width: 24px; height: 24px; background: var(--brand2); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+         .goal-text { font-size: 14px; color: var(--text); font-weight: 500; }
+         
+         .coaching-encouragement { display: flex; align-items: center; gap: 16px; padding: 20px; background: linear-gradient(135deg, rgba(166, 193, 238, 0.1), rgba(251, 194, 235, 0.1)); border-radius: var(--radius); border: 1px solid rgba(166, 193, 238, 0.2); }
+         .encouragement-icon { font-size: 32px; }
+         .coaching-encouragement p { font-size: 16px; line-height: 1.6; color: var(--text); margin: 0; font-weight: 500; }
+         
+         .user-dropdown { position: relative; }
+         .user-button { display: flex; align-items: center; gap: 8px; background: none; border: none; cursor: pointer; padding: 8px 12px; border-radius: var(--radius); transition: background-color .2s; }
+         .user-button:hover { background-color: rgba(0,0,0,0.05); }
+         .user-avatar { width: 24px; height: 24px; border-radius: 50%; }
+         .user-name { font-size: 14px; font-weight: 600; color: var(--text); }
+         .dropdown-arrow { transition: transform .2s; }
+         .user-button:hover .dropdown-arrow { transform: rotate(180deg); }
+         
+         .dropdown-menu { position: absolute; top: 100%; right: 0; background: white; border: 1px solid var(--stroke); border-radius: var(--radius); box-shadow: var(--shadow); min-width: 200px; z-index: 1000; margin-top: 8px; }
+         .plan-badge-header { padding: 12px 16px; border-bottom: 1px solid var(--stroke); }
+         .plan-type { display: inline-block; padding: 4px 8px; background: var(--brand2); color: white; border-radius: 4px; font-size: 12px; font-weight: 600; }
+         .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 12px 16px; text-decoration: none; color: var(--text); font-size: 14px; transition: background-color .2s; border: none; background: none; width: 100%; text-align: left; cursor: pointer; }
+         .dropdown-item:hover { background-color: rgba(0,0,0,0.05); }
+         .dropdown-item.logout { color: #e74c3c; }
+         .dropdown-item.logout:hover { background-color: rgba(231, 76, 60, 0.1); }
 
-        @media (max-width: 768px) {
-          .history-card { grid-template-columns: 1fr; }
-          .calendar-wrapper { border-right: none; padding-right: 0; }
-          .session-list-wrapper { border-top: 1px solid var(--stroke); padding-top: 20px; }
-          .summary-grid { grid-template-columns: 1fr; text-align: center; }
-          .detail-analysis-grid { grid-template-columns: 1fr; }
-          .key-moments-grid { grid-template-columns: 1fr; }
-        }
+                 @media (max-width: 768px) {
+           .history-card { grid-template-columns: 1fr; }
+           .calendar-wrapper { border-right: none; padding-right: 0; }
+           .session-list-wrapper { border-top: 1px solid var(--stroke); padding-top: 20px; }
+           .summary-grid { grid-template-columns: 1fr; text-align: center; }
+           .detail-analysis-grid { grid-template-columns: 1fr; }
+           .key-moments-grid { grid-template-columns: 1fr; }
+           .coaching-details { grid-template-columns: 1fr; }
+         }
       `}</style>
     </>
   );

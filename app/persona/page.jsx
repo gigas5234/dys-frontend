@@ -3,20 +3,10 @@
 import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getCurrentSession, restoreSessionFromUrl, signOut, supabase } from '../../lib/supabase';
+import personas from '../../data/personas.json';
 
-// 페르소나 데이터 -> 페르소나가 많아지면 서버에서 관리 
-const allPersonas = [
-    { gender: 'female', name: '이서아', age: 28, mbti: 'ENFP', job: '마케터', personality: ['활발함', '긍정적'], image: '/img/woman1_insta.webp' },
-    { gender: 'female', name: '김연진', age: 24, mbti: 'ESFJ', job: '대학생', personality: ['사교적', '다정함'], image: '/img/woman2_insta.webp' },
-    { gender: 'female', name: '이진아', age: 34, mbti: 'INFJ', job: '디자이너', personality: ['통찰력', '따뜻함'], image: '/img/woman3_insta.webp' },
-    { gender: 'female', name: '박지은', age: 29, mbti: 'ISFP', job: '상담사', personality: ['예술적', '온화함'], image: '/img/woman4_insta.webp' },
-    { gender: 'female', name: '최소희', age: 26, mbti: 'ESTP', job: '필라테스 강사', personality: ['에너제틱', '모험적'], image: '/img/woman5_insta.webp' },
-    { gender: 'male', name: '한승준', age: 31, mbti: 'ISTJ', job: '스타트업 대표', personality: ['논리적', '신중함'], image: '/img/man1_insta.webp' },
-    { gender: 'male', name: '박찬수', age: 29, mbti: 'ENTP', job: '개발자', personality: ['도전적', '창의적'], image: '/img/man2_insta.webp' },
-    { gender: 'male', name: '박도윤', age: 32, mbti: 'INTP', job: '연구원', personality: ['분석적', '지적 호기심'], image: '/img/man3_insta.webp' },
-    { gender: 'male', name: '강태오', age: 27, mbti: 'ESFP', job: '배우 지망생', personality: ['자유로운 영혼', '즉흥적'], image: '/img/man4_insta.webp' },
-    { gender: 'male', name: '서지훈', age: 30, mbti: 'ISFJ', job: '대학원생', personality: ['헌신적', '차분함'], image: '/img/man5_insta.webp' },
-];
+// 공통 페르소나 데이터 사용
+const allPersonas = personas;
 
 // 페르소나 카드 컴포넌트
 const PersonaCard = ({ persona, isSelected, onClick, isProfileCard = false }) => {
