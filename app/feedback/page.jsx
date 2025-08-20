@@ -94,6 +94,8 @@ export default function FeedbackPage() {
       if (session?.user) {
         setUser(session.user);
         setUserPlan(getUserPlan(session.user));
+        // 세팅 동기화: 세션 로드 직후 DB 설정도 불러와 플랜 배지를 정확히 반영
+        fetchUserSettingsFor(session.user.id);
       }
     };
     fetchUser();
@@ -106,23 +108,17 @@ export default function FeedbackPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 사용자 플랜 확인 함수
+  // 사용자 플랜 확인 함수 (auth 메타데이터 기준, 기본값 basic)
   const getUserPlan = (user) => {
     if (!user) return 'basic';
-    // user_metadata의 subscription_plan 또는 기본값으로 basic 반환
-    // 테스트용: 특정 이메일은 premium으로 설정
-    if (user.email === 'premium@test.com') {
-      return 'premium';
-    }
     return user.user_metadata?.subscription_plan || 'basic';
   };
 
-  // 실제 사용자 플랜 가져오기 (설정에서 가져온 데이터 우선)
+  // 실제 사용자 플랜 가져오기 (설정의 member_tier 우선, 그 다음 auth 메타데이터)
   const getActualUserPlan = () => {
-    if (userSettings?.member_tier) {
-      return userSettings.member_tier;
-    }
-    return userPlan;
+    if (userSettings?.member_tier) return userSettings.member_tier;
+    if (user?.user_metadata?.subscription_plan) return user.user_metadata.subscription_plan;
+    return 'basic';
   };
 
   // 로그아웃 처리
@@ -135,16 +131,17 @@ export default function FeedbackPage() {
     }
   };
 
-  // 사용자 설정 가져오기
-  const fetchUserSettings = async () => {
-    if (!user) return;
+  // 사용자 설정 가져오기 (명시적 사용자 ID 허용)
+  const fetchUserSettingsFor = async (userId) => {
+    const targetId = userId || user?.id;
+    if (!targetId) return;
     
     setIsLoadingSettings(true);
     try {
       const { data, error } = await supabase
         .from('users')
         .select('id, name, email, mbti, member_tier, cam_calibration')
-        .eq('id', user.id)
+        .eq('id', targetId)
         .single();
 
       if (error) throw error;
@@ -202,14 +199,14 @@ export default function FeedbackPage() {
   // 설정 모달이 열릴 때 사용자 설정 가져오기
   useEffect(() => {
     if (showSettingsModal && user) {
-      fetchUserSettings();
+      fetchUserSettingsFor();
     }
   }, [showSettingsModal, user]);
 
   // 사용자 정보가 로드되면 설정도 미리 로드
   useEffect(() => {
     if (user && !userSettings) {
-      fetchUserSettings();
+      fetchUserSettingsFor();
     }
   }, [user]);
 
@@ -509,7 +506,7 @@ export default function FeedbackPage() {
                    </a>
                    <button onClick={() => {
                      setShowSettingsModal(true);
-                     fetchUserSettings();
+                     fetchUserSettingsFor();
                    }} className="user-dropdown-item" role="menuitem">
                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                        <circle cx="12" cy="12" r="3"/>
