@@ -919,7 +919,7 @@ export default function FeedbackPage() {
          .calendar-day.today:not(.selected) .session-marker { background: var(--brand2); }
 
         .session-list-wrapper h3 { font-size: 18px; font-weight: 700; margin: 0 0 20px 0; color: var(--text); padding-left: 10px; }
-        .session-list-container { max-height: 300px; overflow-y: auto; padding-right: 5px; }
+        .session-list-container { max-height: 300px; overflow-y: auto; padding-right: 5px; padding-top: 8px; }
         .session-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: var(--radius); margin-bottom: 8px; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent; }
         .session-item:last-child { margin-bottom: 0; }
         .session-item:hover { background-color: var(--color-primary-light); transform: translateY(-1px); }
@@ -949,8 +949,10 @@ export default function FeedbackPage() {
         
         .score-overview { background: linear-gradient(135deg, rgba(166, 193, 238, 0.05), rgba(251, 194, 235, 0.05)); border: 1px solid rgba(166, 193, 238, 0.2); }
         .summary-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 32px; align-items: center; }
-        .score-circle { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 160px; height: 160px; margin: 0 auto; background: rgba(255, 255, 255, 0.9); border-radius: 50%; box-shadow: 0 8px 32px rgba(166, 193, 238, 0.3); position: relative; overflow: hidden; border: 3px solid rgba(166, 193, 238, 0.3); }
-        .score-fill { position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: linear-gradient(135deg, var(--brand2), var(--brand1)); transition: height 2s ease-out; border-radius: 50%; }
+        .score-circle { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 160px; height: 160px; margin: 0 auto; background: rgba(255, 255, 255, 0.95); border-radius: 50%; box-shadow: 0 8px 32px rgba(166, 193, 238, 0.3); position: relative; overflow: hidden; border: 3px solid rgba(166, 193, 238, 0.2); }
+        .score-fill { position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: linear-gradient(135deg, var(--brand2), var(--brand1)); transition: height 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); border-radius: 50% 50% 0 0; }
+        .score-fill::before { content: ''; position: absolute; top: -2px; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); border-radius: 50%; animation: wave 3s ease-in-out infinite; }
+        @keyframes wave { 0%, 100% { transform: translateX(-100%); } 50% { transform: translateX(100%); } }
         .score-value { font-size: 48px; font-weight: 900; color: var(--text); text-align: center; position: relative; z-index: 2; }
         .total-score .score-label { text-align: center; color: var(--text); font-weight: 600; margin-top: 4px; font-size: 14px; position: relative; z-index: 2; }
         
