@@ -434,6 +434,19 @@ export default function FeedbackPage() {
       if (scoreTextEl) {
         animateValue(scoreTextEl, 0, scoreValue, 2000);
       }
+      
+      // 매력 효과 활성화 (점수가 50 이상일 때)
+      const scoreCircle = totalScoreRef.current.parentElement;
+      if (scoreValue >= 50) {
+        scoreCircle.style.setProperty('--show-effects', '1');
+        // 하트 효과 활성화
+        const heartEffect = scoreCircle.querySelector('.score-fill::after');
+        if (heartEffect) {
+          heartEffect.style.animation = 'heartbeat 1.5s ease-in-out infinite';
+        }
+      } else {
+        scoreCircle.style.setProperty('--show-effects', '0');
+      }
     }
     if (aiSummaryRef.current) {
       aiSummaryRef.current.textContent = "자연스러운 미소와 적극적인 대화 참여로 긍정적인 분위기를 조성했습니다.";
@@ -952,7 +965,14 @@ export default function FeedbackPage() {
         .score-circle { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 160px; height: 160px; margin: 0 auto; background: rgba(255, 255, 255, 0.95); border-radius: 50%; box-shadow: 0 8px 32px rgba(166, 193, 238, 0.3); position: relative; overflow: hidden; border: 3px solid rgba(166, 193, 238, 0.2); }
         .score-fill { position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: linear-gradient(135deg, var(--brand2), var(--brand1)); transition: height 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); border-radius: 50% 50% 0 0; }
         .score-fill::before { content: ''; position: absolute; top: -2px; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); border-radius: 50%; animation: wave 3s ease-in-out infinite; }
+        .score-fill::after { content: '💖'; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 16px; animation: heartbeat 1.5s ease-in-out infinite; opacity: var(--show-effects, 0); }
+        .score-circle::before { content: '✨'; position: absolute; top: 20px; right: 20px; font-size: 14px; animation: sparkle 2s ease-in-out infinite; opacity: var(--show-effects, 0); }
+        .score-circle::after { content: '💫'; position: absolute; bottom: 30px; left: 25px; font-size: 12px; animation: sparkle 2.5s ease-in-out infinite 0.5s; opacity: var(--show-effects, 0); }
+        
         @keyframes wave { 0%, 100% { transform: translateX(-100%); } 50% { transform: translateX(100%); } }
+        @keyframes heartbeat { 0%, 100% { transform: translateX(-50%) scale(1); opacity: 0; } 50% { transform: translateX(-50%) scale(1.2); opacity: 1; } }
+        @keyframes sparkle { 0%, 100% { transform: scale(0) rotate(0deg); opacity: 0; } 50% { transform: scale(1) rotate(180deg); opacity: 1; } }
+        
         .score-value { font-size: 48px; font-weight: 900; color: var(--text); text-align: center; position: relative; z-index: 2; }
         .total-score .score-label { text-align: center; color: var(--text); font-weight: 600; margin-top: 4px; font-size: 14px; position: relative; z-index: 2; }
         
