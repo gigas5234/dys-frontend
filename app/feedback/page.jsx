@@ -333,35 +333,43 @@ export default function FeedbackPage() {
           </div>
                      <div className="header-right">
              <div className="user-dropdown">
-               <button className="user-button" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-                 <img src="/dys_logo.png" alt="프로필" className="user-avatar" />
+               <div className="plan-badge-header">
+                 <span className="plan-type basic">Basic</span>
+               </div>
+               <div
+                 className={`user-dropdown-toggle ${isDropdownOpen ? 'open' : ''}`}
+                 role="button"
+                 aria-haspopup="menu"
+                 aria-expanded={isDropdownOpen}
+                 aria-controls="user-menu"
+                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+               >
+                 <img
+                   src="https://placehold.co/32x32/e0e8ff/7d7d7d?text=U"
+                   alt="프로필"
+                   className="user-avatar"
+                 />
                  <span className="user-name">사용자</span>
-                 <svg className="dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                   <path d="M6 9l6 6 6-6"/>
+                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                   <polyline points="6,9 12,15 18,9"></polyline>
                  </svg>
-               </button>
-               {isDropdownOpen && (
-                 <div className="dropdown-menu">
-                   <div className="plan-badge-header">
-                     <span className="plan-type basic">Basic</span>
-                   </div>
-                   <a href="/settings" className="dropdown-item">
-                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                       <circle cx="12" cy="12" r="3"/>
-                       <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                     </svg>
-                     설정
-                   </a>
-                   <button className="dropdown-item logout" onClick={() => {}}>
-                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                       <polyline points="16,17 21,12 16,7"/>
-                       <line x1="21" y1="12" x2="9" y2="12"/>
-                     </svg>
-                     로그아웃
-                   </button>
-                 </div>
-               )}
+               </div>
+               <div id="user-menu" className={`user-dropdown-menu ${isDropdownOpen ? 'open' : ''}`} role="menu">
+                 <a href="/persona" className="user-dropdown-item" role="menuitem">
+                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                   </svg>
+                   시작하기
+                 </a>
+                 <button className="user-dropdown-item logout" role="menuitem">
+                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                     <polyline points="16,17 21,12 16,7"></polyline>
+                     <line x1="21" y1="12" x2="9" y2="12"></line>
+                   </svg>
+                   로그아웃
+                 </button>
+               </div>
              </div>
            </div>
         </div>
@@ -379,10 +387,7 @@ export default function FeedbackPage() {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h10"/></svg>
               피드백 리포트
             </a>
-            <a href="/settings">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-              설정
-            </a>
+            
           </nav>
         </aside>
 
@@ -582,7 +587,9 @@ export default function FeedbackPage() {
         .session-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: var(--radius); margin-bottom: 8px; cursor: pointer; transition: background-color .2s; }
         .session-item:last-child { margin-bottom: 0; }
         .session-item:hover { background-color: var(--color-primary-light); }
-        .session-item.active { background-color: var(--color-primary-light); box-shadow: 0 0 0 2px var(--color-primary) inset; }
+                 .session-item.active { background-color: var(--brand2); color: white; }
+         .session-item.active .session-info h4 { color: white; }
+         .session-item.active .session-info p { color: rgba(255,255,255,0.8); }
         .session-item img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
         .session-info h4 { margin: 0; font-size: 14px; font-weight: 700; color: var(--text); }
         .session-info p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
@@ -646,21 +653,23 @@ export default function FeedbackPage() {
          .encouragement-icon { font-size: 32px; }
          .coaching-encouragement p { font-size: 16px; line-height: 1.6; color: var(--text); margin: 0; font-weight: 500; }
          
-         .user-dropdown { position: relative; }
-         .user-button { display: flex; align-items: center; gap: 8px; background: none; border: none; cursor: pointer; padding: 8px 12px; border-radius: var(--radius); transition: background-color .2s; }
-         .user-button:hover { background-color: rgba(0,0,0,0.05); }
-         .user-avatar { width: 24px; height: 24px; border-radius: 50%; }
-         .user-name { font-size: 14px; font-weight: 600; color: var(--text); }
-         .dropdown-arrow { transition: transform .2s; }
-         .user-button:hover .dropdown-arrow { transform: rotate(180deg); }
-         
-         .dropdown-menu { position: absolute; top: 100%; right: 0; background: white; border: 1px solid var(--stroke); border-radius: var(--radius); box-shadow: var(--shadow); min-width: 200px; z-index: 1000; margin-top: 8px; }
-         .plan-badge-header { padding: 12px 16px; border-bottom: 1px solid var(--stroke); }
-         .plan-type { display: inline-block; padding: 4px 8px; background: var(--brand2); color: white; border-radius: 4px; font-size: 12px; font-weight: 600; }
-         .dropdown-item { display: flex; align-items: center; gap: 8px; padding: 12px 16px; text-decoration: none; color: var(--text); font-size: 14px; transition: background-color .2s; border: none; background: none; width: 100%; text-align: left; cursor: pointer; }
-         .dropdown-item:hover { background-color: rgba(0,0,0,0.05); }
-         .dropdown-item.logout { color: #e74c3c; }
-         .dropdown-item.logout:hover { background-color: rgba(231, 76, 60, 0.1); }
+                   .user-dropdown { position: relative; }
+          .plan-badge-header { margin-bottom: 8px; }
+          .plan-type { display: inline-block; padding: 4px 8px; background: var(--brand2); color: white; border-radius: 4px; font-size: 12px; font-weight: 600; }
+          
+          .user-dropdown-toggle { display: flex; align-items: center; gap: 8px; background: none; border: none; cursor: pointer; padding: 8px 12px; border-radius: var(--radius); transition: background-color .2s; }
+          .user-dropdown-toggle:hover { background-color: rgba(0,0,0,0.05); }
+          .user-dropdown-toggle.open { background-color: rgba(0,0,0,0.05); }
+          .user-avatar { width: 24px; height: 24px; border-radius: 50%; }
+          .user-name { font-size: 14px; font-weight: 600; color: var(--text); }
+          
+          .user-dropdown-menu { position: absolute; top: 100%; right: 0; background: white; border: 1px solid var(--stroke); border-radius: var(--radius); box-shadow: var(--shadow); min-width: 200px; z-index: 1000; margin-top: 8px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all .2s; }
+          .user-dropdown-menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
+          
+          .user-dropdown-item { display: flex; align-items: center; gap: 8px; padding: 12px 16px; text-decoration: none; color: var(--text); font-size: 14px; transition: background-color .2s; border: none; background: none; width: 100%; text-align: left; cursor: pointer; }
+          .user-dropdown-item:hover { background-color: rgba(0,0,0,0.05); }
+          .user-dropdown-item.logout { color: #e74c3c; }
+          .user-dropdown-item.logout:hover { background-color: rgba(231, 76, 60, 0.1); }
 
                  @media (max-width: 768px) {
            .history-card { grid-template-columns: 1fr; }
