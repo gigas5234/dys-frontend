@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Chart from "chart.js/auto";
 import personas from "../../data/personas.json";
-import { getCurrentSession } from "../../lib/supabase";
+import { getCurrentSession, supabase } from "../../lib/supabase";
 
 export default function FeedbackPage() {
   const calendarBodyRef = useRef(null);
@@ -20,6 +20,9 @@ export default function FeedbackPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [userSettings, setUserSettings] = useState(null);
+  const [isLoadingSettings, setIsLoadingSettings] = useState(false);
   const radarChartRef = useRef(null);
 
   // 공통 persona 데이터 사용
@@ -52,14 +55,22 @@ export default function FeedbackPage() {
   });
 
   const coachingHistory = [
-    { date: "2025-08-18", partnerId: 1, report: generateRandomReport() },
-    { date: "2025-08-20", partnerId: 2, report: generateRandomReport() },
-    { date: "2025-08-20", partnerId: 7, report: generateRandomReport() },
-    { date: "2025-08-21", partnerId: 3, report: generateRandomReport() },
-    { date: "2025-08-22", partnerId: 6, report: generateRandomReport() },
+    { date: "2025-08-15", partnerId: 1, report: generateRandomReport() },
+    { date: "2025-08-16", partnerId: 2, report: generateRandomReport() },
+    { date: "2025-08-17", partnerId: 3, report: generateRandomReport() },
+    { date: "2025-08-18", partnerId: 4, report: generateRandomReport() },
+    { date: "2025-08-19", partnerId: 5, report: generateRandomReport() },
+    { date: "2025-08-20", partnerId: 6, report: generateRandomReport() },
+    { date: "2025-08-21", partnerId: 7, report: generateRandomReport() },
     { date: "2025-08-22", partnerId: 8, report: generateRandomReport() },
-    { date: "2025-08-23", partnerId: 4, report: generateRandomReport() },
-    { date: "2025-08-23", partnerId: 9, report: generateRandomReport() }
+    { date: "2025-08-23", partnerId: 9, report: generateRandomReport() },
+    { date: "2025-08-24", partnerId: 1, report: generateRandomReport() },
+    { date: "2025-08-25", partnerId: 2, report: generateRandomReport() },
+    { date: "2025-08-26", partnerId: 3, report: generateRandomReport() },
+    { date: "2025-08-27", partnerId: 4, report: generateRandomReport() },
+    { date: "2025-08-28", partnerId: 5, report: generateRandomReport() },
+    { date: "2025-08-29", partnerId: 6, report: generateRandomReport() },
+    { date: "2025-08-30", partnerId: 7, report: generateRandomReport() }
   ];
 
   useEffect(() => {
@@ -79,6 +90,72 @@ export default function FeedbackPage() {
     renderCalendar(today);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // 사용자 설정 가져오기
+  const fetchUserSettings = async () => {
+    if (!user) return;
+    
+    setIsLoadingSettings(true);
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('id, name, email, mbti, member_tier, cam_calibration')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+      setUserSettings(data);
+    } catch (error) {
+      console.error('설정 로드 오류:', error);
+    } finally {
+      setIsLoadingSettings(false);
+    }
+  };
+
+  // MBTI 업데이트
+  const updateMBTI = async (newMBTI) => {
+    if (!user) return;
+    
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ mbti: newMBTI })
+        .eq('id', user.id);
+
+      if (error) throw error;
+      
+      // 로컬 상태 업데이트
+      setUserSettings(prev => prev ? { ...prev, mbti: newMBTI } : null);
+    } catch (error) {
+      console.error('MBTI 업데이트 오류:', error);
+    }
+  };
+
+  // 캠 캘리브레이션 삭제
+  const deleteCamCalibration = async () => {
+    if (!user) return;
+    
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ cam_calibration: false })
+        .eq('id', user.id);
+
+      if (error) throw error;
+      
+      // 로컬 상태 업데이트
+      setUserSettings(prev => prev ? { ...prev, cam_calibration: false } : null);
+    } catch (error) {
+      console.error('캠 캘리브레이션 삭제 오류:', error);
+    }
+  };
+
+  // 설정 모달이 열릴 때 사용자 설정 가져오기
+  useEffect(() => {
+    if (showSettingsModal && user) {
+      fetchUserSettings();
+    }
+  }, [showSettingsModal, user]);
 
   const renderCalendar = (dateObj) => {
     if (!calendarBodyRef.current || !currentMonthRef.current) return;
@@ -260,13 +337,17 @@ export default function FeedbackPage() {
     const container = speechBubbleContainerRef.current;
     container.querySelectorAll(".speech-bubble").forEach((el) => el.remove());
     const totalDuration = 150;
+    const containerWidth = container.offsetWidth - 20; // 패딩 10px * 2 고려
     segments.forEach((seg) => {
       const bubble = document.createElement("div");
       bubble.className = "speech-bubble";
       const size = 20 + seg.duration * 3;
       bubble.style.width = `${size}px`;
       bubble.style.height = `${size}px`;
-      bubble.style.left = `${(seg.time / totalDuration) * 100}%`;
+      
+      // 회색박스 안에서만 배치되도록 계산
+      const position = (seg.time / totalDuration) * containerWidth;
+      bubble.style.left = `${Math.max(10, Math.min(position, containerWidth - size + 10))}px`;
       bubble.style.opacity = String(0.5 + (seg.energy - 50) / 100);
 
       const tooltip = document.createElement("div");
@@ -367,13 +448,20 @@ export default function FeedbackPage() {
                    </svg>
                    시작하기
                  </a>
-                 <a href="/settings" className="user-dropdown-item" role="menuitem">
+                 <button 
+                   className="user-dropdown-item" 
+                   role="menuitem"
+                   onClick={() => {
+                     setShowSettingsModal(true);
+                     setIsDropdownOpen(false);
+                   }}
+                 >
                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                      <circle cx="12" cy="12" r="3"/>
                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                    </svg>
                    설정
-                 </a>
+                 </button>
                  <button className="user-dropdown-item logout" role="menuitem">
                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -402,13 +490,10 @@ export default function FeedbackPage() {
             </a>
             <a href="/feedback" className="active">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14,2 14,8 20,8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-                <polyline points="10,9 9,9 8,9"/>
+                <path d="M12 20h9"/>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
               </svg>
-              피드백 리포트
+              피드백
             </a>
           </nav>
         </aside>
@@ -588,6 +673,106 @@ export default function FeedbackPage() {
         </main>
       </div>
 
+      {/* 설정 모달 */}
+      {showSettingsModal && (
+        <div className="modal-overlay" role="dialog" aria-modal="true">
+          <div className="modal-card settings-modal">
+            <div className="modal-header">
+              <h3>설정</h3>
+              <button className="modal-close" aria-label="닫기" onClick={() => setShowSettingsModal(false)}>×</button>
+            </div>
+            <div className="modal-body">
+              {isLoadingSettings ? (
+                <div className="settings-loading">
+                  <div className="loading-spinner"></div>
+                  <p>설정을 불러오는 중...</p>
+                </div>
+              ) : userSettings ? (
+                <div className="settings-content">
+                  <div className="setting-group">
+                    <label className="setting-label">이름</label>
+                    <div className="setting-value">
+                      {user?.user_metadata?.full_name || '이름 없음'}
+                    </div>
+                  </div>
+                  
+                  <div className="setting-group">
+                    <label className="setting-label">이메일</label>
+                    <div className="setting-value">
+                      {user?.email || '이메일 없음'}
+                    </div>
+                  </div>
+                  
+                  <div className="setting-group">
+                    <label className="setting-label">MBTI</label>
+                    <select 
+                      className="setting-input"
+                      value={userSettings.mbti || ''}
+                      onChange={(e) => updateMBTI(e.target.value)}
+                    >
+                      <option value="">MBTI를 선택하세요</option>
+                      <option value="INTJ">INTJ</option>
+                      <option value="INTP">INTP</option>
+                      <option value="ENTJ">ENTJ</option>
+                      <option value="ENTP">ENTP</option>
+                      <option value="INFJ">INFJ</option>
+                      <option value="INFP">INFP</option>
+                      <option value="ENFJ">ENFJ</option>
+                      <option value="ENFP">ENFP</option>
+                      <option value="ISTJ">ISTJ</option>
+                      <option value="ISFJ">ISFJ</option>
+                      <option value="ESTJ">ESTJ</option>
+                      <option value="ESFJ">ESFJ</option>
+                      <option value="ISTP">ISTP</option>
+                      <option value="ISFP">ISFP</option>
+                      <option value="ESTP">ESTP</option>
+                      <option value="ESFP">ESFP</option>
+                    </select>
+                  </div>
+                  
+                  <div className="setting-group">
+                    <label className="setting-label">캠 캘리브레이션</label>
+                    <div className="setting-value">
+                      {userSettings.cam_calibration ? (
+                        <div className="calibration-status">
+                          <span className="status-success">✅ 완료</span>
+                          <button 
+                            className="btn-delete-calibration"
+                            onClick={deleteCamCalibration}
+                          >
+                            삭제
+                          </button>
+                        </div>
+                      ) : (
+                        <span className="status-pending">⏳ 미완료</span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="setting-group">
+                    <label className="setting-label">멤버십</label>
+                    <div className="setting-value">
+                      <span className={`membership-badge ${userSettings.member_tier || 'basic'}`}>
+                        {userSettings.member_tier === 'premium' ? 'Premium' : 'Basic'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="settings-error">
+                  <p>설정을 불러올 수 없습니다.</p>
+                </div>
+              )}
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-primary" onClick={() => setShowSettingsModal(false)}>
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <style jsx global>{`
         .history-card { padding: 20px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; }
         .calendar-wrapper { padding-right: 20px; border-right: 1px solid var(--stroke); }
@@ -642,7 +827,7 @@ export default function FeedbackPage() {
 
                  .speech-bubble-chart-container { margin-top: 32px; position: relative; width: 100%; height: 120px; background: rgba(0,0,0,0.03); border-radius: var(--radius); padding: 10px; border: 1px solid var(--stroke); }
          .speech-bubble-chart-container h4 { margin: 0 0 12px; font-size: 14px; font-weight: 600; color: var(--muted); text-align: center; position: absolute; top: -35px; width: 100%; left: 0; }
-        .speech-bubble { position: absolute; bottom: 10px; background: var(--brand2); border-radius: 50%; transform: translateX(-50%); transition: all .5s ease-out; cursor: pointer; }
+                 .speech-bubble { position: absolute; bottom: 10px; background: var(--brand2); border-radius: 50%; transform: translateX(-50%); transition: all .5s ease-out; cursor: pointer; }
         .speech-bubble:hover { transform: translateX(-50%) scale(1.1); }
         .tooltip { position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 6px 10px; border-radius: 6px; font-size: 12px; white-space: nowrap; opacity: 0; visibility: hidden; transition: opacity .2s, visibility .2s; pointer-events: none; }
         .speech-bubble:hover .tooltip { opacity: 1; visibility: visible; }
