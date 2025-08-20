@@ -1,4 +1,5 @@
 import './globals.css';
+import TokenExpiryChecker from './components/TokenExpiryChecker';
 
 export const metadata = {
     title: "데연소 — 데이트 연습소, AI 피드백 대시보드",
@@ -31,6 +32,7 @@ export const metadata = {
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
       <body>
+        <TokenExpiryChecker />
         {children}
       </body>
     </html>

@@ -2168,15 +2168,21 @@ section[id] {
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 4px;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--muted);
+    gap: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--brand1);
+    transition: all 0.2s ease;
+}
+
+.phone-header .back-button:hover {
+    color: var(--brand2);
+    transform: translateX(-2px);
 }
 
 .phone-header .back-button svg { 
-    width: 20px; 
-    height: 20px; 
+    width: 22px; 
+    height: 22px; 
 }
 
 .phone-header .name { 
