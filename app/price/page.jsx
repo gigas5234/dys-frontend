@@ -33,7 +33,7 @@ function PricePage() {
     try {
       const { data, error } = await supabase
         .from('users')
-        .select('id, name, email, mbti, member_tier, cam_calibration')
+        .select('id, name, mbti, member_tier, cam_calibration')
         .eq('id', userId)
         .single();
 

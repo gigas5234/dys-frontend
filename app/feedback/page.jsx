@@ -95,7 +95,7 @@ export default function FeedbackPage() {
         setUser(session.user);
         setUserPlan(getUserPlan(session.user));
         // 세팅 동기화: 세션 로드 직후 DB 설정도 불러와 플랜 배지를 정확히 반영
-        fetchUserSettingsFor(session.user.id);
+        fetchUserSettings(session.user.id);
       }
     };
     fetchUser();
@@ -132,16 +132,15 @@ export default function FeedbackPage() {
   };
 
   // 사용자 설정 가져오기 (명시적 사용자 ID 허용)
-  const fetchUserSettingsFor = async (userId) => {
-    const targetId = userId || user?.id;
-    if (!targetId) return;
+  const fetchUserSettings = async (userId) => {
+    if (!userId) return;
     
     setIsLoadingSettings(true);
     try {
       const { data, error } = await supabase
         .from('users')
-        .select('id, name, email, mbti, member_tier, cam_calibration')
-        .eq('id', targetId)
+        .select('id, name, mbti, member_tier, cam_calibration')
+        .eq('id', userId)
         .single();
 
       if (error) throw error;
@@ -152,7 +151,7 @@ export default function FeedbackPage() {
         setUserPlan(data.member_tier);
       }
     } catch (error) {
-      console.error('설정 로드 오류:', error);
+      console.error('Error fetching user settings:', error);
     } finally {
       setIsLoadingSettings(false);
     }
@@ -199,14 +198,14 @@ export default function FeedbackPage() {
   // 설정 모달이 열릴 때 사용자 설정 가져오기
   useEffect(() => {
     if (showSettingsModal && user) {
-      fetchUserSettingsFor();
+      fetchUserSettings(user.id);
     }
   }, [showSettingsModal, user]);
 
   // 사용자 정보가 로드되면 설정도 미리 로드
   useEffect(() => {
     if (user && !userSettings) {
-      fetchUserSettingsFor();
+      fetchUserSettings(user.id);
     }
   }, [user]);
 
@@ -510,7 +509,7 @@ export default function FeedbackPage() {
                    </a>
                    <button onClick={() => {
                      setShowSettingsModal(true);
-                     fetchUserSettingsFor();
+                     fetchUserSettings(user.id);
                    }} className="user-dropdown-item" role="menuitem">
                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                        <circle cx="12" cy="12" r="3"/>
