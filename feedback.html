@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>데연소 AI 코칭 분석 리포트 (디자인 개선)</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+    :root {
+      --bg: #f7f8fc;
+      --glass: rgba(255, 255, 255, 0.5);
+      --stroke: rgba(0, 0, 0, 0.1);
+      --shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+      --text: #2c3e50;
+      --muted: rgba(44, 62, 80, 0.6);
+      --brand1: #fbc2eb;
+      --brand2: #a6c1ee;
+      --brand3: #e6b3ff;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      
+      --color-primary: #a6c1ee;
+      --color-primary-light: rgba(166, 193, 238, 0.15);
+      --color-positive: #28A745;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Pretendard', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    
+    body::before {
+        content: '';
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 70vw;
+        height: 70vh;
+        min-width: 800px;
+        min-height: 800px;
+        background: radial-gradient(circle, var(--brand1) 0%, var(--brand2) 50%, var(--brand3) 100%);
+        opacity: 0.15;
+        filter: blur(120px);
+        transform-origin: center;
+        animation: backgroundHighlight 25s ease-in-out infinite alternate;
+        z-index: -1;
+    }
+
+    @keyframes backgroundHighlight {
+        0% { transform: translate(-20%, -20%) rotate(0deg) scale(1.2); }
+        100% { transform: translate(20%, 20%) rotate(360deg) scale(1.4); }
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .card {
+      background-color: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--stroke);
+      padding: 28px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.7s ease-out forwards;
+    }
+    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+    /* --- 캘린더 & 세션 목록 통합 --- */
+    .history-card {
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 20px;
+    }
+    .calendar-wrapper {
+        padding-right: 20px;
+        border-right: 1px solid var(--stroke);
+    }
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 0 10px;
+    }
+    .calendar-header h2 {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0;
+        color: var(--text);
+    }
+    .calendar-nav button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        color: var(--muted);
+    }
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+        text-align: center;
+    }
+    .calendar-grid div {
+        padding: 8px 4px;
+        font-size: 14px;
+        position: relative;
+    }
+    .calendar-day-name {
+        font-weight: 600;
+        color: var(--muted);
+        font-size: 12px;
+    }
+    .calendar-day {
+        cursor: pointer;
+        border-radius: 50%;
+        transition: background-color 0.2s, color 0.2s;
+        border: 2px solid transparent;
+    }
+    .calendar-day.other-month {
+        color: var(--muted);
+    }
+    .calendar-day.today {
+        font-weight: 700;
+        border-color: var(--color-primary);
+        color: var(--color-primary);
+    }
+    .calendar-day.selected {
+        background-color: var(--color-primary);
+        color: white;
+        border-color: var(--color-primary);
+    }
+    .calendar-day:not(.selected):hover {
+        background-color: rgba(0,0,0,0.05);
+    }
+    .session-markers {
+        position: absolute;
+        bottom: 4px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 3px;
+    }
+    .session-marker {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background-color: var(--color-primary);
+    }
+    .calendar-day.selected .session-marker {
+        background-color: white;
+    }
+    .calendar-day.today:not(.selected) .session-marker {
+        background-color: var(--color-primary);
+    }
+
+    .session-list-wrapper h3 {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0 0 20px 0;
+        color: var(--text);
+        padding-left: 10px;
+    }
+    .session-list-container {
+        max-height: 300px;
+        overflow-y: auto;
+        padding-right: 5px;
+    }
+    .session-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 12px;
+        border-radius: var(--radius-md);
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    .session-item:last-child {
+        margin-bottom: 0;
+    }
+    .session-item:hover {
+        background-color: var(--color-primary-light);
+    }
+    .session-item.active {
+        background-color: var(--color-primary-light);
+        box-shadow: 0 0 0 2px var(--color-primary) inset;
+    }
+    .session-item img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .session-info h4 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+    }
+    .session-info p {
+        margin: 2px 0 0;
+        font-size: 13px;
+        color: var(--muted);
+    }
+    .session-info .session-trial {
+        font-weight: 600;
+        color: var(--color-primary);
+    }
+
+    .report-header { text-align: center; margin-bottom: 0; }
+    .report-header h1 { font-size: 32px; font-weight: 800; margin: 0 0 8px; color: var(--text); }
+    .report-header p { font-size: 16px; color: var(--muted); margin: 0; }
+    .report-header .date { font-size: 14px; color: var(--muted); margin-top: 4px; }
+
+    .summary-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 28px; align-items: center; }
+    .total-score .score-value { font-size: 72px; font-weight: 900; color: var(--text); text-align: center; }
+    .total-score .score-label { text-align: center; color: var(--muted); font-weight: 500; margin-top: -10px; }
+    .ai-comment h3 { margin: 0 0 12px; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: var(--text); }
+    .ai-comment p { margin: 0; font-size: 15px; line-height: 1.7; color: var(--muted); }
+
+    .section-title { font-size: 24px; font-weight: 700; margin: 0 0 24px; padding-bottom: 12px; border-bottom: 1px solid var(--stroke); color: var(--text); }
+    
+    .chart-container { width: 100%; max-width: 450px; margin: 0 auto; }
+    
+    .detail-analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .metric-item {
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .metric-header { display: flex; justify-content: space-between; align-items: baseline; }
+    .metric-header .label { font-size: 16px; font-weight: 600; color: var(--muted); }
+    .metric-header .value { font-size: 22px; font-weight: 700; color: var(--text); }
+    .metric-header .value .unit { font-size: 15px; font-weight: 500; color: var(--muted); margin-left: 2px; }
+    .progress-bar { width: 100%; height: 8px; background-color: var(--stroke); border-radius: 4px; overflow: hidden; }
+    .progress-bar-inner { height: 100%; width: 0%; background-color: var(--color-primary); border-radius: 4px; transition: width 1s ease-out; }
+    .metric-insight { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    .speech-bubble-chart-container {
+        margin-top: 32px;
+        position: relative;
+        width: 100%;
+        height: 120px;
+        background-color: rgba(0,0,0,0.03);
+        border-radius: var(--radius-md);
+        padding: 10px;
+        border: 1px solid var(--stroke);
+    }
+    .speech-bubble-chart-container h4 { margin: 0 0 12px; font-size: 16px; font-weight: 600; color: var(--muted); text-align: center; position: absolute; top: -35px; width: 100%; left: 0;}
+    .speech-bubble {
+        position: absolute;
+        bottom: 10px;
+        background-color: var(--color-primary);
+        border-radius: 50%;
+        transform: translateX(-50%);
+        transition: all 0.5s ease-out;
+        cursor: pointer;
+    }
+    .speech-bubble:hover {
+        transform: translateX(-50%) scale(1.1);
+    }
+    .tooltip {
+        position: absolute;
+        bottom: 110%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--text);
+        color: var(--bg);
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s, visibility 0.2s;
+        pointer-events: none;
+    }
+    .speech-bubble:hover .tooltip {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .key-moments-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .moment-card { border: 1px solid var(--stroke); border-radius: var(--radius-md); overflow: hidden; background: white; }
+    .moment-card img { width: 100%; height: 180px; object-fit: cover; background-color: #eee; }
+    .moment-card-content { padding: 16px; }
+    .moment-card-content h4 { margin: 0 0 8px; font-size: 16px; font-weight: 700; color: var(--text); }
+    .moment-card-content p { margin: 0; font-size: 14px; color: var(--muted); }
+
+    .final-coaching { background: linear-gradient(135deg, var(--color-primary-light), rgba(255,255,255,0.2)); }
+    .final-coaching p { font-size: 16px; line-height: 1.8; color: var(--text); }
+    .final-coaching strong { color: var(--text); font-weight: 700; }
+
+    .report-actions { display: flex; gap: 16px; justify-content: center; margin-top: 10px; }
+    .action-btn {
+      border: none; border-radius: var(--radius-md); padding: 14px 28px;
+      font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s ease;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--brand2), var(--brand1)); color: white; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(166, 193, 238, 0.4); }
+    .btn-secondary { background-color: var(--glass); color: var(--text); border: 1px solid var(--stroke); }
+    .btn-secondary:hover { background-color: rgba(255,255,255,0.9); }
+
+    @media (max-width: 768px) {
+      .history-card { grid-template-columns: 1fr; }
+      .calendar-wrapper { border-right: none; padding-right: 0; }
+      .session-list-wrapper { border-top: 1px solid var(--stroke); padding-top: 20px; }
+      .summary-grid { grid-template-columns: 1fr; text-align: center; }
+      .detail-analysis-grid { grid-template-columns: 1fr; }
+      .key-moments-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="report-header">
+      <h1>AI 코칭 히스토리</h1>
+      <p>캘린더에서 날짜를 선택하여 과거의 분석 리포트를 확인해보세요.</p>
+    </header>
+
+    <div class="history-card card">
+        <div class="calendar-wrapper">
+            <div class="calendar-header">
+                <button id="prev-month">‹</button>
+                <h2 id="current-month"></h2>
+                <button id="next-month">›</button>
+            </div>
+            <div class="calendar-grid" id="calendar-body">
+                <!-- Calendar days will be injected here -->
+            </div>
+        </div>
+        <div class="session-list-wrapper">
+            <h3 id="session-list-title">세션 목록</h3>
+            <div class="session-list-container" id="session-list">
+                <!-- Session items will be injected here -->
+            </div>
+        </div>
+    </div>
+    
+    <div id="report-content" style="display: none;">
+        <section class="card">
+          <div class="summary-grid">
+            <div class="total-score">
+              <div class="score-value" id="total-score" data-value="0">0</div>
+              <div class="score-label">종합 매력 점수</div>
+            </div>
+            <div class="ai-comment">
+              <h3>💡 코치의 한마디</h3>
+              <p id="ai-summary"></p>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" style="animation-delay: 0.1s;">
+          <h2 class="section-title">매력 지수 요약</h2>
+          <div class="chart-container">
+            <canvas id="radarChart"></canvas>
+          </div>
+        </section>
+        
+        <section class="card" style="animation-delay: 0.2s;">
+            <h2 class="section-title">✨ 최고의 순간</h2>
+            <div class="key-moments-grid">
+                <div class="moment-card">
+                    <img src="https://placehold.co/400x220/E9EFFF/4A72FF?text=Best+Smile" alt="최고의 미소 순간">
+                    <div class="moment-card-content">
+                        <h4>최고의 미소 순간</h4>
+                        <p>대화 시작 1분 25초 경, 자연스러운 미소로 긍정적인 분위기를 만들었어요.</p>
+                    </div>
+                </div>
+                <div class="moment-card">
+                    <img src="https://placehold.co/400x220/E4F6E7/28A745?text=Good+Posture" alt="이상적인 자세">
+                    <div class="moment-card-content">
+                        <h4>이상적인 자세</h4>
+                        <p>상대방의 이야기에 귀 기울일 때, 안정적이고 신뢰감 있는 자세를 보여주었어요.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card" style="animation-delay: 0.3s;">
+          <h2 class="section-title">🤸 자세 & 표정 분석</h2>
+          <div class="detail-analysis-grid">
+            <div class="metric-item">
+              <div class="metric-header">
+                <span class="label">시선 안정성</span>
+                <span class="value" data-value="0">0<span class="unit">%</span></span>
+              </div>
+              <div class="progress-bar"><div class="progress-bar-inner" data-value="0" style="background-color: var(--color-positive);"></div></div>
+              <div class="metric-insight">상대방의 눈을 편안하게 바라보았어요.</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-header">
+                <span class="label">긍정적 표정</span>
+                <span class="value" data-value="0">0<span class="unit">%</span></span>
+              </div>
+              <div class="progress-bar"><div class="progress-bar-inner" data-value="0" style="background-color: var(--color-positive);"></div></div>
+              <div class="metric-insight">밝은 표정이 대화 분위기를 이끌었어요.</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-header">
+                <span class="label">자세 안정성</span>
+                <span class="value" data-value="0">0<span class="unit">%</span></span>
+              </div>
+              <div class="progress-bar"><div class="progress-bar-inner" data-value="0"></div></div>
+              <div class="metric-insight">대부분 안정적이었으나, 가끔 움직임이 있었어요.</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-header">
+                <span class="label">평균 미소 유지</span>
+                <span class="value" data-value="0">0<span class="unit">초</span></span>
+              </div>
+              <div class="progress-bar"><div class="progress-bar-inner" data-value="0" style="background-color: var(--color-positive);"></div></div>
+              <div class="metric-insight">자연스러운 미소로 호감을 주었어요.</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" style="animation-delay: 0.4s;">
+          <h2 class="section-title">🎤 음성 & 대화 분석</h2>
+          <div class="detail-analysis-grid">
+            <div class="metric-item">
+              <div class="metric-header">
+                <span class="label">목소리 자신감</span>
+                <span class="value" data-value="0">0<span class="unit">점</span></span>
+              </div>
+              <div class="progress-bar"><div class="progress-bar-inner" data-value="0"></div></div>
+              <div class="metric-insight">조금 더 힘 있는 목소리가 전달력을 높여요.</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-header">
+                <span class="label">발표 속도</span>
+                <span class="value" data-value="0">0<span class="unit">SPM</span></span>
+              </div>
+              <div class="progress-bar"><div class="progress-bar-inner" data-value="0" style="background-color: var(--color-positive);"></div></div>
+              <div class="metric-insight">듣기 편안한 이상적인 속도입니다.</div>
+            </div>
+          </div>
+           <div class="speech-bubble-chart-container" id="speechBubbleChart">
+            <h4>발화 구간별 목소리 자신감</h4>
+           </div>
+        </section>
+
+        <section class="card final-coaching" style="animation-delay: 0.5s;">
+          <h2 class="section-title">💌 AI 종합 코칭</h2>
+          <p id="final-coaching-text"></p>
+        </section>
+        
+        <div class="report-actions">
+            <button class="action-btn btn-secondary">리포트 저장하기</button>
+            <button class="action-btn btn-primary">다시 코칭하기</button>
+        </div>
+    </div>
+  </div>
+
+  <script>
+    const aiPartners = [
+        { id: 1, gender: 'female', name: '김세아', age: 28, mbti: 'ENFP', job: '마케터', personality: ['활발함', '긍정적'], image: 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+        { id: 2, gender: 'female', name: '박서진', age: 25, mbti: 'ESFJ', job: '대학생', personality: ['사교적', '다정함'], image: 'https://images.pexels.com/photos/1181519/pexels-photo-1181519.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+        { id: 3, gender: 'female', name: '최유나', age: 34, mbti: 'INFJ', job: '상담사', personality: ['통찰력', '따뜻함'], image: 'https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+        { id: 4, gender: 'male', name: '이준영', age: 31, mbti: 'ISTJ', job: '개발자', personality: ['논리적', '신중함'], image: 'https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+        { id: 5, gender: 'male', name: '정현우', age: 29, mbti: 'ENTP', job: '스타트업 대표', personality: ['도전적', '창의적'], image: 'https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+    ];
+
+    // Generate random report data for demonstration
+    const generateRandomReport = () => ({
+        totalScore: 70 + Math.floor(Math.random() * 25), // 70-94
+        radar: { labels: ['시선', '표정', '자세', '목소리', '속도', '대화'], score: Array.from({length: 6}, () => 60 + Math.floor(Math.random() * 40)) },
+        posture: { gaze: 60 + Math.floor(Math.random() * 40), expression: 60 + Math.floor(Math.random() * 40), stability: 60 + Math.floor(Math.random() * 40), smileDuration: (1.5 + Math.random() * 2).toFixed(1) },
+        voice: { confidence: 60 + Math.floor(Math.random() * 40), speed: 120 + Math.floor(Math.random() * 30), talkRatio: "N/A", questionRatio: 10 + Math.floor(Math.random() * 20) },
+        voiceSegments: Array.from({ length: 5 + Math.floor(Math.random() * 5) }, (_, i) => ({
+            time: (i * 15) + Math.floor(Math.random() * 5),
+            duration: 4 + Math.floor(Math.random() * 8),
+            energy: 50 + Math.floor(Math.random() * 50)
+        }))
+    });
+
+    const coachingHistory = [
+        { date: '2025-08-18', partnerId: 1, report: generateRandomReport() },
+        { date: '2025-08-18', partnerId: 4, report: generateRandomReport() },
+        { date: '2025-08-20', partnerId: 2, report: generateRandomReport() },
+        { date: '2025-08-20', partnerId: 2, report: generateRandomReport() },
+        { date: '2025-08-20', partnerId: 5, report: generateRandomReport() },
+        { date: '2025-08-20', partnerId: 1, report: generateRandomReport() },
+        { date: '2025-08-20', partnerId: 3, report: generateRandomReport() },
+        { date: '2025-07-30', partnerId: 3, report: generateRandomReport() },
+    ];
+
+    let currentDate = new Date(2025, 7, 20); // August 20, 2025
+    let radarChartInstance = null;
+
+    function renderCalendar() {
+        const calendarBody = document.getElementById('calendar-body');
+        calendarBody.innerHTML = '';
+        document.getElementById('current-month').textContent = `${currentDate.getFullYear()}년 ${currentDate.getMonth() + 1}월`;
+
+        const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+        
+        const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+        daysOfWeek.forEach(day => {
+            const dayNameEl = document.createElement('div');
+            dayNameEl.className = 'calendar-day-name';
+            dayNameEl.textContent = day;
+            calendarBody.appendChild(dayNameEl);
+        });
+
+        for (let i = 0; i < firstDay.getDay(); i++) {
+            calendarBody.appendChild(document.createElement('div'));
+        }
+
+        for (let day = 1; day <= lastDay.getDate(); day++) {
+            const dayEl = document.createElement('div');
+            dayEl.className = 'calendar-day';
+            dayEl.textContent = day;
+            const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            dayEl.dataset.date = dateStr;
+
+            const today = new Date();
+            if (day === today.getDate() && currentDate.getMonth() === today.getMonth() && currentDate.getFullYear() === today.getFullYear()) {
+                dayEl.classList.add('today');
+            }
+
+            const sessionsOnDay = coachingHistory.filter(s => s.date === dateStr);
+            if (sessionsOnDay.length > 0) {
+                const markersContainer = document.createElement('div');
+                markersContainer.className = 'session-markers';
+                const markerCount = Math.min(sessionsOnDay.length, 3); // Show max 3 markers
+                for (let i = 0; i < markerCount; i++) {
+                    const marker = document.createElement('div');
+                    marker.className = 'session-marker';
+                    markersContainer.appendChild(marker);
+                }
+                dayEl.appendChild(markersContainer);
+                dayEl.addEventListener('click', () => selectDate(dayEl));
+            } else {
+                 dayEl.style.cursor = 'default';
+            }
+
+            calendarBody.appendChild(dayEl);
+        }
+    }
+
+    function selectDate(dayEl) {
+        document.querySelectorAll('.calendar-day.selected').forEach(el => el.classList.remove('selected'));
+        dayEl.classList.add('selected');
+        renderSessionList(dayEl.dataset.date);
+    }
+    
+    function renderSessionList(dateStr) {
+        const sessionListContainer = document.getElementById('session-list');
+        const sessionListTitle = document.getElementById('session-list-title');
+        sessionListContainer.innerHTML = '';
+        const sessionsOnDay = coachingHistory.filter(s => s.date === dateStr);
+        
+        const date = new Date(dateStr);
+        sessionListTitle.textContent = `${date.getMonth() + 1}월 ${date.getDate()}일 세션 목록`;
+
+        const sessionsByPartner = sessionsOnDay.reduce((acc, session) => {
+            if (!acc[session.partnerId]) {
+                acc[session.partnerId] = [];
+            }
+            acc[session.partnerId].push(session);
+            return acc;
+        }, {});
+
+        if (sessionsOnDay.length === 0) {
+            sessionListContainer.innerHTML = '<p style="text-align:center; color: var(--muted);">선택한 날짜에 기록이 없습니다.</p>';
+            document.getElementById('report-content').style.display = 'none';
+            return;
+        }
+
+        Object.values(sessionsByPartner).flat().forEach((session, index) => {
+            const partner = aiPartners.find(p => p.id === session.partnerId);
+            const trialCount = sessionsByPartner[session.partnerId].length > 1 ? ` (${sessionsByPartner[session.partnerId].indexOf(session) + 1}차)` : '';
+
+            const itemEl = document.createElement('div');
+            itemEl.className = 'session-item';
+            itemEl.innerHTML = `
+                <img src="${partner.image}" alt="${partner.name}">
+                <div class="session-info">
+                    <h4>${partner.name}<span class="session-trial">${trialCount}</span></h4>
+                    <p>${partner.mbti}</p>
+                </div>
+            `;
+            itemEl.addEventListener('click', () => {
+                document.querySelectorAll('.session-item.active').forEach(el => el.classList.remove('active'));
+                itemEl.classList.add('active');
+                updateReport(session.report);
+            });
+            sessionListContainer.appendChild(itemEl);
+        });
+        
+        // Automatically select and load the first session
+        sessionListContainer.firstChild.click();
+    }
+
+    function updateReport(reportData) {
+        document.getElementById('report-content').style.display = 'flex';
+        document.getElementById('report-content').style.flexDirection = 'column';
+        document.getElementById('report-content').style.gap = '32px';
+
+        // Animate Numbers
+        const totalScoreEl = document.getElementById('total-score');
+        totalScoreEl.dataset.value = reportData.totalScore;
+        animateValue(totalScoreEl, 0, reportData.totalScore, 1000);
+        
+        document.getElementById('ai-summary').textContent = "AI가 이 세션에 대한 종합적인 코멘트를 제공합니다. 전반적으로 훌륭했지만, 개선할 점도 보이네요!";
+        document.getElementById('final-coaching-text').innerHTML = `이성민님, 이번 코칭도 정말 수고 많으셨습니다! ... (중략) ... <strong>'${reportData.radar.labels[reportData.radar.score.indexOf(Math.min(...reportData.radar.score))]} 개선'</strong>을 목표로 함께 연습해보는 건 어떨까요?`;
+
+        // Update metric items and progress bars
+        const metricValues = {
+            '시선 안정성': reportData.posture.gaze,
+            '긍정적 표정': reportData.posture.expression,
+            '자세 안정성': reportData.posture.stability,
+            '평균 미소 유지': reportData.posture.smileDuration,
+            '목소리 자신감': reportData.voice.confidence,
+            '발표 속도': reportData.voice.speed,
+        };
+        
+        document.querySelectorAll('.metric-item').forEach(item => {
+            const label = item.querySelector('.label').textContent;
+            const valueEl = item.querySelector('.value');
+            const progressBar = item.querySelector('.progress-bar-inner');
+            
+            const value = metricValues[label];
+            valueEl.dataset.value = value;
+            progressBar.dataset.value = label === '평균 미소 유지' ? value * 25 : value; // Normalize smile duration for progress bar
+            
+            animateValue(valueEl, 0, value, 1000, label === '평균 미소 유지');
+            progressBar.style.width = `${progressBar.dataset.value}%`;
+        });
+        
+        // Update charts
+        if (radarChartInstance) {
+            radarChartInstance.destroy();
+        }
+        renderRadarChart(reportData.radar);
+        renderSpeechBubbleChart(reportData.voiceSegments);
+    }
+    
+    function animateValue(element, start, end, duration, isFloat = false) {
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            const currentValue = progress * (end - start) + start;
+            if (isFloat) {
+                element.innerHTML = `${currentValue.toFixed(1)}<span class="unit">${element.querySelector('.unit').innerHTML}</span>`;
+            } else {
+                element.innerHTML = `${Math.floor(currentValue)}<span class="unit">${element.querySelector('.unit')?.innerHTML || ''}</span>`;
+            }
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+    
+    function renderSpeechBubbleChart(segments) {
+        const container = document.getElementById('speechBubbleChart');
+        // Clear previous bubbles but keep the title
+        container.querySelectorAll('.speech-bubble').forEach(el => el.remove());
+        const totalDuration = 150; // 전체 코칭 시간 (초)
+        
+        segments.forEach(segment => {
+            const bubble = document.createElement('div');
+            bubble.className = 'speech-bubble';
+            const size = 20 + segment.duration * 3;
+            bubble.style.width = `${size}px`;
+            bubble.style.height = `${size}px`;
+            bubble.style.left = `${(segment.time / totalDuration) * 100}%`;
+            bubble.style.opacity = 0.5 + (segment.energy - 50) / 100;
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'tooltip';
+            tooltip.innerHTML = `자신감: ${segment.energy}점<br>길이: ${segment.duration}초`;
+            bubble.appendChild(tooltip);
+            container.appendChild(bubble);
+        });
+    }
+
+    function renderRadarChart(radarData) {
+      const computedStyle = getComputedStyle(document.documentElement);
+      const strokeColor = computedStyle.getPropertyValue('--stroke').trim();
+      const mutedColor = computedStyle.getPropertyValue('--muted').trim();
+
+      const radarCtx = document.getElementById('radarChart').getContext('2d');
+      radarChartInstance = new Chart(radarCtx, {
+        type: 'radar',
+        data: {
+          labels: radarData.labels,
+          datasets: [{
+            label: '매력 지수',
+            data: radarData.score,
+            backgroundColor: 'rgba(166, 193, 238, 0.2)',
+            borderColor: 'rgba(166, 193, 238, 1)',
+            borderWidth: 2.5,
+            pointBackgroundColor: '#fff',
+            pointBorderColor: 'rgba(166, 193, 238, 1)',
+            pointRadius: 5,
+            pointHoverRadius: 7
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: true,
+          scales: {
+            r: {
+              angleLines: { color: strokeColor }, 
+              grid: { color: strokeColor },
+              pointLabels: { font: { size: 15, weight: '600' }, color: mutedColor },
+              suggestedMin: 0, suggestedMax: 100,
+              ticks: { display: false, stepSize: 25 }
+            }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('prev-month').addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        });
+        document.getElementById('next-month').addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        });
+
+        renderCalendar();
+        // Select the most recent date with a session on initial load
+        const mostRecentSessionDate = coachingHistory.map(s => s.date).sort().pop();
+        if(mostRecentSessionDate) {
+            const [year, month, day] = mostRecentSessionDate.split('-').map(Number);
+            currentDate = new Date(year, month - 1, day);
+            renderCalendar(); // Re-render to show the correct month
+            const dayEl = document.querySelector(`.calendar-day[data-date="${mostRecentSessionDate}"]`);
+            if (dayEl) {
+                selectDate(dayEl);
+            }
+        } else {
+             renderSessionList(null); // Show empty state
+        }
+    });
+  </script>
+</body>
+</html>
