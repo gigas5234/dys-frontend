@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Chart from "chart.js/auto";
 import personas from "../../data/personas.json";
+import { getCurrentSession } from "../../lib/supabase";
 
 export default function FeedbackPage() {
   const calendarBodyRef = useRef(null);
@@ -18,6 +19,7 @@ export default function FeedbackPage() {
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [user, setUser] = useState(null);
   const radarChartRef = useRef(null);
 
   // 공통 persona 데이터 사용
@@ -61,16 +63,20 @@ export default function FeedbackPage() {
   ];
 
   useEffect(() => {
+    // 사용자 정보 가져오기
+    const fetchUser = async () => {
+      const session = await getCurrentSession();
+      if (session?.user) {
+        setUser(session.user);
+      }
+    };
+    fetchUser();
+
     renderCalendar(currentDate);
-    // 초기 진입 시 가장 최근 세션 날짜 선택
-    const mostRecent = coachingHistory.map(s => s.date).sort().pop();
-    if (mostRecent) {
-      const dt = new Date(mostRecent);
-      setCurrentDate(dt);
-      renderCalendar(dt);
-      const dayEl = calendarBodyRef.current?.querySelector(`.calendar-day[data-date="${mostRecent}"]`);
-      if (dayEl) selectDate(dayEl);
-    }
+    // 초기 진입 시 오늘 날짜 선택
+    const today = new Date();
+    setCurrentDate(today);
+    renderCalendar(today);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -349,7 +355,7 @@ export default function FeedbackPage() {
                    alt="프로필"
                    className="user-avatar"
                  />
-                 <span className="user-name">사용자</span>
+                 <span className="user-name">{user?.user_metadata?.full_name || user?.email || "사용자"}</span>
                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                    <polyline points="6,9 12,15 18,9"></polyline>
                  </svg>
@@ -360,6 +366,13 @@ export default function FeedbackPage() {
                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                    </svg>
                    시작하기
+                 </a>
+                 <a href="/settings" className="user-dropdown-item" role="menuitem">
+                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                     <circle cx="12" cy="12" r="3"/>
+                     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                   </svg>
+                   설정
                  </a>
                  <button className="user-dropdown-item logout" role="menuitem">
                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -375,26 +388,32 @@ export default function FeedbackPage() {
         </div>
       </header>
 
-      <div className="persona-container" style={{ marginTop: "var(--header-height)", minHeight: "calc(100vh - var(--header-height))" }}>
+      <div className="persona-container">
         <aside className="sidebar">
-          <div className="logo">데연소</div>
           <nav>
             <a href="/persona">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12l2-2 4 4 8-8 2 2-10 10-6-6"/></svg>
-              페르소나 선택
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              데이트 상대 선택
             </a>
             <a href="/feedback" className="active">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h10"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14,2 14,8 20,8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10,9 9,9 8,9"/>
+              </svg>
               피드백 리포트
-            </a>
-            <a href="/settings">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-              설정
             </a>
           </nav>
         </aside>
 
-        <main className="main-content" style={{ padding: 24 }}>
+        <main className="main-content">
           <div className="container" style={{ maxWidth: 800, margin: "0 auto" }}>
             <header className="report-header" style={{ textAlign: "center", marginBottom: 0 }}>
               <h1>AI 코칭 히스토리</h1>
@@ -621,8 +640,8 @@ export default function FeedbackPage() {
         .progress-bar-inner { height: 100%; width: 0%; background: var(--brand2); border-radius: 4px; transition: width 1s ease-out; }
         .metric-insight { font-size: 13px; color: var(--muted); margin-top: 4px; }
 
-        .speech-bubble-chart-container { margin-top: 32px; position: relative; width: 100%; height: 120px; background: rgba(0,0,0,0.03); border-radius: var(--radius); padding: 10px; border: 1px solid var(--stroke); }
-        .speech-bubble-chart-container h4 { margin: 0 0 12px; font-size: 16px; font-weight: 600; color: var(--muted); text-align: center; position: absolute; top: -35px; width: 100%; left: 0; }
+                 .speech-bubble-chart-container { margin-top: 32px; position: relative; width: 100%; height: 120px; background: rgba(0,0,0,0.03); border-radius: var(--radius); padding: 10px; border: 1px solid var(--stroke); }
+         .speech-bubble-chart-container h4 { margin: 0 0 12px; font-size: 14px; font-weight: 600; color: var(--muted); text-align: center; position: absolute; top: -35px; width: 100%; left: 0; }
         .speech-bubble { position: absolute; bottom: 10px; background: var(--brand2); border-radius: 50%; transform: translateX(-50%); transition: all .5s ease-out; cursor: pointer; }
         .speech-bubble:hover { transform: translateX(-50%) scale(1.1); }
         .tooltip { position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 6px 10px; border-radius: 6px; font-size: 12px; white-space: nowrap; opacity: 0; visibility: hidden; transition: opacity .2s, visibility .2s; pointer-events: none; }
