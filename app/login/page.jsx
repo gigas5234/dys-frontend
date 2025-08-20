@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithGoogle, getCurrentSession, restoreSessionFromUrl, signOut } from '../../lib/supabase';
+import { signInWithGoogle, getCurrentSession, restoreSessionFromUrl, signOut, supabase } from '../../lib/supabase';
 
 function LoginPage() {
   const [user, setUser] = useState(null);

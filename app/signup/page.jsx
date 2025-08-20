@@ -20,7 +20,8 @@ export default function SignupPage() {
         event.preventDefault();
         setErrorMessage('');
         
-        if (!email || !email.includes('@')) {
+        const sanitizedEmail = email.trim().toLowerCase();
+        if (!sanitizedEmail || !sanitizedEmail.includes('@')) {
             setErrorMessage('올바른 이메일을 입력해주세요.');
             return;
         }
@@ -42,7 +43,7 @@ export default function SignupPage() {
 
             // 1) Supabase Auth 회원가입
             const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-                email,
+                email: sanitizedEmail,
                 password,
                 options: {
                     data: { full_name: name }
@@ -59,7 +60,7 @@ export default function SignupPage() {
                     {
                         id: signUpData.user.id,
                         name,
-                        email,
+                        email: sanitizedEmail,
                         mbti: mbti || null,
                         member_tier: 'basic',
                         cam_calibration: false
