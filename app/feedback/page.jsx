@@ -280,7 +280,9 @@ export default function FeedbackPage() {
   };
 
   const selectDate = (dayEl) => {
+    // 이전 선택 제거
     calendarBodyRef.current?.querySelectorAll(".calendar-day.selected").forEach((el) => el.classList.remove("selected"));
+    // 새 선택 추가
     dayEl.classList.add("selected");
     renderSessionList(dayEl.dataset.date);
   };
@@ -301,12 +303,12 @@ export default function FeedbackPage() {
     }, {});
 
     if (sessionsOnDay.length === 0) {
-      container.innerHTML = '<p style="text-align:center; color: var(--muted);">선택한 날짜에 기록이 없습니다.</p>';
+      container.innerHTML = '<p style="text-align:center; color: var(--muted); padding: 20px;">선택한 날짜에 기록이 없습니다.</p>';
       if (reportContentRef.current) reportContentRef.current.style.display = "none";
       return;
     }
 
-    Object.values(byPartner).flat().forEach((session) => {
+    Object.values(byPartner).flat().forEach((session, index) => {
       const partner = aiPartners.find((p) => p.id === session.partnerId);
       const itemEl = document.createElement("div");
       itemEl.className = "session-item";
@@ -316,15 +318,21 @@ export default function FeedbackPage() {
           <h4>${partner.name}</h4>
           <p>${partner.mbti}</p>
         </div>
+        <div class="session-status">
+          <span class="session-time">오후 2:30</span>
+        </div>
       `;
       itemEl.addEventListener("click", () => {
+        // 이전 선택 제거
         container.querySelectorAll(".session-item.active").forEach((el) => el.classList.remove("active"));
+        // 새 선택 추가
         itemEl.classList.add("active");
         updateReport(session.report);
       });
       container.appendChild(itemEl);
     });
 
+    // 첫 번째 세션 자동 선택
     container.firstChild?.click();
   };
 
@@ -418,14 +426,20 @@ export default function FeedbackPage() {
 
     // 상단 요약
     if (totalScoreRef.current) {
-      totalScoreRef.current.dataset.value = String(reportData.totalScore);
-      animateValue(totalScoreRef.current, 0, reportData.totalScore, 1000);
+      const scoreValue = reportData.totalScore;
+      totalScoreRef.current.style.height = `${scoreValue}%`;
+      
+      // 점수 텍스트 애니메이션
+      const scoreTextEl = totalScoreRef.current.parentElement.querySelector('.score-value');
+      if (scoreTextEl) {
+        animateValue(scoreTextEl, 0, scoreValue, 2000);
+      }
     }
     if (aiSummaryRef.current) {
-      aiSummaryRef.current.textContent = "AI가 이 세션에 대한 종합적인 코멘트를 제공합니다. 전반적으로 훌륭했지만, 개선할 점도 보이네요!";
+      aiSummaryRef.current.textContent = "자연스러운 미소와 적극적인 대화 참여로 긍정적인 분위기를 조성했습니다.";
     }
     if (finalCoachingRef.current) {
-      finalCoachingRef.current.innerHTML = `이번 코칭도 정말 수고 많으셨습니다! <strong>집중 개선</strong> 포인트를 기준으로 다음 세션을 계획해보세요.`;
+      finalCoachingRef.current.innerHTML = `이번 코칭도 정말 수고 많으셨습니다! <strong>목소리 자신감</strong> 포인트를 기준으로 다음 세션을 계획해보세요.`;
     }
 
     // 메트릭 값 업데이트 (발표 속도 제거)
@@ -435,6 +449,7 @@ export default function FeedbackPage() {
       "자세 안정성": reportData.posture.stability,
       "평균 미소 유지": reportData.posture.smileDuration,
       "목소리 자신감": reportData.voice.confidence,
+      "대화 참여도": 85, // 새로운 메트릭
     };
 
     document.querySelectorAll(".metric-item").forEach((item) => {
@@ -445,7 +460,7 @@ export default function FeedbackPage() {
       const value = metricValues[label];
       valueEl.dataset.value = String(value);
       bar.dataset.value = label === "평균 미소 유지" ? String(Number(value) * 25) : String(value);
-      animateValue(valueEl, 0, Number(value), 1000, label === "평균 미소 유지");
+      animateValue(valueEl, 0, Number(value), 1500, label === "평균 미소 유지");
       bar.style.width = `${bar.dataset.value}%`;
     });
 
@@ -572,10 +587,6 @@ export default function FeedbackPage() {
                     <span className="stat-number">85</span>
                     <span className="stat-label">평균 점수</span>
                   </div>
-                  <div className="stat-item">
-                    <span className="stat-number">3</span>
-                    <span className="stat-label">이번 달</span>
-                  </div>
                 </div>
               </div>
             </header>
@@ -600,16 +611,17 @@ export default function FeedbackPage() {
                 <div className="summary-grid">
                   <div className="total-score">
                     <div className="score-circle">
-                      <div className="score-value" ref={totalScoreRef} id="total-score" data-value="0">0</div>
+                      <div className="score-fill" ref={totalScoreRef} id="total-score" data-value="0"></div>
+                      <div className="score-value">0</div>
                       <div className="score-label">종합 매력 점수</div>
                     </div>
                   </div>
                   <div className="ai-comment">
                     <div className="comment-header">
                       <div className="ai-avatar">🤖</div>
-                      <h3>AI 코치의 한마디</h3>
+                      <h3>AI 코치의 핵심 요약</h3>
                     </div>
-                    <p ref={aiSummaryRef} id="ai-summary"></p>
+                    <p ref={aiSummaryRef} id="ai-summary">이번 세션에서 가장 인상적이었던 점을 한 줄로 요약해드릴게요.</p>
                     <div className="comment-footer">
                       <span className="timestamp">방금 전</span>
                     </div>
@@ -630,30 +642,29 @@ export default function FeedbackPage() {
               <section className="card moments-section" style={{ animationDelay: "0.2s" }}>
                 <div className="section-header">
                   <h2 className="section-title">최고의 순간</h2>
-                  <p className="section-subtitle">이번 세션에서 가장 빛났던 순간들을 담았어요</p>
+                  <p className="section-subtitle">세션 중 가장 빛났던 순간들을 타임라인으로 확인해보세요</p>
                 </div>
-                <div className="key-moments-grid">
-                  <div className="moment-card">
-                    <div className="moment-image">
-                      <img src="https://placehold.co/400x220/E9EFFF/4A72FF?text=Best+Smile" alt="최고의 미소 순간" />
-                      <div className="moment-badge">최고의 미소</div>
+                <div className="timeline-container">
+                  <div className="timeline-track">
+                    <div className="timeline-moment" style={{ left: '25%' }}>
+                      <div className="moment-peak"></div>
+                      <div className="moment-label">자연스러운 미소</div>
+                      <div className="moment-time">3분 24초</div>
                     </div>
-                    <div className="moment-card-content">
-                      <h4>자연스러운 미소</h4>
-                      <p>상대방의 이야기에 공감하며 보여준 자연스러운 미소가 긍정적인 분위기를 만들었어요.</p>
-                      <div className="moment-time">세션 3분 24초</div>
+                    <div className="timeline-moment" style={{ left: '65%' }}>
+                      <div className="moment-peak"></div>
+                      <div className="moment-label">완벽한 자세</div>
+                      <div className="moment-time">7분 12초</div>
+                    </div>
+                    <div className="timeline-moment" style={{ left: '85%' }}>
+                      <div className="moment-peak"></div>
+                      <div className="moment-label">적극적 질문</div>
+                      <div className="moment-time">12분 8초</div>
                     </div>
                   </div>
-                  <div className="moment-card">
-                    <div className="moment-image">
-                      <img src="https://placehold.co/400x220/E4F6E7/28A745?text=Good+Posture" alt="이상적인 자세" />
-                      <div className="moment-badge">완벽한 자세</div>
-                    </div>
-                    <div className="moment-card-content">
-                      <h4>신뢰감 있는 자세</h4>
-                      <p>상대방의 이야기에 귀 기울일 때 보여준 안정적이고 신뢰감 있는 자세가 인상적이었어요.</p>
-                      <div className="moment-time">세션 7분 12초</div>
-                    </div>
+                  <div className="timeline-duration">
+                    <span>0초</span>
+                    <span>15분</span>
                   </div>
                 </div>
               </section>
@@ -664,7 +675,7 @@ export default function FeedbackPage() {
                   <p className="section-subtitle">비언어적 소통의 핵심 요소들을 분석했어요</p>
                 </div>
                 <div className="detail-analysis-grid">
-                  <div className="metric-item">
+                  <div className="metric-item" data-aos="fade-up" data-aos-delay="100">
                     <div className="metric-header">
                       <span className="label">시선 안정성</span>
                       <span className="value" data-value="0">0<span className="unit">%</span></span>
@@ -672,7 +683,7 @@ export default function FeedbackPage() {
                     <div className="progress-bar"><div className="progress-bar-inner" data-value="0"></div></div>
                     <div className="metric-insight">상대방의 눈을 편안하게 바라보았어요.</div>
                   </div>
-                  <div className="metric-item">
+                  <div className="metric-item" data-aos="fade-up" data-aos-delay="200">
                     <div className="metric-header">
                       <span className="label">긍정적 표정</span>
                       <span className="value" data-value="0">0<span className="unit">%</span></span>
@@ -680,7 +691,7 @@ export default function FeedbackPage() {
                     <div className="progress-bar"><div className="progress-bar-inner" data-value="0"></div></div>
                     <div className="metric-insight">밝은 표정이 대화 분위기를 이끌었어요.</div>
                   </div>
-                  <div className="metric-item">
+                  <div className="metric-item" data-aos="fade-up" data-aos-delay="300">
                     <div className="metric-header">
                       <span className="label">자세 안정성</span>
                       <span className="value" data-value="0">0<span className="unit">%</span></span>
@@ -688,7 +699,7 @@ export default function FeedbackPage() {
                     <div className="progress-bar"><div className="progress-bar-inner" data-value="0"></div></div>
                     <div className="metric-insight">대부분 안정적이었으나, 가끔 움직임이 있었어요.</div>
                   </div>
-                  <div className="metric-item">
+                  <div className="metric-item" data-aos="fade-up" data-aos-delay="400">
                     <div className="metric-header">
                       <span className="label">평균 미소 유지</span>
                       <span className="value" data-value="0">0<span className="unit">초</span></span>
@@ -704,18 +715,28 @@ export default function FeedbackPage() {
                   <h2 className="section-title">음성 & 대화 분석</h2>
                   <p className="section-subtitle">목소리 톤과 대화 패턴을 분석했어요</p>
                 </div>
-                <div className="detail-analysis-grid">
-                  <div className="metric-item">
-                    <div className="metric-header">
-                      <span className="label">목소리 자신감</span>
-                      <span className="value" data-value="0">0<span className="unit">점</span></span>
+                <div className="voice-analysis-grid">
+                  <div className="voice-metrics">
+                    <div className="metric-item" data-aos="fade-up" data-aos-delay="100">
+                      <div className="metric-header">
+                        <span className="label">목소리 자신감</span>
+                        <span className="value" data-value="0">0<span className="unit">점</span></span>
+                      </div>
+                      <div className="progress-bar"><div className="progress-bar-inner" data-value="0"></div></div>
+                      <div className="metric-insight">조금 더 힘 있는 목소리가 전달력을 높여요.</div>
                     </div>
-                    <div className="progress-bar"><div className="progress-bar-inner" data-value="0"></div></div>
-                    <div className="metric-insight">조금 더 힘 있는 목소리가 전달력을 높여요.</div>
+                    <div className="metric-item" data-aos="fade-up" data-aos-delay="200">
+                      <div className="metric-header">
+                        <span className="label">대화 참여도</span>
+                        <span className="value" data-value="0">0<span className="unit">%</span></span>
+                      </div>
+                      <div className="progress-bar"><div className="progress-bar-inner" data-value="0"></div></div>
+                      <div className="metric-insight">적극적인 대화 참여로 좋은 인상을 주었어요.</div>
+                    </div>
                   </div>
-                </div>
-                <div className="speech-bubble-chart-container" ref={speechBubbleContainerRef} id="speechBubbleChart">
-                  <h4>발화 구간별 목소리 자신감</h4>
+                  <div className="speech-bubble-chart-container" ref={speechBubbleContainerRef} id="speechBubbleChart">
+                    <h4>발화 구간별 목소리 자신감</h4>
+                  </div>
                 </div>
               </section>
 
@@ -906,6 +927,15 @@ export default function FeedbackPage() {
         .session-item img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
         .session-info h4 { margin: 0; font-size: 14px; font-weight: 700; color: var(--text); }
         .session-info p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+        .session-status {
+          margin-left: auto;
+          background: var(--color-primary-light);
+          border-radius: 12px;
+          padding: 4px 10px;
+          font-size: 12px;
+          font-weight: 600;
+          color: var(--brand2);
+        }
 
         .report-header h1 { font-size: 32px; font-weight: 800; margin: 0 0 8px; background: linear-gradient(135deg, var(--brand2), var(--brand1)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
         .report-header p { font-size: 16px; color: var(--muted); margin: 0 0 24px; }
@@ -919,9 +949,10 @@ export default function FeedbackPage() {
         
         .score-overview { background: linear-gradient(135deg, rgba(166, 193, 238, 0.05), rgba(251, 194, 235, 0.05)); border: 1px solid rgba(166, 193, 238, 0.2); }
         .summary-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 32px; align-items: center; }
-        .score-circle { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 160px; height: 160px; margin: 0 auto; background: linear-gradient(135deg, var(--brand2), var(--brand1)); border-radius: 50%; box-shadow: 0 8px 32px rgba(166, 193, 238, 0.3); }
-        .total-score .score-value { font-size: 48px; font-weight: 900; color: white; text-align: center; }
-        .total-score .score-label { text-align: center; color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-top: 4px; font-size: 14px; }
+        .score-circle { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 160px; height: 160px; margin: 0 auto; background: linear-gradient(135deg, var(--brand2), var(--brand1)); border-radius: 50%; box-shadow: 0 8px 32px rgba(166, 193, 238, 0.3); position: relative; overflow: hidden; }
+        .score-fill { position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7)); transition: height 2s ease-out; border-radius: 50%; }
+        .score-value { font-size: 48px; font-weight: 900; color: white; text-align: center; position: relative; z-index: 2; }
+        .total-score .score-label { text-align: center; color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-top: 4px; font-size: 14px; position: relative; z-index: 2; }
         
         .ai-comment { background: white; border-radius: 16px; padding: 24px; border: 1px solid rgba(0, 0, 0, 0.08); }
         .comment-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
@@ -988,6 +1019,17 @@ export default function FeedbackPage() {
         .calendar-nav-btn { background: none; border: none; cursor: pointer; font-size: 20px; color: var(--muted); padding: 8px; border-radius: 8px; transition: all 0.2s ease; }
         .calendar-nav-btn:hover { background: rgba(0, 0, 0, 0.05); color: var(--text); }
 
+        .timeline-container { position: relative; height: 100px; margin-top: 20px; padding: 10px 0; }
+        .timeline-track { position: absolute; top: 50%; transform: translateY(-50%); width: 100%; height: 2px; background: rgba(0, 0, 0, 0.1); z-index: 1; }
+        .timeline-moment { position: absolute; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; z-index: 2; }
+        .moment-peak { width: 10px; height: 10px; background: var(--brand2); border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 2px var(--brand2); }
+        .moment-label { font-size: 12px; color: var(--muted); margin-top: 8px; text-align: center; }
+        .moment-time { font-size: 10px; color: var(--muted); margin-top: 4px; }
+        .timeline-duration { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); z-index: 1; }
+
+        .voice-analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .voice-metrics { display: flex; flex-direction: column; gap: 24px; }
+
                  @media (max-width: 768px) {
            .history-card { grid-template-columns: 1fr; }
            .calendar-wrapper { border-right: none; padding-right: 0; }
@@ -996,6 +1038,7 @@ export default function FeedbackPage() {
            .detail-analysis-grid { grid-template-columns: 1fr; }
            .key-moments-grid { grid-template-columns: 1fr; }
            .coaching-details { grid-template-columns: 1fr; }
+           .voice-analysis-grid { grid-template-columns: 1fr; }
          }
       `}</style>
     </>
