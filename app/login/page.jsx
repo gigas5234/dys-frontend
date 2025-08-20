@@ -11,6 +11,7 @@ function LoginPage() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isLoginLoading, setIsLoginLoading] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [loginError, setLoginError] = useState('');
   const router = useRouter();
 
   // 사용자 세션 확인
@@ -71,6 +72,7 @@ function LoginPage() {
   const handleEmailLogin = async (event) => {
     event.preventDefault();
     setIsLoginLoading(true);
+    setLoginError('');
 
     const formData = new FormData(event.target);
     const email = formData.get('email');
@@ -84,18 +86,30 @@ function LoginPage() {
 
       if (error) {
         console.error('로그인 오류:', error);
-        // 에러 메시지 표시 로직 추가 가능
+        
+        // 구체적인 에러 메시지 표시
+        if (error.message.includes('Invalid login credentials')) {
+          setLoginError('이메일 또는 비밀번호가 올바르지 않습니다.');
+        } else if (error.message.includes('Email not confirmed')) {
+          setLoginError('이메일 인증이 필요합니다. 이메일을 확인해주세요.');
+        } else if (error.message.includes('Too many requests')) {
+          setLoginError('너무 많은 로그인 시도가 있었습니다. 잠시 후 다시 시도해주세요.');
+        } else {
+          setLoginError('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
+        }
+        
         setIsLoginLoading(false);
         return;
       }
 
       if (data.user) {
         console.log('로그인 성공:', data.user.email);
-        // 로그인 성공 시 메인 페이지로 이동
-        router.push('/');
+        // 로그인 성공 시 persona 페이지로 이동
+        router.push('/persona');
       }
     } catch (error) {
       console.error('로그인 중 오류 발생:', error);
+      setLoginError('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
       setIsLoginLoading(false);
     }
   };
@@ -213,6 +227,12 @@ function LoginPage() {
             </div>
           </div>
           <p>계정에 로그인하여 계속하세요.</p>
+          
+          {loginError && (
+            <div className="error-message">
+              {loginError}
+            </div>
+          )}
           
           <form onSubmit={handleEmailLogin}>
             <div className="input-group">
