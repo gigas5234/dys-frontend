@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Chart from "chart.js/auto";
 import personas from "../../data/personas.json";
-import { getCurrentSession, supabase } from "../../lib/supabase";
+import { getCurrentSession, supabase, signOut } from "../../lib/supabase";
 
 export default function FeedbackPage() {
   const calendarBodyRef = useRef(null);
@@ -23,7 +23,10 @@ export default function FeedbackPage() {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [userSettings, setUserSettings] = useState(null);
   const [isLoadingSettings, setIsLoadingSettings] = useState(false);
+  const [userPlan, setUserPlan] = useState('basic');
+  const [isClient, setIsClient] = useState(false);
   const radarChartRef = useRef(null);
+  const dropdownRef = useRef(null);
 
   // 공통 persona 데이터 사용
   const aiPartners = personas;
@@ -55,30 +58,42 @@ export default function FeedbackPage() {
   });
 
   const coachingHistory = [
+    // 8월 15일 - 1개 세션
     { date: "2025-08-15", partnerId: 1, report: generateRandomReport() },
+    
+    // 8월 16일 - 2개 세션
     { date: "2025-08-16", partnerId: 2, report: generateRandomReport() },
-    { date: "2025-08-17", partnerId: 3, report: generateRandomReport() },
-    { date: "2025-08-18", partnerId: 4, report: generateRandomReport() },
-    { date: "2025-08-19", partnerId: 5, report: generateRandomReport() },
-    { date: "2025-08-20", partnerId: 6, report: generateRandomReport() },
-    { date: "2025-08-21", partnerId: 7, report: generateRandomReport() },
-    { date: "2025-08-22", partnerId: 8, report: generateRandomReport() },
-    { date: "2025-08-23", partnerId: 9, report: generateRandomReport() },
-    { date: "2025-08-24", partnerId: 1, report: generateRandomReport() },
-    { date: "2025-08-25", partnerId: 2, report: generateRandomReport() },
-    { date: "2025-08-26", partnerId: 3, report: generateRandomReport() },
-    { date: "2025-08-27", partnerId: 4, report: generateRandomReport() },
-    { date: "2025-08-28", partnerId: 5, report: generateRandomReport() },
-    { date: "2025-08-29", partnerId: 6, report: generateRandomReport() },
-    { date: "2025-08-30", partnerId: 7, report: generateRandomReport() }
+    { date: "2025-08-16", partnerId: 3, report: generateRandomReport() },
+    
+    // 8월 17일 - 1개 세션
+    { date: "2025-08-17", partnerId: 4, report: generateRandomReport() },
+    
+    // 8월 18일 - 3개 세션
+    { date: "2025-08-18", partnerId: 5, report: generateRandomReport() },
+    { date: "2025-08-18", partnerId: 6, report: generateRandomReport() },
+    { date: "2025-08-18", partnerId: 7, report: generateRandomReport() },
+    
+    // 8월 19일 - 0개 세션 (빈 날)
+    
+    // 8월 20일 - 2개 세션
+    { date: "2025-08-20", partnerId: 8, report: generateRandomReport() },
+    { date: "2025-08-20", partnerId: 9, report: generateRandomReport() },
+    
+    // 8월 21일 - 4개 세션 (오늘)
+    { date: "2025-08-21", partnerId: 1, report: generateRandomReport() },
+    { date: "2025-08-21", partnerId: 2, report: generateRandomReport() },
+    { date: "2025-08-21", partnerId: 3, report: generateRandomReport() },
+    { date: "2025-08-21", partnerId: 4, report: generateRandomReport() }
   ];
 
   useEffect(() => {
+    setIsClient(true);
     // 사용자 정보 가져오기
     const fetchUser = async () => {
       const session = await getCurrentSession();
       if (session?.user) {
         setUser(session.user);
+        setUserPlan(getUserPlan(session.user));
       }
     };
     fetchUser();
@@ -90,6 +105,22 @@ export default function FeedbackPage() {
     renderCalendar(today);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // 사용자 플랜 확인 함수
+  const getUserPlan = (user) => {
+    if (!user) return 'basic';
+    return user.user_metadata?.subscription_plan || 'basic';
+  };
+
+  // 로그아웃 처리
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      window.location.href = '/';
+    } catch (error) {
+      console.error('로그아웃 오류:', error);
+    }
+  };
 
   // 사용자 설정 가져오기
   const fetchUserSettings = async () => {
@@ -418,60 +449,62 @@ export default function FeedbackPage() {
               <a href="/price">가격</a>
             </nav>
           </div>
-                     <div className="header-right">
-             <div className="user-dropdown">
-               <div className="plan-badge-header">
-                 <span className="plan-type basic">Basic</span>
-               </div>
-               <div
-                 className={`user-dropdown-toggle ${isDropdownOpen ? 'open' : ''}`}
-                 role="button"
-                 aria-haspopup="menu"
-                 aria-expanded={isDropdownOpen}
-                 aria-controls="user-menu"
-                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-               >
-                 <img
-                   src="https://placehold.co/32x32/e0e8ff/7d7d7d?text=U"
-                   alt="프로필"
-                   className="user-avatar"
-                 />
-                 <span className="user-name">{user?.user_metadata?.full_name || user?.email || "사용자"}</span>
-                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                   <polyline points="6,9 12,15 18,9"></polyline>
-                 </svg>
-               </div>
-               <div id="user-menu" className={`user-dropdown-menu ${isDropdownOpen ? 'open' : ''}`} role="menu">
-                 <a href="/persona" className="user-dropdown-item" role="menuitem">
-                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                   </svg>
-                   시작하기
-                 </a>
-                 <button 
-                   className="user-dropdown-item" 
-                   role="menuitem"
-                   onClick={() => {
-                     setShowSettingsModal(true);
-                     setIsDropdownOpen(false);
-                   }}
+                     <div className="header-right" suppressHydrationWarning>
+             {isClient && user ? (
+               <div className="user-dropdown" ref={dropdownRef}>
+                 <div className="plan-badge-header">
+                   <span className={`plan-type ${userPlan}`}>
+                     {userPlan === 'premium' ? 'Premium' : 'Basic'}
+                   </span>
+                 </div>
+                 <div
+                   className={`user-dropdown-toggle ${isDropdownOpen ? 'open' : ''}`}
+                   role="button"
+                   aria-haspopup="menu"
+                   aria-expanded={isDropdownOpen}
+                   aria-controls="user-menu"
+                   onClick={() => setIsDropdownOpen(o => !o)}
                  >
-                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                     <circle cx="12" cy="12" r="3"/>
-                     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                   <img
+                     src={user.user_metadata?.avatar_url || 'https://placehold.co/32x32/e0e8ff/7d7d7d?text=U'}
+                     alt="프로필"
+                     className="user-avatar"
+                   />
+                   <span className="user-name">{user.user_metadata?.full_name || user.email}</span>
+                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                     <polyline points="6,9 12,15 18,9"></polyline>
                    </svg>
-                   설정
-                 </button>
-                 <button className="user-dropdown-item logout" role="menuitem">
-                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                     <polyline points="16,17 21,12 16,7"></polyline>
-                     <line x1="21" y1="12" x2="9" y2="12"></line>
-                   </svg>
-                   로그아웃
-                 </button>
+                 </div>
+                 <div id="user-menu" className={`user-dropdown-menu ${isDropdownOpen ? 'open' : ''}`} role="menu">
+                   <a href="/persona" className="user-dropdown-item" role="menuitem">
+                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                       <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                     </svg>
+                     시작하기
+                   </a>
+                   <button onClick={() => {
+                     setShowSettingsModal(true);
+                     fetchUserSettings();
+                   }} className="user-dropdown-item" role="menuitem">
+                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                       <circle cx="12" cy="12" r="3"/>
+                       <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                     </svg>
+                     설정
+                   </button>
+                   <button onClick={handleLogout} className="user-dropdown-item logout" role="menuitem">
+                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                       <polyline points="16,17 21,12 16,7"></polyline>
+                       <line x1="21" y1="12" x2="9" y2="12"></line>
+                     </svg>
+                     로그아웃
+                   </button>
+                 </div>
                </div>
-             </div>
+             ) : (
+               <a href="/login" className="btn btn-login">로그인</a>
+             )}
            </div>
         </div>
       </header>
