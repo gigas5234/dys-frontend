@@ -91,8 +91,8 @@ export default function SignupPage() {
             <header className="main-header">
                 <div className="header-content">
                     <div className="header-left">
-                        <a href="/" className="logo-link">
-                            <img src="/dys_logo.png" alt="데연소" className="logo" />
+                        <a href="/" className="logo">
+                            <img src="/dys_logo.png" alt="데연소" />
                         </a>
                     </div>
                     <div className="header-right">
@@ -105,7 +105,7 @@ export default function SignupPage() {
                 <div className="login-container">
                 <div className="login-box">
                     <div className="login-header">
-                        <div className="logo">데연소</div>
+                        <div className="logo"><img src="/dys_logo.png" alt="데연소" className="auth-logo-small" /></div>
                         <div className="header-icon">
                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="#a6c1ee" strokeWidth="2" strokeMiterlimit="10"/>
