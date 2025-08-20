@@ -397,7 +397,7 @@ export default function FeedbackPage() {
     const container = speechBubbleContainerRef.current;
     container.querySelectorAll(".speech-bubble").forEach((el) => el.remove());
     const totalDuration = 150;
-    const containerWidth = container.offsetWidth - 20; // 패딩 10px * 2 고려
+    const containerWidth = container.offsetWidth - 40; // 패딩 20px * 2 고려
     segments.forEach((seg) => {
       const bubble = document.createElement("div");
       bubble.className = "speech-bubble";
@@ -405,9 +405,9 @@ export default function FeedbackPage() {
       bubble.style.width = `${size}px`;
       bubble.style.height = `${size}px`;
       
-      // 회색박스 안에서만 배치되도록 계산
+      // 회색박스 안에서만 배치되도록 계산 (패딩 고려)
       const position = (seg.time / totalDuration) * containerWidth;
-      bubble.style.left = `${Math.max(10, Math.min(position, containerWidth - size + 10))}px`;
+      bubble.style.left = `${Math.max(20, Math.min(position + 20, containerWidth - size + 20))}px`;
       bubble.style.opacity = String(0.5 + (seg.energy - 50) / 100);
 
       const tooltip = document.createElement("div");
@@ -623,7 +623,7 @@ export default function FeedbackPage() {
                     </div>
                     <p ref={aiSummaryRef} id="ai-summary">이번 세션에서 가장 인상적이었던 점을 한 줄로 요약해드릴게요.</p>
                     <div className="comment-footer">
-                      <span className="timestamp">방금 전</span>
+                      <span className="timestamp"></span>
                     </div>
                   </div>
                 </div>
@@ -920,10 +920,10 @@ export default function FeedbackPage() {
 
         .session-list-wrapper h3 { font-size: 18px; font-weight: 700; margin: 0 0 20px 0; color: var(--text); padding-left: 10px; }
         .session-list-container { max-height: 300px; overflow-y: auto; padding-right: 5px; }
-        .session-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: var(--radius); margin-bottom: 8px; cursor: pointer; transition: background-color .2s; }
+        .session-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: var(--radius); margin-bottom: 8px; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent; }
         .session-item:last-child { margin-bottom: 0; }
-        .session-item:hover { background-color: var(--color-primary-light); }
-        .session-item.active { background-color: var(--color-primary-light); box-shadow: 0 0 0 2px var(--color-primary) inset; }
+        .session-item:hover { background-color: var(--color-primary-light); transform: translateY(-1px); }
+        .session-item.active { background-color: var(--color-primary-light); border-color: var(--brand2); box-shadow: 0 4px 12px rgba(166, 193, 238, 0.3); transform: translateY(-2px); }
         .session-item img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
         .session-info h4 { margin: 0; font-size: 14px; font-weight: 700; color: var(--text); }
         .session-info p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
@@ -949,10 +949,10 @@ export default function FeedbackPage() {
         
         .score-overview { background: linear-gradient(135deg, rgba(166, 193, 238, 0.05), rgba(251, 194, 235, 0.05)); border: 1px solid rgba(166, 193, 238, 0.2); }
         .summary-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 32px; align-items: center; }
-        .score-circle { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 160px; height: 160px; margin: 0 auto; background: linear-gradient(135deg, var(--brand2), var(--brand1)); border-radius: 50%; box-shadow: 0 8px 32px rgba(166, 193, 238, 0.3); position: relative; overflow: hidden; }
-        .score-fill { position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7)); transition: height 2s ease-out; border-radius: 50%; }
-        .score-value { font-size: 48px; font-weight: 900; color: white; text-align: center; position: relative; z-index: 2; }
-        .total-score .score-label { text-align: center; color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-top: 4px; font-size: 14px; position: relative; z-index: 2; }
+        .score-circle { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 160px; height: 160px; margin: 0 auto; background: rgba(255, 255, 255, 0.9); border-radius: 50%; box-shadow: 0 8px 32px rgba(166, 193, 238, 0.3); position: relative; overflow: hidden; border: 3px solid rgba(166, 193, 238, 0.3); }
+        .score-fill { position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: linear-gradient(135deg, var(--brand2), var(--brand1)); transition: height 2s ease-out; border-radius: 50%; }
+        .score-value { font-size: 48px; font-weight: 900; color: var(--text); text-align: center; position: relative; z-index: 2; }
+        .total-score .score-label { text-align: center; color: var(--text); font-weight: 600; margin-top: 4px; font-size: 14px; position: relative; z-index: 2; }
         
         .ai-comment { background: white; border-radius: 16px; padding: 24px; border: 1px solid rgba(0, 0, 0, 0.08); }
         .comment-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
@@ -977,9 +977,9 @@ export default function FeedbackPage() {
         .progress-bar-inner { height: 100%; width: 0%; background: linear-gradient(90deg, var(--brand2), var(--brand1)); border-radius: 4px; transition: width 1s ease-out; }
         .metric-insight { font-size: 14px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
 
-        .speech-bubble-chart-container { margin-top: 32px; position: relative; width: 100%; height: 120px; background: rgba(0,0,0,0.03); border-radius: var(--radius); padding: 10px; border: 1px solid var(--stroke); }
+        .speech-bubble-chart-container { margin-top: 32px; position: relative; width: 100%; height: 120px; background: rgba(0,0,0,0.03); border-radius: var(--radius); padding: 20px; border: 1px solid var(--stroke); }
         .speech-bubble-chart-container h4 { margin: 0 0 12px; font-size: 14px; font-weight: 600; color: var(--muted); text-align: center; position: absolute; top: -35px; width: 100%; left: 0; }
-        .speech-bubble { position: absolute; bottom: 10px; background: var(--brand2); border-radius: 50%; transform: translateX(-50%); transition: all .5s ease-out; cursor: pointer; }
+        .speech-bubble { position: absolute; bottom: 20px; background: var(--brand2); border-radius: 50%; transform: translateX(-50%); transition: all .5s ease-out; cursor: pointer; }
         .speech-bubble:hover { transform: translateX(-50%) scale(1.1); }
         .tooltip { position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 6px 10px; border-radius: 6px; font-size: 12px; white-space: nowrap; opacity: 0; visibility: hidden; transition: opacity .2s, visibility .2s; pointer-events: none; }
         .speech-bubble:hover .tooltip { opacity: 1; visibility: visible; }
@@ -1019,13 +1019,13 @@ export default function FeedbackPage() {
         .calendar-nav-btn { background: none; border: none; cursor: pointer; font-size: 20px; color: var(--muted); padding: 8px; border-radius: 8px; transition: all 0.2s ease; }
         .calendar-nav-btn:hover { background: rgba(0, 0, 0, 0.05); color: var(--text); }
 
-        .timeline-container { position: relative; height: 100px; margin-top: 20px; padding: 10px 0; }
+        .timeline-container { position: relative; height: 120px; margin-top: 20px; padding: 20px 0; }
         .timeline-track { position: absolute; top: 50%; transform: translateY(-50%); width: 100%; height: 2px; background: rgba(0, 0, 0, 0.1); z-index: 1; }
         .timeline-moment { position: absolute; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; z-index: 2; }
-        .moment-peak { width: 10px; height: 10px; background: var(--brand2); border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 2px var(--brand2); }
-        .moment-label { font-size: 12px; color: var(--muted); margin-top: 8px; text-align: center; }
-        .moment-time { font-size: 10px; color: var(--muted); margin-top: 4px; }
-        .timeline-duration { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); z-index: 1; }
+        .moment-peak { width: 12px; height: 12px; background: var(--brand2); border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 2px var(--brand2); margin-bottom: 8px; }
+        .moment-label { font-size: 12px; color: var(--text); font-weight: 600; text-align: center; margin-bottom: 4px; }
+        .moment-time { font-size: 10px; color: var(--muted); }
+        .timeline-duration { position: absolute; bottom: 0; left: 0; right: 0; display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); z-index: 1; }
 
         .voice-analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .voice-metrics { display: flex; flex-direction: column; gap: 24px; }
