@@ -63,6 +63,12 @@ function PersonaPage() {
         return user.user_metadata?.subscription_plan || 'basic';
     };
 
+    // 실제 사용자 플랜 반환 함수 (로딩 상태 고려)
+    const getActualUserPlan = () => {
+        if (isLoadingSettings) return 'loading';
+        return userSettings?.member_tier || userPlan;
+    };
+
     // 세션 종료 결과 처리
     const handleSessionEndResult = () => {
         if (typeof window === 'undefined') return;
@@ -210,23 +216,18 @@ function PersonaPage() {
     const closeSettingsModal = () => setShowSettingsModal(false);
 
     // 사용자 설정 가져오기
-    const fetchUserSettings = async () => {
-        if (!user) return;
+    const fetchUserSettings = async (userId) => {
+        if (!userId) return;
         
+        setIsLoadingSettings(true);
         try {
-            setIsLoadingSettings(true);
-            
             const { data, error } = await supabase
                 .from('users')
-                .select('*')
-                .eq('id', user.id)
+                .select('id, name, email, mbti, member_tier, cam_calibration')
+                .eq('id', userId)
                 .single();
-            
-            if (error) {
-                console.error('Error fetching user settings:', error);
-                return;
-            }
-            
+
+            if (error) throw error;
             setUserSettings(data);
         } catch (error) {
             console.error('Error fetching user settings:', error);
@@ -234,6 +235,13 @@ function PersonaPage() {
             setIsLoadingSettings(false);
         }
     };
+
+    // 사용자 정보가 로드되면 설정도 미리 로드
+    useEffect(() => {
+        if (user && !userSettings) {
+            fetchUserSettings(user.id);
+        }
+    }, [user]);
 
     // MBTI 업데이트
     const updateMBTI = async (newMBTI) => {
@@ -519,9 +527,13 @@ function PersonaPage() {
                         {isClient && user ? (
                             <div className="user-dropdown" ref={dropdownRef}>
                                 <div className="plan-badge-header">
-                                    <span className={`plan-type ${userPlan}`}>
-                                        {userPlan === 'premium' ? 'Premium' : 'Basic'}
-                                    </span>
+                                    {userSettings ? (
+                                        <span className={`plan-type ${getActualUserPlan()}`}>
+                                            {getActualUserPlan() === 'premium' ? 'Premium' : 'Basic'}
+                                        </span>
+                                    ) : (
+                                        <span className="plan-type basic" style={{ opacity: 0.6 }}>로딩중...</span>
+                                    )}
                                 </div>
                                 <div
                                     className={`user-dropdown-toggle ${isDropdownOpen ? 'open' : ''}`}
@@ -554,7 +566,7 @@ function PersonaPage() {
                                     }} className="user-dropdown-item" role="menuitem">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                             <circle cx="12" cy="12" r="3"/>
-                                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-1.82-.33l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                                         </svg>
                                         설정
                                     </button>

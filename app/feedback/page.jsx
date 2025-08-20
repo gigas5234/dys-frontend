@@ -475,9 +475,13 @@ export default function FeedbackPage() {
              {isClient && user ? (
                <div className="user-dropdown" ref={dropdownRef}>
                  <div className="plan-badge-header">
-                   <span className={`plan-type ${getActualUserPlan()}`}>
-                     {getActualUserPlan() === 'premium' ? 'Premium' : 'Basic'}
-                   </span>
+                   {userSettings ? (
+                     <span className={`plan-type ${getActualUserPlan()}`}>
+                       {getActualUserPlan() === 'premium' ? 'Premium' : 'Basic'}
+                     </span>
+                   ) : (
+                     <span className="plan-type basic" style={{ opacity: 0.6 }}>로딩중...</span>
+                   )}
                  </div>
                  <div
                    className={`user-dropdown-toggle ${isDropdownOpen ? 'open' : ''}`}

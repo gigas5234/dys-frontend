@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { getCurrentSession, restoreSessionFromUrl, signOut, isReturnFromBackend, cleanReturnParams } from '../lib/supabase';
+import { getCurrentSession, restoreSessionFromUrl, signOut, isReturnFromBackend, cleanReturnParams, supabase } from '../lib/supabase';
 
 function HomePage() {
   const [isChatStarted, setIsChatStarted] = useState(false);
@@ -15,6 +15,8 @@ function HomePage() {
   const [isPageReady, setIsPageReady] = useState(true); // 로딩 화면 비활성화
   const [showAnimations, setShowAnimations] = useState(false);
   const [userPlan, setUserPlan] = useState('basic'); // 사용자 플랜 정보
+  const [userSettings, setUserSettings] = useState(null);
+  const [isLoadingSettings, setIsLoadingSettings] = useState(false);
   const hasAnimatedRef = useRef(false);
   const cleanupRef = useRef(() => {});
   const dropdownRef = useRef(null);
@@ -29,6 +31,40 @@ function HomePage() {
     // 예: user.user_metadata?.subscription_plan || 'basic'
     return user.user_metadata?.subscription_plan || 'basic';
   };
+
+  // 실제 사용자 플랜 반환 함수 (로딩 상태 고려)
+  const getActualUserPlan = () => {
+    if (isLoadingSettings) return 'loading';
+    return userSettings?.member_tier || userPlan;
+  };
+
+  // 사용자 설정 가져오기
+  const fetchUserSettings = async (userId) => {
+    if (!userId) return;
+    
+    setIsLoadingSettings(true);
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('id, name, email, mbti, member_tier, cam_calibration')
+        .eq('id', userId)
+        .single();
+
+      if (error) throw error;
+      setUserSettings(data);
+    } catch (error) {
+      console.error('Error fetching user settings:', error);
+    } finally {
+      setIsLoadingSettings(false);
+    }
+  };
+
+  // 사용자 정보가 로드되면 설정도 미리 로드
+  useEffect(() => {
+    if (user && !userSettings) {
+      fetchUserSettings(user.id);
+    }
+  }, [user]);
 
   // 사용자 세션 확인 함수
   const checkUser = async () => {
@@ -228,9 +264,13 @@ function HomePage() {
             {isClient && user ? (
               <div className="user-dropdown" ref={dropdownRef}>
                 <div className="plan-badge-header">
-                  <span className={`plan-type ${userPlan}`}>
-                    {userPlan === 'premium' ? 'Premium' : 'Basic'}
-                  </span>
+                  {userSettings ? (
+                    <span className={`plan-type ${getActualUserPlan()}`}>
+                      {getActualUserPlan() === 'premium' ? 'Premium' : 'Basic'}
+                    </span>
+                  ) : (
+                    <span className="plan-type basic" style={{ opacity: 0.6 }}>로딩중...</span>
+                  )}
                 </div>
                 <div 
                   className={`user-dropdown-toggle ${isDropdownOpen ? 'open' : ''}`}
