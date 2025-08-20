@@ -17,6 +17,7 @@ function HomePage() {
   const [userPlan, setUserPlan] = useState('basic'); // 사용자 플랜 정보
   const [userSettings, setUserSettings] = useState(null);
   const [isLoadingSettings, setIsLoadingSettings] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const hasAnimatedRef = useRef(false);
   const cleanupRef = useRef(() => {});
   const dropdownRef = useRef(null);
@@ -239,6 +240,56 @@ function HomePage() {
     }
   };
 
+  // 설정 모달 닫기
+  const closeSettingsModal = () => {
+    setShowSettingsModal(false);
+  };
+
+  // MBTI 업데이트 함수
+  const updateMBTI = async (mbti) => {
+    if (!user || !userSettings) return;
+
+    setIsLoadingSettings(true);
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ mbti })
+        .eq('id', user.id);
+
+      if (error) throw error;
+      setUserSettings(prev => ({ ...prev, mbti }));
+      alert('MBTI가 성공적으로 업데이트되었습니다.');
+    } catch (error) {
+      console.error('Error updating MBTI:', error);
+      alert('MBTI 업데이트에 실패했습니다.');
+    } finally {
+      setIsLoadingSettings(false);
+    }
+  };
+
+  // 캠 캘리브레이션 삭제 함수
+  const deleteCamCalibration = async () => {
+    if (!user || !userSettings) return;
+
+    if (confirm('캠 캘리브레이션을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+      setIsLoadingSettings(true);
+      try {
+        const { error } = await supabase
+          .from('users')
+          .update({ cam_calibration: null })
+          .eq('id', user.id);
+
+        if (error) throw error;
+        setUserSettings(prev => ({ ...prev, cam_calibration: null }));
+        alert('캠 캘리브레이션이 성공적으로 삭제되었습니다.');
+      } catch (error) {
+        console.error('Error deleting cam calibration:', error);
+        alert('캠 캘리브레이션 삭제에 실패했습니다.');
+      } finally {
+        setIsLoadingSettings(false);
+      }
+    }
+  };
 
 
   // JSX: HTML과 유사하지만 JavaScript가 통합된 형태입니다.
@@ -297,7 +348,7 @@ function HomePage() {
                                         </svg>
                                         시작하기
                                     </a>
-                                    <button onClick={() => router.push('/settings')} className="user-dropdown-item" role="menuitem">
+                                    <button onClick={() => setShowSettingsModal(true)} className="user-dropdown-item" role="menuitem">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                             <circle cx="12" cy="12" r="3"/>
                                             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-1.82-.33l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -503,6 +554,106 @@ function HomePage() {
       <footer className="main-footer">
         <p>&copy; 2025 데연소. All rights reserved.</p>
       </footer>
+
+      {/* 설정 모달 */}
+      {showSettingsModal && (
+        <div className="modal-overlay" role="dialog" aria-modal="true">
+          <div className="modal-card settings-modal">
+            <div className="modal-header">
+              <h3>설정</h3>
+              <button className="modal-close" aria-label="닫기" onClick={closeSettingsModal}>×</button>
+            </div>
+            <div className="modal-body">
+              {isLoadingSettings ? (
+                <div className="settings-loading">
+                  <div className="loading-spinner"></div>
+                  <p>설정을 불러오는 중...</p>
+                </div>
+              ) : userSettings ? (
+                <div className="settings-content">
+                  <div className="setting-group">
+                    <label className="setting-label">이름</label>
+                    <div className="setting-value">
+                      {user?.user_metadata?.full_name || '이름 없음'}
+                    </div>
+                  </div>
+                  
+                  <div className="setting-group">
+                    <label className="setting-label">이메일</label>
+                    <div className="setting-value">
+                      {user?.email || '이메일 없음'}
+                    </div>
+                  </div>
+                  
+                  <div className="setting-group">
+                    <label className="setting-label">MBTI</label>
+                    <select 
+                      className="setting-input"
+                      value={userSettings.mbti || ''}
+                      onChange={(e) => updateMBTI(e.target.value)}
+                    >
+                      <option value="">MBTI를 선택하세요</option>
+                      <option value="INTJ">INTJ</option>
+                      <option value="INTP">INTP</option>
+                      <option value="ENTJ">ENTJ</option>
+                      <option value="ENTP">ENTP</option>
+                      <option value="INFJ">INFJ</option>
+                      <option value="INFP">INFP</option>
+                      <option value="ENFJ">ENFJ</option>
+                      <option value="ENFP">ENFP</option>
+                      <option value="ISTJ">ISTJ</option>
+                      <option value="ISFJ">ISFJ</option>
+                      <option value="ESTJ">ESTJ</option>
+                      <option value="ESFJ">ESFJ</option>
+                      <option value="ISTP">ISTP</option>
+                      <option value="ISFP">ISFP</option>
+                      <option value="ESTP">ESTP</option>
+                      <option value="ESFP">ESFP</option>
+                    </select>
+                  </div>
+                  
+                  <div className="setting-group">
+                    <label className="setting-label">캠 캘리브레이션</label>
+                    <div className="setting-value">
+                      {userSettings.cam_calibration ? (
+                        <div className="calibration-status">
+                          <span className="status-success">✅ 완료</span>
+                          <button 
+                            className="btn-delete-calibration"
+                            onClick={deleteCamCalibration}
+                          >
+                            삭제
+                          </button>
+                        </div>
+                      ) : (
+                        <span className="status-pending">⏳ 미완료</span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="setting-group">
+                    <label className="setting-label">멤버십</label>
+                    <div className="setting-value">
+                      <span className={`membership-badge ${userSettings.member_tier || 'basic'}`}>
+                        {userSettings.member_tier === 'premium' ? 'Premium' : 'Basic'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="settings-error">
+                  <p>설정을 불러올 수 없습니다.</p>
+                </div>
+              )}
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-primary" onClick={closeSettingsModal}>
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
