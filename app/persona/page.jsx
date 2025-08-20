@@ -556,7 +556,8 @@ function PersonaPage() {
                                 <div id="user-menu" className={`user-dropdown-menu ${isDropdownOpen ? 'open' : ''}`} role="menu">
                                     <a href="/persona" className="user-dropdown-item" role="menuitem">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                                            <path d="M5 12h14"/>
+                                            <path d="m12 5 7 7-7 7"/>
                                         </svg>
                                         시작하기
                                     </a>
