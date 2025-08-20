@@ -196,7 +196,8 @@ section[id] {
     transition: transform 0.3s ease-out;
 }
 
-.main-header .container {
+.main-header .container,
+.main-header .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1633,7 +1634,7 @@ section[id] {
 }
 
 .login-box .logo {
-  font-size: 36px;
+  font-size: 24px;
   font-weight: 800;
   color: var(--text);
   letter-spacing: 1px;
