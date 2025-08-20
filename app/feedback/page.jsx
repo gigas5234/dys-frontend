@@ -558,18 +558,34 @@ export default function FeedbackPage() {
         </aside>
 
         <main className="main-content">
-          <div className="container" style={{ maxWidth: 800, margin: "0 auto" }}>
-            <header className="report-header" style={{ textAlign: "center", marginBottom: 0 }}>
-              <h1>AI 코칭 히스토리</h1>
-              <p>캘린더에서 날짜를 선택하여 과거의 분석 리포트를 확인해보세요.</p>
+          <div className="container" style={{ maxWidth: 1000, margin: "0 auto" }}>
+            <header className="report-header" style={{ textAlign: "center", marginBottom: "40px" }}>
+              <div className="header-content">
+                <h1>AI 코칭 히스토리</h1>
+                <p>과거 세션을 통해 당신의 성장 여정을 확인해보세요</p>
+                <div className="header-stats">
+                  <div className="stat-item">
+                    <span className="stat-number">12</span>
+                    <span className="stat-label">총 세션</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-number">85</span>
+                    <span className="stat-label">평균 점수</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-number">3</span>
+                    <span className="stat-label">이번 달</span>
+                  </div>
+                </div>
+              </div>
             </header>
 
             <div className="history-card card">
               <div className="calendar-wrapper">
                 <div className="calendar-header">
-                  <button onClick={prevMonth}>‹</button>
+                  <button onClick={prevMonth} className="calendar-nav-btn">‹</button>
                   <h2 ref={currentMonthRef} id="current-month"></h2>
-                  <button onClick={nextMonth}>›</button>
+                  <button onClick={nextMonth} className="calendar-nav-btn">›</button>
                 </div>
                 <div className="calendar-grid" ref={calendarBodyRef} id="calendar-body"></div>
               </div>
@@ -580,48 +596,73 @@ export default function FeedbackPage() {
             </div>
 
             <div id="report-content" ref={reportContentRef} style={{ display: "none" }}>
-              <section className="card">
+              <section className="card score-overview">
                 <div className="summary-grid">
                   <div className="total-score">
-                    <div className="score-value" ref={totalScoreRef} id="total-score" data-value="0">0</div>
-                    <div className="score-label">종합 매력 점수</div>
+                    <div className="score-circle">
+                      <div className="score-value" ref={totalScoreRef} id="total-score" data-value="0">0</div>
+                      <div className="score-label">종합 매력 점수</div>
+                    </div>
                   </div>
                   <div className="ai-comment">
-                    <h3>코치의 한마디</h3>
+                    <div className="comment-header">
+                      <div className="ai-avatar">🤖</div>
+                      <h3>AI 코치의 한마디</h3>
+                    </div>
                     <p ref={aiSummaryRef} id="ai-summary"></p>
+                    <div className="comment-footer">
+                      <span className="timestamp">방금 전</span>
+                    </div>
                   </div>
                 </div>
               </section>
 
-              <section className="card" style={{ animationDelay: "0.1s" }}>
-                <h2 className="section-title">매력 지수 요약</h2>
+              <section className="card radar-section" style={{ animationDelay: "0.1s" }}>
+                <div className="section-header">
+                  <h2 className="section-title">매력 지수 분석</h2>
+                  <p className="section-subtitle">5가지 핵심 요소로 분석한 당신의 매력 지수</p>
+                </div>
                 <div className="chart-container">
                   <canvas ref={radarCanvasRef} id="radarChart" />
                 </div>
               </section>
 
-              <section className="card" style={{ animationDelay: "0.2s" }}>
-                <h2 className="section-title">최고의 순간</h2>
+              <section className="card moments-section" style={{ animationDelay: "0.2s" }}>
+                <div className="section-header">
+                  <h2 className="section-title">최고의 순간</h2>
+                  <p className="section-subtitle">이번 세션에서 가장 빛났던 순간들을 담았어요</p>
+                </div>
                 <div className="key-moments-grid">
                   <div className="moment-card">
-                    <img src="https://placehold.co/400x220/E9EFFF/4A72FF?text=Best+Smile" alt="최고의 미소 순간" />
+                    <div className="moment-image">
+                      <img src="https://placehold.co/400x220/E9EFFF/4A72FF?text=Best+Smile" alt="최고의 미소 순간" />
+                      <div className="moment-badge">최고의 미소</div>
+                    </div>
                     <div className="moment-card-content">
-                      <h4>최고의 미소 순간</h4>
-                      <p>자연스러운 미소로 긍정적인 분위기를 만들었어요.</p>
+                      <h4>자연스러운 미소</h4>
+                      <p>상대방의 이야기에 공감하며 보여준 자연스러운 미소가 긍정적인 분위기를 만들었어요.</p>
+                      <div className="moment-time">세션 3분 24초</div>
                     </div>
                   </div>
                   <div className="moment-card">
-                    <img src="https://placehold.co/400x220/E4F6E7/28A745?text=Good+Posture" alt="이상적인 자세" />
+                    <div className="moment-image">
+                      <img src="https://placehold.co/400x220/E4F6E7/28A745?text=Good+Posture" alt="이상적인 자세" />
+                      <div className="moment-badge">완벽한 자세</div>
+                    </div>
                     <div className="moment-card-content">
-                      <h4>이상적인 자세</h4>
-                      <p>상대방의 이야기에 귀 기울일 때 신뢰감 있는 자세를 보여주었어요.</p>
+                      <h4>신뢰감 있는 자세</h4>
+                      <p>상대방의 이야기에 귀 기울일 때 보여준 안정적이고 신뢰감 있는 자세가 인상적이었어요.</p>
+                      <div className="moment-time">세션 7분 12초</div>
                     </div>
                   </div>
                 </div>
               </section>
 
-              <section className="card" style={{ animationDelay: "0.3s" }}>
-                <h2 className="section-title">자세 & 표정 분석</h2>
+              <section className="card analysis-section" style={{ animationDelay: "0.3s" }}>
+                <div className="section-header">
+                  <h2 className="section-title">자세 & 표정 분석</h2>
+                  <p className="section-subtitle">비언어적 소통의 핵심 요소들을 분석했어요</p>
+                </div>
                 <div className="detail-analysis-grid">
                   <div className="metric-item">
                     <div className="metric-header">
@@ -658,8 +699,11 @@ export default function FeedbackPage() {
                 </div>
               </section>
 
-              <section className="card" style={{ animationDelay: "0.4s" }}>
-                <h2 className="section-title">음성 & 대화 분석</h2>
+              <section className="card voice-section" style={{ animationDelay: "0.4s" }}>
+                <div className="section-header">
+                  <h2 className="section-title">음성 & 대화 분석</h2>
+                  <p className="section-subtitle">목소리 톤과 대화 패턴을 분석했어요</p>
+                </div>
                 <div className="detail-analysis-grid">
                   <div className="metric-item">
                     <div className="metric-header">
@@ -675,58 +719,61 @@ export default function FeedbackPage() {
                 </div>
               </section>
 
-                             <section className="card final-coaching" style={{ animationDelay: "0.5s" }}>
-                 <h2 className="section-title">AI 종합 코칭</h2>
-                 <div className="coaching-content">
-                   <div className="coaching-summary">
-                     <h3>이번 세션 핵심 포인트</h3>
-                     <p ref={finalCoachingRef} id="final-coaching-text"></p>
-                   </div>
-                   
-                   <div className="coaching-details">
-                     <div className="coaching-section">
-                       <h4>✨ 잘한 점</h4>
-                       <ul>
-                         <li>자연스러운 미소로 긍정적인 분위기를 조성했습니다</li>
-                         <li>상대방의 이야기에 적극적으로 귀 기울였습니다</li>
-                         <li>적절한 시선 접촉으로 신뢰감을 표현했습니다</li>
-                       </ul>
-                     </div>
-                     
-                     <div className="coaching-section">
-                       <h4>개선할 점</h4>
-                       <ul>
-                         <li>목소리 톤을 조금 더 자신감 있게 조절해보세요</li>
-                         <li>자세를 더 안정적으로 유지하면 좋겠습니다</li>
-                         <li>질문을 통해 대화를 더 활발하게 이끌어보세요</li>
-                       </ul>
-                     </div>
-                     
-                     <div className="coaching-section">
-                       <h4>다음 세션 목표</h4>
-                       <div className="next-goals">
-                         <div className="goal-item">
-                           <span className="goal-number">1</span>
-                           <span className="goal-text">목소리 자신감 80점 이상 달성</span>
-                         </div>
-                         <div className="goal-item">
-                           <span className="goal-number">2</span>
-                           <span className="goal-text">자세 안정성 90% 이상 유지</span>
-                         </div>
-                         <div className="goal-item">
-                           <span className="goal-number">3</span>
-                           <span className="goal-text">적극적인 질문으로 대화 주도</span>
-                         </div>
-                       </div>
-                     </div>
-                   </div>
-                   
-                   <div className="coaching-encouragement">
-                     <div className="encouragement-icon">💪</div>
-                     <p>매번 조금씩 개선해나가는 당신이 정말 대단해요! 다음 세션에서도 좋은 모습 보여주세요!</p>
-                   </div>
-                 </div>
-               </section>
+              <section className="card coaching-section final-coaching" style={{ animationDelay: "0.5s" }}>
+                <div className="section-header">
+                  <h2 className="section-title">AI 종합 코칭</h2>
+                  <p className="section-subtitle">이번 세션을 종합적으로 분석한 맞춤형 피드백</p>
+                </div>
+                <div className="coaching-content">
+                  <div className="coaching-summary">
+                    <h3>이번 세션 핵심 포인트</h3>
+                    <p ref={finalCoachingRef} id="final-coaching-text"></p>
+                  </div>
+                  
+                  <div className="coaching-details">
+                    <div className="coaching-section">
+                      <h4>✨ 잘한 점</h4>
+                      <ul>
+                        <li>자연스러운 미소로 긍정적인 분위기를 조성했습니다</li>
+                        <li>상대방의 이야기에 적극적으로 귀 기울였습니다</li>
+                        <li>적절한 시선 접촉으로 신뢰감을 표현했습니다</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="coaching-section">
+                      <h4>💡 개선할 점</h4>
+                      <ul>
+                        <li>목소리 톤을 조금 더 자신감 있게 조절해보세요</li>
+                        <li>자세를 더 안정적으로 유지하면 좋겠습니다</li>
+                        <li>질문을 통해 대화를 더 활발하게 이끌어보세요</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="coaching-section">
+                      <h4>🎯 다음 세션 목표</h4>
+                      <div className="next-goals">
+                        <div className="goal-item">
+                          <span className="goal-number">1</span>
+                          <span className="goal-text">목소리 자신감 80점 이상 달성</span>
+                        </div>
+                        <div className="goal-item">
+                          <span className="goal-number">2</span>
+                          <span className="goal-text">자세 안정성 90% 이상 유지</span>
+                        </div>
+                        <div className="goal-item">
+                          <span className="goal-number">3</span>
+                          <span className="goal-text">적극적인 질문으로 대화 주도</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="coaching-encouragement">
+                    <div className="encouragement-icon">💪</div>
+                    <p>매번 조금씩 개선해나가는 당신이 정말 대단해요! 다음 세션에서도 좋은 모습 보여주세요!</p>
+                  </div>
+                </div>
+              </section>
             </div>
           </div>
         </main>
@@ -860,111 +907,86 @@ export default function FeedbackPage() {
         .session-info h4 { margin: 0; font-size: 14px; font-weight: 700; color: var(--text); }
         .session-info p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
 
-        .report-header h1 { font-size: 28px; font-weight: 800; margin: 0 0 8px; }
-        .report-header p { font-size: 15px; color: var(--muted); margin: 0; }
+        .report-header h1 { font-size: 32px; font-weight: 800; margin: 0 0 8px; background: linear-gradient(135deg, var(--brand2), var(--brand1)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .report-header p { font-size: 16px; color: var(--muted); margin: 0 0 24px; }
+        .header-stats { display: flex; justify-content: center; gap: 40px; margin-top: 24px; }
+        .stat-item { text-align: center; }
+        .stat-number { display: block; font-size: 24px; font-weight: 800; color: var(--brand2); }
+        .stat-label { font-size: 14px; color: var(--muted); font-weight: 500; }
 
-        .card { background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: var(--radius); border: 1px solid var(--stroke); padding: 28px; box-shadow: var(--shadow); opacity: 0; transform: translateY(20px); animation: fadeInUp .7s ease-out forwards; }
+        .card { background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: var(--radius); border: 1px solid var(--stroke); padding: 32px; box-shadow: var(--shadow); opacity: 0; transform: translateY(20px); animation: fadeInUp .7s ease-out forwards; }
         @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-        .summary-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 28px; align-items: center; }
-        .total-score .score-value { font-size: 56px; font-weight: 900; color: var(--text); text-align: center; }
-        .total-score .score-label { text-align: center; color: var(--muted); font-weight: 500; margin-top: -6px; }
-        .ai-comment h3 { margin: 0 0 12px; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: var(--text); }
-        .ai-comment p { margin: 0; font-size: 15px; line-height: 1.7; color: var(--muted); }
+        
+        .score-overview { background: linear-gradient(135deg, rgba(166, 193, 238, 0.05), rgba(251, 194, 235, 0.05)); border: 1px solid rgba(166, 193, 238, 0.2); }
+        .summary-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 32px; align-items: center; }
+        .score-circle { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 160px; height: 160px; margin: 0 auto; background: linear-gradient(135deg, var(--brand2), var(--brand1)); border-radius: 50%; box-shadow: 0 8px 32px rgba(166, 193, 238, 0.3); }
+        .total-score .score-value { font-size: 48px; font-weight: 900; color: white; text-align: center; }
+        .total-score .score-label { text-align: center; color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-top: 4px; font-size: 14px; }
+        
+        .ai-comment { background: white; border-radius: 16px; padding: 24px; border: 1px solid rgba(0, 0, 0, 0.08); }
+        .comment-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .ai-avatar { font-size: 24px; }
+        .ai-comment h3 { margin: 0; font-size: 18px; font-weight: 700; color: var(--text); }
+        .ai-comment p { margin: 0 0 16px; font-size: 15px; line-height: 1.7; color: var(--text); }
+        .comment-footer { display: flex; justify-content: flex-end; }
+        .timestamp { font-size: 12px; color: var(--muted); }
 
-        .section-title { font-size: 20px; font-weight: 700; margin: 0 0 18px; padding-bottom: 12px; border-bottom: 1px solid var(--stroke); color: var(--text); }
+        .section-header { margin-bottom: 24px; }
+        .section-title { font-size: 22px; font-weight: 700; margin: 0 0 8px; color: var(--text); }
+        .section-subtitle { font-size: 15px; color: var(--muted); margin: 0; }
         .chart-container { width: 100%; max-width: 450px; margin: 0 auto; }
 
         .detail-analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        .metric-item { display: flex; flex-direction: column; gap: 8px; }
+        .metric-item { display: flex; flex-direction: column; gap: 12px; padding: 20px; background: white; border-radius: 12px; border: 1px solid rgba(0, 0, 0, 0.08); }
         .metric-header { display: flex; justify-content: space-between; align-items: baseline; }
-        .metric-header .label { font-size: 16px; font-weight: 600; color: var(--muted); }
-        .metric-header .value { font-size: 22px; font-weight: 700; color: var(--text); }
-        .metric-header .value .unit { font-size: 15px; font-weight: 500; color: var(--muted); margin-left: 2px; }
-        .progress-bar { width: 100%; height: 8px; background: var(--stroke); border-radius: 4px; overflow: hidden; }
-        .progress-bar-inner { height: 100%; width: 0%; background: var(--brand2); border-radius: 4px; transition: width 1s ease-out; }
-        .metric-insight { font-size: 13px; color: var(--muted); margin-top: 4px; }
+        .metric-header .label { font-size: 16px; font-weight: 600; color: var(--text); }
+        .metric-header .value { font-size: 24px; font-weight: 700; color: var(--brand2); }
+        .metric-header .value .unit { font-size: 16px; font-weight: 500; color: var(--muted); margin-left: 2px; }
+        .progress-bar { width: 100%; height: 8px; background: rgba(0, 0, 0, 0.1); border-radius: 4px; overflow: hidden; }
+        .progress-bar-inner { height: 100%; width: 0%; background: linear-gradient(90deg, var(--brand2), var(--brand1)); border-radius: 4px; transition: width 1s ease-out; }
+        .metric-insight { font-size: 14px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
 
-                 .speech-bubble-chart-container { margin-top: 32px; position: relative; width: 100%; height: 120px; background: rgba(0,0,0,0.03); border-radius: var(--radius); padding: 10px; border: 1px solid var(--stroke); }
-         .speech-bubble-chart-container h4 { margin: 0 0 12px; font-size: 14px; font-weight: 600; color: var(--muted); text-align: center; position: absolute; top: -35px; width: 100%; left: 0; }
-                 .speech-bubble { position: absolute; bottom: 10px; background: var(--brand2); border-radius: 50%; transform: translateX(-50%); transition: all .5s ease-out; cursor: pointer; }
+        .speech-bubble-chart-container { margin-top: 32px; position: relative; width: 100%; height: 120px; background: rgba(0,0,0,0.03); border-radius: var(--radius); padding: 10px; border: 1px solid var(--stroke); }
+        .speech-bubble-chart-container h4 { margin: 0 0 12px; font-size: 14px; font-weight: 600; color: var(--muted); text-align: center; position: absolute; top: -35px; width: 100%; left: 0; }
+        .speech-bubble { position: absolute; bottom: 10px; background: var(--brand2); border-radius: 50%; transform: translateX(-50%); transition: all .5s ease-out; cursor: pointer; }
         .speech-bubble:hover { transform: translateX(-50%) scale(1.1); }
         .tooltip { position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 6px 10px; border-radius: 6px; font-size: 12px; white-space: nowrap; opacity: 0; visibility: hidden; transition: opacity .2s, visibility .2s; pointer-events: none; }
         .speech-bubble:hover .tooltip { opacity: 1; visibility: visible; }
 
-        .key-moments-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .moment-card { border: 1px solid var(--stroke); border-radius: var(--radius); overflow: hidden; background: #fff; }
-        .moment-card img { width: 100%; height: 180px; object-fit: cover; background: #eee; }
-        .moment-card-content { padding: 16px; }
+        .key-moments-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .moment-card { border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 16px; overflow: hidden; background: white; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .moment-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1); }
+        .moment-image { position: relative; }
+        .moment-image img { width: 100%; height: 180px; object-fit: cover; background: #eee; }
+        .moment-badge { position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, var(--brand2), var(--brand1)); color: white; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(166, 193, 238, 0.3); }
+        .moment-card-content { padding: 20px; }
         .moment-card-content h4 { margin: 0 0 8px; font-size: 16px; font-weight: 700; color: var(--text); }
-        .moment-card-content p { margin: 0; font-size: 14px; color: var(--muted); }
+        .moment-card-content p { margin: 0; font-size: 14px; color: var(--muted); line-height: 1.6; }
+        .moment-time { font-size: 12px; color: var(--brand2); margin-top: 12px; font-weight: 500; }
 
-                 .final-coaching p { font-size: 16px; line-height: 1.8; color: var(--text); }
-         
-         .coaching-content { display: flex; flex-direction: column; gap: 24px; }
-         .coaching-summary h3 { font-size: 18px; font-weight: 700; margin: 0 0 12px; color: var(--text); }
-         .coaching-summary p { font-size: 16px; line-height: 1.7; color: var(--muted); margin: 0; }
-         
-         .coaching-details { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-         .coaching-section h4 { font-size: 16px; font-weight: 700; margin: 0 0 12px; color: var(--text); }
-         .coaching-section ul { margin: 0; padding-left: 20px; }
-         .coaching-section li { font-size: 14px; line-height: 1.6; color: var(--muted); margin-bottom: 8px; }
-         .coaching-section li:last-child { margin-bottom: 0; }
-         
-         .next-goals { display: flex; flex-direction: column; gap: 12px; }
-         .goal-item { display: flex; align-items: center; gap: 12px; }
-         .goal-number { width: 24px; height: 24px; background: var(--brand2); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
-         .goal-text { font-size: 14px; color: var(--text); font-weight: 500; }
-         
-         .coaching-encouragement { display: flex; align-items: center; gap: 16px; padding: 20px; background: linear-gradient(135deg, rgba(166, 193, 238, 0.1), rgba(251, 194, 235, 0.1)); border-radius: var(--radius); border: 1px solid rgba(166, 193, 238, 0.2); }
-         .encouragement-icon { font-size: 32px; }
-         .coaching-encouragement p { font-size: 16px; line-height: 1.6; color: var(--text); margin: 0; font-weight: 500; }
-         
-         .user-dropdown { position: relative; }
-         .plan-badge-header { margin-bottom: 8px; }
-         .plan-type { display: inline-block; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: white; background: #6b7280; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
-         .plan-type.premium { background: linear-gradient(135deg, var(--brand2), var(--brand1)); box-shadow: 0 2px 8px rgba(166, 193, 238, 0.3); }
-         
-         .membership-badge { display: inline-block; padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: white; background: #6b7280; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
-         .membership-badge.premium { background: linear-gradient(135deg, var(--brand2), var(--brand1)); box-shadow: 0 2px 8px rgba(166, 193, 238, 0.3); }
-         
-         /* Premium 플랜 추가 스타일 */
-         .plan-type.premium, .membership-badge.premium {
-           background: linear-gradient(135deg, #a6c1ee 0%, #fbc2eb 100%);
-           box-shadow: 0 2px 8px rgba(166, 193, 238, 0.3);
-           position: relative;
-           overflow: hidden;
-         }
-         
-         .plan-type.premium::before, .membership-badge.premium::before {
-           content: '';
-           position: absolute;
-           top: 0;
-           left: -100%;
-           width: 100%;
-           height: 100%;
-           background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-           animation: shimmer 2s infinite;
-         }
-         
-         @keyframes shimmer {
-           0% { left: -100%; }
-           100% { left: 100%; }
-         }
-         
-         .user-dropdown-toggle { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 16px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
-         .user-dropdown-toggle:hover { background: rgba(255, 255, 255, 1); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); border-color: rgba(166, 193, 238, 0.3); }
-         .user-dropdown-toggle.open { background: rgba(255, 255, 255, 1); }
-         .user-avatar { width: 32px; height: 32px; border-radius: 50%; }
-         .user-name { font-size: 15px; font-weight: 600; color: var(--text); }
-         
-         .user-dropdown-menu { position: absolute; top: calc(100% + 8px); right: 0; background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 16px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15); min-width: 180px; opacity: 0; visibility: hidden; transform: translateY(-8px) scale(0.95); transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); z-index: 1000; overflow: hidden; }
-         .user-dropdown-menu.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
-         
-         .user-dropdown-item { display: flex; align-items: center; gap: 12px; padding: 14px 18px; color: var(--text); text-decoration: none; font-size: 15px; font-weight: 500; transition: all 0.2s ease; border: none; background: none; width: 100%; text-align: left; cursor: pointer; }
-         .user-dropdown-item:not(:last-child) { border-bottom: 1px solid rgba(0, 0, 0, 0.06); }
-         .user-dropdown-item:hover { background-color: rgba(0,0,0,0.05); }
-         .user-dropdown-item.logout { color: #e74c3c; }
-         .user-dropdown-item.logout:hover { background-color: rgba(231, 76, 60, 0.1); }
+        .coaching-content { display: flex; flex-direction: column; gap: 32px; }
+        .coaching-summary { background: linear-gradient(135deg, rgba(166, 193, 238, 0.05), rgba(251, 194, 235, 0.05)); padding: 24px; border-radius: 16px; border: 1px solid rgba(166, 193, 238, 0.2); }
+        .coaching-summary h3 { font-size: 18px; font-weight: 700; margin: 0 0 12px; color: var(--text); }
+        .coaching-summary p { font-size: 16px; line-height: 1.7; color: var(--text); margin: 0; }
+        
+        .coaching-details { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .coaching-section { background: white; padding: 20px; border-radius: 12px; border: 1px solid rgba(0, 0, 0, 0.08); }
+        .coaching-section h4 { font-size: 16px; font-weight: 700; margin: 0 0 16px; color: var(--text); }
+        .coaching-section ul { margin: 0; padding-left: 20px; }
+        .coaching-section li { font-size: 14px; line-height: 1.6; color: var(--text); margin-bottom: 8px; }
+        .coaching-section li:last-child { margin-bottom: 0; }
+        
+        .next-goals { display: flex; flex-direction: column; gap: 12px; }
+        .goal-item { display: flex; align-items: center; gap: 12px; }
+        .goal-number { width: 28px; height: 28px; background: linear-gradient(135deg, var(--brand2), var(--brand1)); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; box-shadow: 0 4px 12px rgba(166, 193, 238, 0.3); }
+        .goal-text { font-size: 14px; color: var(--text); font-weight: 500; }
+        
+        .coaching-encouragement { display: flex; align-items: center; gap: 16px; padding: 24px; background: linear-gradient(135deg, rgba(166, 193, 238, 0.1), rgba(251, 194, 235, 0.1)); border-radius: 16px; border: 1px solid rgba(166, 193, 238, 0.2); }
+        .encouragement-icon { font-size: 32px; }
+        .coaching-encouragement p { font-size: 16px; line-height: 1.6; color: var(--text); margin: 0; font-weight: 500; }
+
+        .calendar-nav-btn { background: none; border: none; cursor: pointer; font-size: 20px; color: var(--muted); padding: 8px; border-radius: 8px; transition: all 0.2s ease; }
+        .calendar-nav-btn:hover { background: rgba(0, 0, 0, 0.05); color: var(--text); }
 
                  @media (max-width: 768px) {
            .history-card { grid-template-columns: 1fr; }
