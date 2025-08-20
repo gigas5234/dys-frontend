@@ -72,11 +72,32 @@ function LoginPage() {
     event.preventDefault();
     setIsLoginLoading(true);
 
-    // 2초 후 로딩 상태 해제 (API 호출 시뮬레이션)
-    setTimeout(() => {
+    const formData = new FormData(event.target);
+    const email = formData.get('email');
+    const password = formData.get('password');
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+      if (error) {
+        console.error('로그인 오류:', error);
+        // 에러 메시지 표시 로직 추가 가능
+        setIsLoginLoading(false);
+        return;
+      }
+
+      if (data.user) {
+        console.log('로그인 성공:', data.user.email);
+        // 로그인 성공 시 메인 페이지로 이동
+        router.push('/');
+      }
+    } catch (error) {
+      console.error('로그인 중 오류 발생:', error);
       setIsLoginLoading(false);
-      // 실제 로그인 성공/실패 로직 추가
-    }, 2000);
+    }
   };
 
   // Google 로그인 처리
@@ -245,7 +266,7 @@ function LoginPage() {
           <div className="login-links">
             <a href="#">비밀번호 찾기</a>
             <span className="separator">|</span>
-            <a href="#">회원가입</a>
+            <a href="/signup">회원가입</a>
           </div>
         </div>
       </div>
