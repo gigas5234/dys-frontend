@@ -371,9 +371,8 @@ function PersonaPage() {
             // HTTPS 환경에서는 프록시를 통해 health check
             if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
                 console.log('HTTPS 환경에서 프록시를 통한 health check');
-                const response = await fetch('/api/proxy/health', {
-                    method: 'GET',
-                    timeout: 5000
+                const response = await fetch('/api/health', {
+                    method: 'GET'
                 });
                 
                 if (!response.ok) {
@@ -385,8 +384,7 @@ function PersonaPage() {
             } else {
                 // HTTP 환경에서는 직접 요청
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/health`, {
-                    method: 'GET',
-                    timeout: 5000
+                    method: 'GET'
                 });
                 
                 if (!response.ok) {
