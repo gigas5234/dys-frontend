@@ -368,22 +368,13 @@ function PersonaPage() {
         console.log('이동할 URL:', studioUrl);
         
         try {
-            // HTTPS 환경에서는 프록시를 통해 health check
+            // 개발 환경에서는 health check 건너뛰기 (Mixed Content 문제 해결)
             if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
-                console.log('HTTPS 환경에서 프록시를 통한 health check');
-                const response = await fetch('/api/proxy/health', {
-                    method: 'GET',
-                    timeout: 5000
-                });
-                
-                if (!response.ok) {
-                    throw new Error('서버 연결 실패');
-                }
-                
-                console.log('Health check 성공, 페이지 이동');
+                console.log('HTTPS 환경에서 HTTP 백엔드 health check 건너뛰기');
+                // 바로 페이지 이동
                 window.location.href = studioUrl;
             } else {
-                // HTTP 환경에서는 직접 요청
+                // 서버 연결 상태 확인 (HTTP 환경에서만)
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/health`, {
                     method: 'GET',
                     timeout: 5000
