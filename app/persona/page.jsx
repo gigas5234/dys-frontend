@@ -354,12 +354,12 @@ function PersonaPage() {
             persona_image: personaData.image
         });
         
-        const studioUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/dys_studio/studio_calibration.html?${params.toString()}`;
+        const studioUrl = `${process.env.NEXT_PUBLIC_API_URL}/dys_studio/studio_calibration.html?${params.toString()}`;
         console.log('이동할 URL:', studioUrl);
         
         try {
             // 서버 연결 상태 확인
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/health`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/health`, {
                 method: 'GET',
                 timeout: 5000
             });
@@ -371,7 +371,7 @@ function PersonaPage() {
             // 연결 성공 시 페이지 이동
             window.location.href = studioUrl;
         } catch (error) {
-            console.error('RunPod 연결 실패:', error);
+            console.error('GKE 백엔드 연결 실패:', error);
             setIsLoading(false);
             setShowWarningModal(true);
         }

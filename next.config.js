@@ -28,10 +28,16 @@ const nextConfig = {
     ];
   },
   async rewrites() {
+    // 환경 변수가 정의되지 않은 경우 빈 배열 반환
+    if (!process.env.NEXT_PUBLIC_API_URL) {
+      console.warn('NEXT_PUBLIC_API_URL 환경 변수가 정의되지 않았습니다. rewrite 규칙을 건너뜁니다.');
+      return [];
+    }
+    
     return [
       {
-        source: '/api/runpod/:path*',
-        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}/:path*`,
+        source: '/api/gke/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/:path*`,
       },
     ];
   },
