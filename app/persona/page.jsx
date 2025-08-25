@@ -371,9 +371,17 @@ function PersonaPage() {
             // HTTPS 환경에서는 프록시를 통해 health check
             if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
                 console.log('HTTPS 환경에서 프록시를 통한 health check');
+                console.log('현재 URL:', window.location.href);
+                console.log('프로토콜:', window.location.protocol);
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10초 타임아웃
+                
                 const response = await fetch('/api/health', {
-                    method: 'GET'
+                    method: 'GET',
+                    signal: controller.signal
                 });
+                
+                clearTimeout(timeoutId);
                 
                 if (!response.ok) {
                     throw new Error('서버 연결 실패');
@@ -396,6 +404,9 @@ function PersonaPage() {
             }
         } catch (error) {
             console.error('GKE 백엔드 연결 실패:', error);
+            if (error.name === 'AbortError') {
+                console.error('요청 타임아웃');
+            }
             setIsLoading(false);
             setShowWarningModal(true);
         }
