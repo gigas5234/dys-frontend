@@ -1,0 +1,31 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/gke/(.*)",
+      "destination": "http://34.64.136.237/$1"
+    },
+    {
+      "source": "/api/health",
+      "destination": "http://34.64.136.237/health"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
+    }
+  ]
+}
