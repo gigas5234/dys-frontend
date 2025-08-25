@@ -4,10 +4,13 @@ export async function GET() {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://34.64.136.237';
     
     console.log('🔍 [PROXY] Health check 시작:', backendUrl);
+    console.log('🔍 [PROXY] 환경 변수 확인:', {
+      NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+      NODE_ENV: process.env.NODE_ENV
+    });
     
     const response = await fetch(`${backendUrl}/health`, {
       method: 'GET',
-      timeout: 5000,
       headers: {
         'Content-Type': 'application/json'
       }
