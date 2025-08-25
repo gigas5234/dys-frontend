@@ -364,7 +364,10 @@ function PersonaPage() {
             persona_image: personaData.image
         });
         
-        const studioUrl = `${process.env.NEXT_PUBLIC_API_URL}/dys_studio/studio_calibration.html?${params.toString()}`;
+        // HTTPS 환경에서는 Vercel 프록시를 통해 접근
+        const studioUrl = typeof window !== 'undefined' && window.location.protocol === 'https:'
+            ? `/api/gke/dys_studio/studio_calibration.html?${params.toString()}`
+            : `${process.env.NEXT_PUBLIC_API_URL}/dys_studio/studio_calibration.html?${params.toString()}`;
         console.log('이동할 URL:', studioUrl);
         
         try {

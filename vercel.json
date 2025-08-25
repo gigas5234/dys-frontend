@@ -7,6 +7,10 @@
     {
       "source": "/api/health",
       "destination": "http://34.64.136.237/health"
+    },
+    {
+      "source": "/api/gke/dys_studio/(.*)",
+      "destination": "http://34.64.136.237/dys_studio/$1"
     }
   ],
   "headers": [
