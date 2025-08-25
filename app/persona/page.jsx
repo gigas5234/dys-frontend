@@ -341,11 +341,21 @@ function PersonaPage() {
             await new Promise(resolve => setTimeout(resolve, stepDuration));
         }
 
+        // 세션에서 토큰 가져오기
+        const { data: { session } } = await supabase.auth.getSession();
+        const accessToken = session?.access_token;
+        
+        console.log('토큰 정보:', {
+            hasSession: !!session,
+            hasToken: !!accessToken,
+            tokenLength: accessToken?.length
+        });
+        
         // 로딩 완료 후 이동
         const params = new URLSearchParams({
             user_id: user.id,
             email: user.email,
-            token: user.access_token,
+            token: accessToken || '',
             persona_name: personaData.name,
             persona_age: personaData.age.toString(),
             persona_mbti: personaData.mbti,
@@ -358,18 +368,25 @@ function PersonaPage() {
         console.log('이동할 URL:', studioUrl);
         
         try {
-            // 서버 연결 상태 확인
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/health`, {
-                method: 'GET',
-                timeout: 5000
-            });
-            
-            if (!response.ok) {
-                throw new Error('서버 연결 실패');
+            // 개발 환경에서는 health check 건너뛰기 (Mixed Content 문제 해결)
+            if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+                console.log('HTTPS 환경에서 HTTP 백엔드 health check 건너뛰기');
+                // 바로 페이지 이동
+                window.location.href = studioUrl;
+            } else {
+                // 서버 연결 상태 확인 (HTTP 환경에서만)
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/health`, {
+                    method: 'GET',
+                    timeout: 5000
+                });
+                
+                if (!response.ok) {
+                    throw new Error('서버 연결 실패');
+                }
+                
+                // 연결 성공 시 페이지 이동
+                window.location.href = studioUrl;
             }
-            
-            // 연결 성공 시 페이지 이동
-            window.location.href = studioUrl;
         } catch (error) {
             console.error('GKE 백엔드 연결 실패:', error);
             setIsLoading(false);
