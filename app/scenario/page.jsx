@@ -309,7 +309,7 @@ export default function ScenarioPage() {
                
                <div className="scenario-card cafe-date">
                  <div className="card-background" style={{
-                   backgroundImage: "url('/bg/bg_cafe.webp')",
+                   backgroundImage: "url('https://dys-phi.vercel.app/bg/bg_cafe.webp')",
                    backgroundSize: "cover",
                    backgroundPosition: "center",
                    backgroundRepeat: "no-repeat"
