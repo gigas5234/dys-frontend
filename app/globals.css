@@ -29,6 +29,54 @@ html, body {
     word-break: keep-all;
 }
 
+/* 스크롤 스냅 설정 */
+html {
+    scroll-snap-type: y proximity;
+    scroll-behavior: smooth;
+    overflow-y: scroll;
+}
+
+body {
+    scroll-snap-type: y proximity;
+}
+
+section {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 스크롤 스냅이 적용되지 않는 요소들 */
+.scroll-arrow,
+.main-header,
+.modal-overlay,
+.cta-section {
+    scroll-snap-align: none;
+}
+
+/* 스크롤바 스타일링 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(247, 248, 252, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #a6c1ee, #fbc2eb);
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #8aa9d6, #f0a8d8);
+    box-shadow: 0 2px 8px rgba(166, 193, 238, 0.3);
+}
+
 /* 고정 헤더 높이 보정이 필요한 페이지 래퍼 */
 .auth-page {
   min-height: calc(100vh - var(--header-height));
@@ -159,11 +207,18 @@ main.fade-in {
     transform: translateY(calc(var(--reveal, 0px) + var(--parallax))); 
 }
 
-/* --- 공통 섹션 스타일 --- */
-section {
-    padding: 120px 0;
-    position: relative;
-}
+    /* --- 공통 섹션 스타일 --- */
+    section {
+        padding: 120px 0;
+        position: relative;
+    }
+    
+    section .container {
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 40px;
+    }
 section[id] {
     scroll-margin-top: 100px;
 }
@@ -541,7 +596,7 @@ section[id] {
 
 .highlight-text {
     font-weight: 800;
-    font-size: 1.15em;
+    font-size: 1.3em;
     background: linear-gradient(135deg, #667eea, #764ba2);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -563,13 +618,13 @@ section[id] {
 
 @keyframes bounce {
     0%, 20%, 50%, 80%, 100% {
-        transform: translateX(-50%) translateY(0);
+        transform: translateX(-50%) translateY(0) scale(1);
     }
     40% {
-        transform: translateX(-50%) translateY(-10px);
+        transform: translateX(-50%) translateY(-10px) scale(1.02);
     }
     60% {
-        transform: translateX(-50%) translateY(-5px);
+        transform: translateX(-50%) translateY(-5px) scale(1.01);
     }
 }
 
@@ -3028,6 +3083,13 @@ section[id] {
     border: 1px solid var(--stroke);
 }
 
+.setting-value.disabled {
+    background: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
 .setting-input {
     width: 100%;
     padding: 12px 16px;
@@ -3098,6 +3160,60 @@ section[id] {
     text-align: center;
     padding: 40px 20px;
     color: var(--text-secondary);
+}
+
+/* 알림 팝업 스타일 */
+.alert-modal {
+    max-width: 400px;
+}
+
+.alert-content {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.alert-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.alert-content h4 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+.alert-content p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid var(--stroke);
+    display: flex;
+    justify-content: center;
+}
+
+.modal-footer .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-footer .btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.modal-footer .btn-primary:hover {
+    background: var(--primary-dark);
 }
 
 /* Settings Page Styles */

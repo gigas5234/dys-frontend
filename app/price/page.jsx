@@ -12,6 +12,7 @@ function PricePage() {
   const [userSettings, setUserSettings] = useState(null);
   const [isLoadingSettings, setIsLoadingSettings] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showPremiumAlert, setShowPremiumAlert] = useState(false);
   const dropdownRef = useRef(null);
 
   // 사용자 플랜 확인 함수
@@ -282,7 +283,7 @@ function PricePage() {
                     <span>기본 분석 리포트 (종합 점수)</span>
                   </li>
                 </ul>
-                <a href="#" className="btn-cta">Basic으로 시작하기</a>
+                <a href="/persona" className="btn-cta">Basic으로 시작하기</a>
               </div>
 
               <div className="plan-card premium">
@@ -308,7 +309,12 @@ function PricePage() {
                     <span>모든 도전 모드 시나리오 이용 가능</span>
                   </li>
                 </ul>
-                <a href="#" className="btn-cta">프리미엄 구독하기</a>
+                <button 
+                  onClick={() => setShowPremiumAlert(true)} 
+                  className="btn-cta"
+                >
+                  프리미엄 구독하기
+                </button>
               </div>
             </div>
           </div>
@@ -339,6 +345,39 @@ function PricePage() {
         <p>&copy; 2025 데연소. All rights reserved.</p>
       </footer>
 
+      {/* 프리미엄 준비중 알림 팝업 */}
+      {showPremiumAlert && (
+        <div className="modal-overlay" role="dialog" aria-modal="true">
+          <div className="modal-card alert-modal">
+            <div className="modal-header">
+              <h3>알림</h3>
+              <button 
+                className="modal-close" 
+                aria-label="닫기" 
+                onClick={() => setShowPremiumAlert(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="alert-content">
+                <div className="alert-icon">🚧</div>
+                <h4>아직 준비중입니다</h4>
+                <p>프리미엄 구독 서비스는 현재 개발 중입니다.<br/>조금만 기다려주세요!</p>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button 
+                className="btn btn-primary" 
+                onClick={() => setShowPremiumAlert(false)}
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 설정 모달 */}
       {showSettingsModal && (
         <div className="modal-overlay" role="dialog" aria-modal="true">
@@ -357,14 +396,14 @@ function PricePage() {
                 <div className="settings-content">
                   <div className="setting-group">
                     <label className="setting-label">이름</label>
-                    <div className="setting-value">
+                    <div className="setting-value disabled">
                       {user?.user_metadata?.full_name || '이름 없음'}
                     </div>
                   </div>
                   
                   <div className="setting-group">
                     <label className="setting-label">이메일</label>
-                    <div className="setting-value">
+                    <div className="setting-value disabled">
                       {user?.email || '이메일 없음'}
                     </div>
                   </div>
@@ -417,11 +456,6 @@ function PricePage() {
                   
                   <div className="setting-group">
                     <label className="setting-label">멤버십</label>
-                    <div className="setting-value">
-                      <span className={`membership-badge ${userSettings.member_tier || 'basic'}`}>
-                        {userSettings.member_tier === 'premium' ? 'Premium' : 'Basic'}
-                      </span>
-                    </div>
                   </div>
                 </div>
               ) : (

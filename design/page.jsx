@@ -164,7 +164,7 @@ const GlobalStyles = () => (
     
     .highlight-text {
         font-weight: 800;
-        font-size: 1.15em;
+        font-size: 1.3em;
         background: linear-gradient(135deg, #667eea, #764ba2);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;

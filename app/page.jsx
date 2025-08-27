@@ -100,7 +100,11 @@ function HomePage() {
     // 스크롤 이벤트 핸들러 추가
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      setShowScrollArrow(scrollY < 100); // 100px 이상 스크롤하면 화살표 숨김
+      const windowHeight = window.innerHeight;
+      
+      // 첫 번째 섹션(hero-section)에서만 화살표 표시
+      // 스크롤이 상단으로 돌아왔을 때도 다시 표시
+      setShowScrollArrow(scrollY < windowHeight * 0.8);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -383,7 +387,7 @@ function HomePage() {
       </header>
 
       <main className={showAnimations ? 'fade-in' : ''}>
-        <section className="hero-section container">
+        <section className="hero-section">
             <div className="slogan reveal">설렘은 현실로, 실수는 연습으로.</div>
             <h1 className="reveal" style={{transitionDelay: '0.1s'}}>AI 소통 코칭으로<br/>당신의 매력을 발견하세요</h1>
             <p className="reveal" style={{transitionDelay: '0.2s'}}>관계에 대한 막연한 두려움이 있으신가요? 데연소는 실패의 부담이 없는 안전한 공간에서 당신의 소통 능력을 과학적으로 진단하고 잠재된 매력을 찾아드립니다.</p>
@@ -411,19 +415,42 @@ function HomePage() {
                   transform: 'translateX(-50%)',
                   cursor: 'pointer',
                   animation: 'bounce 2s infinite',
-                  zIndex: 10
+                  zIndex: 10,
+                  background: 'rgba(255, 255, 255, 0.9)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '20px',
+                  padding: '12px 20px',
+                  boxShadow: '0 4px 20px rgba(166, 193, 238, 0.2)',
+                  border: '1px solid rgba(166, 193, 238, 0.1)',
+                  transition: 'all 0.3s ease'
                 }}
                 onClick={() => {
-                  document.getElementById('problem')?.scrollIntoView({ 
-                    behavior: 'smooth' 
-                  });
+                  const problemSection = document.getElementById('problem');
+                  if (problemSection) {
+                    const headerHeight = 80; // 헤더 높이
+                    const targetPosition = problemSection.offsetTop - headerHeight;
+                    window.scrollTo({
+                      top: targetPosition,
+                      behavior: 'smooth'
+                    });
+                  }
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = 'translateX(-50%) scale(1.05)';
+                  e.target.style.boxShadow = '0 6px 25px rgba(166, 193, 238, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = 'translateX(-50%) scale(1)';
+                  e.target.style.boxShadow = '0 4px 20px rgba(166, 193, 238, 0.2)';
                 }}
               >
                 <div style={{
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  color: '#667eea',
+                  background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
                   fontSize: '14px',
                   fontWeight: '600'
                 }}>
@@ -433,9 +460,15 @@ function HomePage() {
                     height="24" 
                     viewBox="0 0 24 24" 
                     fill="none" 
-                    stroke="currentColor" 
+                    stroke="url(#scrollGradient)" 
                     strokeWidth="2"
                   >
+                    <defs>
+                      <linearGradient id="scrollGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#667eea" />
+                        <stop offset="100%" stopColor="#764ba2" />
+                      </linearGradient>
+                    </defs>
                     <polyline points="6,9 12,15 18,9"></polyline>
                   </svg>
                 </div>
@@ -625,14 +658,14 @@ function HomePage() {
                 <div className="settings-content">
                   <div className="setting-group">
                     <label className="setting-label">이름</label>
-                    <div className="setting-value">
+                    <div className="setting-value disabled">
                       {user?.user_metadata?.full_name || '이름 없음'}
                     </div>
                   </div>
                   
                   <div className="setting-group">
                     <label className="setting-label">이메일</label>
-                    <div className="setting-value">
+                    <div className="setting-value disabled">
                       {user?.email || '이메일 없음'}
                     </div>
                   </div>
@@ -685,11 +718,6 @@ function HomePage() {
                   
                   <div className="setting-group">
                     <label className="setting-label">멤버십</label>
-                    <div className="setting-value">
-                      <span className={`membership-badge ${userSettings.member_tier || 'basic'}`}>
-                        {userSettings.member_tier === 'premium' ? 'Premium' : 'Basic'}
-                      </span>
-                    </div>
                   </div>
                 </div>
               ) : (

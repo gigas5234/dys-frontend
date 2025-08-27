@@ -245,14 +245,14 @@ export default function SettingsPage() {
                                     <h2>기본 정보</h2>
                                     <div className="setting-group">
                                         <label className="setting-label">이름</label>
-                                        <div className="setting-value">
+                                        <div className="setting-value disabled">
                                             {user?.user_metadata?.full_name || '이름 없음'}
                                         </div>
                                     </div>
                                     
                                     <div className="setting-group">
                                         <label className="setting-label">이메일</label>
-                                        <div className="setting-value">
+                                        <div className="setting-value disabled">
                                             {user?.email || '이메일 없음'}
                                         </div>
                                     </div>
@@ -309,14 +309,9 @@ export default function SettingsPage() {
                                         </div>
                                     </div>
                                     
-                                    <div className="setting-group">
-                                        <label className="setting-label">멤버십</label>
-                                        <div className="setting-value">
-                                            <span className={`membership-badge ${userSettings.member_tier || 'basic'}`}>
-                                                {userSettings.member_tier === 'premium' ? 'Premium' : 'Basic'}
-                                            </span>
-                                        </div>
-                                    </div>
+                                                                         <div className="setting-group">
+                                         <label className="setting-label">멤버십</label>
+                                     </div>
                                 </section>
                             </div>
                         ) : (
