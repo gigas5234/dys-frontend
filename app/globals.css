@@ -3493,22 +3493,24 @@ section[id] {
 
 .scenario-card {
     position: relative;
-    background: var(--background-secondary);
-    border-radius: 16px;
+    background: var(--glass);
+    border-radius: var(--radius);
     padding: 0;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+    transition: all var(--transition-speed) ease;
     border: 1px solid var(--stroke);
     overflow: hidden;
-    min-height: 280px;
+    min-height: 320px;
     display: flex;
     flex-direction: column;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 .scenario-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-    border-color: var(--primary);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    border-color: var(--brand2);
 }
 
 .card-background {
@@ -3520,122 +3522,127 @@ section[id] {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 0.2;
-    transition: all 0.3s ease;
+    opacity: 0.15;
+    transition: all var(--transition-speed) ease;
     z-index: 1;
 }
 
 .scenario-card:hover .card-background {
-    opacity: 0.3;
-    transform: scale(1.02);
+    opacity: 0.25;
+    transform: scale(1.05);
 }
 
 .card-content {
     position: relative;
     z-index: 2;
-    padding: 24px;
+    padding: 32px;
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.85) 100%);
-    backdrop-filter: blur(5px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .card-icon {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 8px;
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--brand1) 0%, var(--brand2) 100%);
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 16px;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(166, 193, 238, 0.3);
 }
 
 .card-icon svg {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     color: white;
     stroke: white;
     fill: none;
 }
 
 .scenario-card h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, var(--brand1) 0%, var(--brand2) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
 .scenario-card p {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    margin-bottom: 16px;
-    line-height: 1.5;
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+    line-height: 1.6;
     flex-grow: 1;
 }
 
 .card-features {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 20px;
+    gap: 8px;
+    margin-bottom: 24px;
 }
 
 .feature-tag {
-    background: rgba(102, 126, 234, 0.1);
-    color: #667eea;
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 0.75rem;
+    background: rgba(166, 193, 238, 0.1);
+    color: var(--brand2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
     font-weight: 500;
-    border: 1px solid rgba(102, 126, 234, 0.2);
-    transition: all 0.2s ease;
+    border: 1px solid rgba(166, 193, 238, 0.2);
+    transition: all var(--transition-speed) ease;
 }
 
 .feature-tag:hover {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--brand1) 0%, var(--brand2) 100%);
     color: white;
-    border-color: #667eea;
+    border-color: var(--brand2);
+    transform: translateY(-1px);
 }
 
 .scenario-card .btn {
     width: 100%;
-    padding: 12px 20px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 14px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: all var(--transition-speed) ease;
+    background: linear-gradient(135deg, var(--brand1) 0%, var(--brand2) 100%);
     border: none;
     color: white;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 4px 12px rgba(166, 193, 238, 0.3);
     cursor: pointer;
 }
 
 .scenario-card .btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(166, 193, 238, 0.4);
+    background: linear-gradient(135deg, var(--brand2) 0%, var(--brand3) 100%);
 }
 
 /* 각 시나리오별 배경 이미지 */
 .scenario-card.first-meeting .card-background {
-    background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-image: linear-gradient(135deg, var(--brand1) 0%, var(--brand2) 100%);
 }
 
 .scenario-card.cafe-date .card-background {
     background-image: url('/bg/bg_cafe.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .scenario-card.restaurant-date .card-background {
-    background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-image: linear-gradient(135deg, var(--brand2) 0%, var(--brand3) 100%);
 }
 
 .scenario-card.movie-date .card-background {
-    background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-image: linear-gradient(135deg, var(--brand3) 0%, var(--brand1) 100%);
 }
