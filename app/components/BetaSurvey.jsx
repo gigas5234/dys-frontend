@@ -30,27 +30,27 @@ const BetaSurvey = () => {
   const questions = [
     {
       id: 'helpfulness',
-      question: '실제적으로 도움이 되었나요?',
+      question: '데연소를 이용하면서 실제 대화 실전 연습에 도움이 되었나요?',
       required: true
     },
     {
       id: 'satisfaction',
-      question: '전반적인 만족도는 어떠신가요?',
+      question: '자세·시선 교정 기능이 대화 태도 개선에 도움이 되었나요?',
       required: true
     },
     {
       id: 'ease_of_use',
-      question: '사용하기 쉬웠나요?',
+      question: '목소리 톤·감정 피드백이 실제 대화 자신감 향상에 기여했나요?',
       required: true
     },
     {
       id: 'recommendation',
-      question: '다른 사람에게 추천하시겠습니까?',
+      question: 'AI 페르소나(가상 상대)와의 대화가 자연스럽고 몰입감이 있었나요?',
       required: true
     },
     {
       id: 'overall_experience',
-      question: '전체적인 경험은 어떠셨나요?',
+      question: '데연소를 사용한 후 실제 소개팅/데이트 상황에 대비하는 자신감이 향상되었다고 느끼시나요?',
       required: true
     }
   ];
@@ -258,15 +258,15 @@ const BetaSurvey = () => {
               </div>
             ))}
 
-            <div style={{ marginBottom: '30px' }}>
-              <h3 style={{
-                margin: '0 0 20px 0',
-                color: '#333',
-                fontSize: '18px',
-                fontWeight: '600'
-              }}>
-                6. 추가 의견이나 개선사항을 알려주세요
-              </h3>
+                         <div style={{ marginBottom: '30px' }}>
+               <h3 style={{
+                 margin: '0 0 20px 0',
+                 color: '#333',
+                 fontSize: '18px',
+                 fontWeight: '600'
+               }}>
+                 6. 추가로 원하시는 기능이나 개선되었으면 하는 점을 자유롭게 작성해주세요.
+               </h3>
               <textarea
                 value={formData.feedback}
                 onChange={(e) => handleInputChange('feedback', e.target.value)}

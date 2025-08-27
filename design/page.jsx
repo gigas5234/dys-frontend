@@ -165,12 +165,11 @@ const GlobalStyles = () => (
     .highlight-text {
         font-weight: 800;
         font-size: 1.15em;
-        background: linear-gradient(135deg, var(--brand2), var(--brand1));
+        background: linear-gradient(135deg, #667eea, #764ba2);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         display: inline-block;
-        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-        -webkit-text-stroke: 0.5px rgba(44, 62, 80, 0.5);
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
         animation: pulse-effect 2s ease-in-out infinite;
     }
 

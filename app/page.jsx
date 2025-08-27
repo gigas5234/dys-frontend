@@ -18,6 +18,7 @@ function HomePage() {
   const [userSettings, setUserSettings] = useState(null);
   const [isLoadingSettings, setIsLoadingSettings] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showScrollArrow, setShowScrollArrow] = useState(true);
   const hasAnimatedRef = useRef(false);
   const cleanupRef = useRef(() => {});
   const dropdownRef = useRef(null);
@@ -95,6 +96,14 @@ function HomePage() {
     
     setIsClient(true);
     setMounted(true);
+    
+    // 스크롤 이벤트 핸들러 추가
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      setShowScrollArrow(scrollY < 100); // 100px 이상 스크롤하면 화살표 숨김
+    };
+
+    window.addEventListener('scroll', handleScroll);
     
     // 한 번만 실행되도록 플래그 추가
     let isInitialized = false;
@@ -390,6 +399,48 @@ function HomePage() {
              >
                {isClient && user ? '데이트 준비하기' : '지금 시작하기'}
              </button>
+            
+            {/* 스크롤 안내 화살표 */}
+            {showScrollArrow && (
+              <div 
+                className="scroll-arrow reveal" 
+                style={{
+                  position: 'absolute',
+                  bottom: '40px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  cursor: 'pointer',
+                  animation: 'bounce 2s infinite',
+                  zIndex: 10
+                }}
+                onClick={() => {
+                  document.getElementById('problem')?.scrollIntoView({ 
+                    behavior: 'smooth' 
+                  });
+                }}
+              >
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  color: '#667eea',
+                  fontSize: '14px',
+                  fontWeight: '600'
+                }}>
+                  <span style={{ marginBottom: '8px' }}>아래로 스크롤</span>
+                  <svg 
+                    width="24" 
+                    height="24" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2"
+                  >
+                    <polyline points="6,9 12,15 18,9"></polyline>
+                  </svg>
+                </div>
+              </div>
+            )}
         </section>
 
         <section id="problem" className="problem-section">
