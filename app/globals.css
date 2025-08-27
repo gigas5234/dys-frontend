@@ -3619,12 +3619,35 @@ section[id] {
     color: white;
     box-shadow: 0 4px 12px rgba(166, 193, 238, 0.3);
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.scenario-card .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--brand2) 0%, var(--brand3) 100%);
+    opacity: 0;
+    transition: opacity var(--transition-speed) ease;
+    z-index: 1;
 }
 
 .scenario-card .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(166, 193, 238, 0.4);
-    background: linear-gradient(135deg, var(--brand2) 0%, var(--brand3) 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(166, 193, 238, 0.5);
+}
+
+.scenario-card .btn:hover::before {
+    opacity: 1;
+}
+
+.scenario-card .btn span {
+    position: relative;
+    z-index: 2;
 }
 
 /* 각 시나리오별 배경 이미지 */
@@ -3637,6 +3660,7 @@ section[id] {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    opacity: 0.15;
 }
 
 .scenario-card.restaurant-date .card-background {

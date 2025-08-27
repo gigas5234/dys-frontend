@@ -303,7 +303,7 @@ export default function ScenarioPage() {
                      <span className="feature-tag">첫인상</span>
                      <span className="feature-tag">자기소개</span>
                    </div>
-                   <button className="btn btn-primary">시작하기</button>
+                   <button className="btn btn-primary"><span>시작하기</span></button>
                  </div>
                </div>
                
@@ -326,7 +326,7 @@ export default function ScenarioPage() {
                      <span className="feature-tag">대화</span>
                      <span className="feature-tag">분위기</span>
                    </div>
-                   <button className="btn btn-primary">시작하기</button>
+                   <button className="btn btn-primary"><span>시작하기</span></button>
                  </div>
                </div>
                
@@ -350,7 +350,7 @@ export default function ScenarioPage() {
                      <span className="feature-tag">매너</span>
                      <span className="feature-tag">분위기</span>
                    </div>
-                   <button className="btn btn-primary">시작하기</button>
+                   <button className="btn btn-primary"><span>시작하기</span></button>
                  </div>
                </div>
                
@@ -369,7 +369,7 @@ export default function ScenarioPage() {
                      <span className="feature-tag">공감</span>
                      <span className="feature-tag">대화</span>
                    </div>
-                   <button className="btn btn-primary">시작하기</button>
+                   <button className="btn btn-primary"><span>시작하기</span></button>
                  </div>
                </div>
              </div>
