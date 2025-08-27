@@ -556,8 +556,8 @@ function PersonaPage() {
 
         const userName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || '사용자';
         const messages = [
-            { role: 'me', text: `안녕하세요. ${userName}이라고 합니다.` },
-            { role: 'ai', text: `네, 안녕하세요. 저는 ${persona.name}이라고 합니다.` },
+            { role: 'me', text: `안녕하세요. ${userName}입니다.` },
+            { role: 'ai', text: `네, 안녕하세요. 저는 ${persona.name}입니다.` },
             { role: 'me', text: '혹시 이번 주말 시간이 괜찮으실까요?' },
             { role: 'ai', text: '이번 주말이요? 네, 가능할 것 같습니다.' },
             { role: 'me', text: '그렇다면 혹시 어디서 뵙는 게 좋을까요?' },

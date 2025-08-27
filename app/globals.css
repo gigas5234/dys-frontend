@@ -2745,13 +2745,13 @@ section[id] {
 .persona-card.locked {
     position: relative;
     cursor: not-allowed;
-    opacity: 0.7;
+    opacity: 0.85;
 }
 
 .persona-card.locked:hover {
     transform: scale(0.85);
-    opacity: 0.6;
-    filter: blur(2px);
+    opacity: 0.75;
+    filter: blur(1px);
 }
 
 .persona-card-lock-overlay {
