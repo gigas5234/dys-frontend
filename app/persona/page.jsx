@@ -10,13 +10,39 @@ import BetaSurvey from '../components/BetaSurvey';
 const allPersonas = personas;
 
 // 페르소나 카드 컴포넌트
-const PersonaCard = ({ persona, isSelected, onClick, isProfileCard = false }) => {
+const PersonaCard = ({ persona, isSelected, onClick, isProfileCard = false, userPlan = 'basic' }) => {
     const tagsHtml = persona.personality.map(tag => <div key={tag} className="tag">#{tag}</div>);
-    const cardClasses = `persona-card ${isSelected && !isProfileCard ? 'selected' : ''}`;
+    const isBasicUser = userPlan === 'basic';
+    const isPremiumPersona = persona.id !== 1; // 1번 이서아만 베이직에서 선택 가능
+    const isLocked = isBasicUser && isPremiumPersona;
+    
+    const cardClasses = `persona-card ${isSelected && !isProfileCard ? 'selected' : ''} ${isLocked ? 'locked' : ''}`;
+
+    const handleClick = () => {
+        if (isLocked) {
+            // 프리미엄 업그레이드 모달 표시
+            return;
+        }
+        if (onClick) {
+            onClick();
+        }
+    };
 
     return (
-        <div className={cardClasses} onClick={onClick}>
+        <div className={cardClasses} onClick={handleClick}>
             <img src={persona.image} alt={persona.name} className="persona-card-image" onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/400x500/e0e8ff/7d7d7d?text=Image'; }} />
+            {isLocked && (
+                <div className="persona-card-lock-overlay">
+                    <div className="lock-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <circle cx="12" cy="16" r="1"></circle>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                    <div className="lock-text">프리미엄 전용</div>
+                </div>
+            )}
             <div className="persona-card-content">
                 <div className="persona-card-name">{persona.name}</div>
                 <div className="persona-card-info">{persona.age}세 · {persona.mbti} · {persona.job}</div>
@@ -495,6 +521,17 @@ function PersonaPage() {
     };
 
     const handleCardClick = (index) => {
+        const persona = currentPersonas[index];
+        const isBasicUser = getActualUserPlan() === 'basic';
+        const isPremiumPersona = persona.id !== 1; // 1번 이서아만 베이직에서 선택 가능
+        
+        // 베이직 사용자가 프리미엄 페르소나를 클릭한 경우
+        if (isBasicUser && isPremiumPersona) {
+            // 프리미엄 업그레이드 모달 표시 (나중에 구현)
+            alert('프리미엄 구독으로 업그레이드하면 모든 페르소나와 대화할 수 있습니다!');
+            return;
+        }
+        
         if (index === selectedIndex) {
             startChatView(index);
         } else {
@@ -732,7 +769,7 @@ function PersonaPage() {
                                 </div>
                             </div>
                             <div className="selected-persona-profile">
-                               <PersonaCard persona={selectedPersona} isSelected={true} isProfileCard={true} />
+                               <PersonaCard persona={selectedPersona} isSelected={true} isProfileCard={true} userPlan={getActualUserPlan()} />
                             </div>
                         </div>
                     )}
@@ -768,6 +805,7 @@ function PersonaPage() {
                                         persona={persona} 
                                         isSelected={index === selectedIndex}
                                         onClick={() => handleCardClick(index)}
+                                        userPlan={getActualUserPlan()}
                                     />
                                 ))}
                             </div>
