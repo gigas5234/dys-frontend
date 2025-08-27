@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from
 import { useRouter } from 'next/navigation';
 import { getCurrentSession, restoreSessionFromUrl, signOut, supabase } from '../../lib/supabase';
 import personas from '../../data/personas.json';
+import BetaSurvey from '../components/BetaSurvey';
 
 // 공통 페르소나 데이터 사용
 const allPersonas = personas;
@@ -645,6 +646,8 @@ function PersonaPage() {
                             <span>피드백</span>
                         </a>
                     </nav>
+                    
+                    <BetaSurvey />
                 </aside>
 
                 <main className={`main-content ${isChatActive ? 'chat-active' : ''}`}>
