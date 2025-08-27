@@ -110,10 +110,22 @@ const BetaSurvey = () => {
     }
   };
 
+  const handleClose = () => {
+    setIsOpen(false);
+    setFormData({
+      helpfulness: '',
+      satisfaction: '',
+      ease_of_use: '',
+      recommendation: '',
+      overall_experience: '',
+      feedback: ''
+    });
+  };
+
   return (
-    <div className="beta-survey-container">
+    <>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen(true)}
         className="beta-survey-toggle"
         style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -129,130 +141,219 @@ const BetaSurvey = () => {
           transition: 'all 0.3s ease'
         }}
       >
-        {isOpen ? '베타 테스트 설문 닫기' : '베타 테스트 설문'}
+        베타 테스트 설문
       </button>
 
+      {/* 모달 오버레이 */}
       {isOpen && (
-        <div className="beta-survey-modal" style={{
-          background: 'white',
-          borderRadius: '12px',
-          padding: '20px',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-          marginBottom: '20px'
-        }}>
-          <h3 style={{
-            margin: '0 0 20px 0',
-            color: '#333',
-            fontSize: '18px',
-            fontWeight: '600'
-          }}>
-            베타 테스트 설문조사
-          </h3>
-          
-          <form onSubmit={handleSubmit}>
-            {questions.map((q) => (
-              <div key={q.id} style={{ marginBottom: '20px' }}>
-                <p style={{
-                  margin: '0 0 10px 0',
-                  fontWeight: '500',
-                  color: '#333',
-                  fontSize: '14px'
+        <div 
+          className="modal-overlay"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '20px'
+          }}
+          onClick={handleClose}
+        >
+          {/* 모달 컨텐츠 */}
+          <div 
+            className="modal-content"
+            style={{
+              background: 'white',
+              borderRadius: '16px',
+              padding: '30px',
+              maxWidth: '600px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              position: 'relative',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 닫기 버튼 */}
+            <button
+              onClick={handleClose}
+              style={{
+                position: 'absolute',
+                top: '15px',
+                right: '20px',
+                background: 'none',
+                border: 'none',
+                fontSize: '24px',
+                cursor: 'pointer',
+                color: '#666',
+                width: '30px',
+                height: '30px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#f0f0f0'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+            >
+              ×
+            </button>
+
+            <h2 style={{
+              margin: '0 0 30px 0',
+              color: '#333',
+              fontSize: '24px',
+              fontWeight: '700',
+              textAlign: 'center'
+            }}>
+              베타 테스트 설문조사
+            </h2>
+            
+            <p style={{
+              margin: '0 0 30px 0',
+              color: '#666',
+              fontSize: '16px',
+              textAlign: 'center',
+              lineHeight: '1.5'
+            }}>
+              서비스 개선을 위한 소중한 의견을 들려주세요.
+            </p>
+            
+            <form onSubmit={handleSubmit}>
+              {questions.map((q, index) => (
+                <div key={q.id} style={{ 
+                  marginBottom: '30px',
+                  padding: '20px',
+                  border: '1px solid #e0e0e0',
+                  borderRadius: '12px',
+                  backgroundColor: '#fafafa'
                 }}>
-                  {q.question} {q.required && <span style={{ color: 'red' }}>*</span>}
-                </p>
-                
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {options.map((option) => (
-                    <label key={option.value} style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      cursor: 'pointer',
-                      fontSize: '13px',
-                      color: '#555'
-                    }}>
-                      <input
-                        type="radio"
-                        name={q.id}
-                        value={option.value}
-                        checked={formData[q.id] === option.value}
-                        onChange={(e) => handleInputChange(q.id, e.target.value)}
-                        required={q.required}
-                        style={{ marginRight: '8px' }}
-                      />
-                      {option.label}
-                    </label>
-                  ))}
+                  <h3 style={{
+                    margin: '0 0 15px 0',
+                    color: '#333',
+                    fontSize: '16px',
+                    fontWeight: '600'
+                  }}>
+                    {index + 1}. {q.question} {q.required && <span style={{ color: 'red' }}>*</span>}
+                  </h3>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {options.map((option) => (
+                      <label key={option.value} style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        cursor: 'pointer',
+                        fontSize: '15px',
+                        color: '#555',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        transition: 'background-color 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.target.style.backgroundColor = '#f0f0f0'}
+                      onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                      >
+                        <input
+                          type="radio"
+                          name={q.id}
+                          value={option.value}
+                          checked={formData[q.id] === option.value}
+                          onChange={(e) => handleInputChange(q.id, e.target.value)}
+                          required={q.required}
+                          style={{ 
+                            marginRight: '12px',
+                            transform: 'scale(1.2)'
+                          }}
+                        />
+                        {option.label}
+                      </label>
+                    ))}
+                  </div>
                 </div>
+              ))}
+
+              <div style={{ marginBottom: '30px' }}>
+                <h3 style={{
+                  margin: '0 0 15px 0',
+                  color: '#333',
+                  fontSize: '16px',
+                  fontWeight: '600'
+                }}>
+                  6. 추가 의견이나 개선사항을 알려주세요
+                </h3>
+                <textarea
+                  value={formData.feedback}
+                  onChange={(e) => handleInputChange('feedback', e.target.value)}
+                  placeholder="의견을 자유롭게 작성해주세요. 서비스 개선에 큰 도움이 됩니다..."
+                  style={{
+                    width: '100%',
+                    minHeight: '120px',
+                    padding: '15px',
+                    border: '1px solid #ddd',
+                    borderRadius: '8px',
+                    fontSize: '15px',
+                    resize: 'vertical',
+                    fontFamily: 'inherit',
+                    lineHeight: '1.5'
+                  }}
+                />
               </div>
-            ))}
 
-            <div style={{ marginBottom: '20px' }}>
-              <p style={{
-                margin: '0 0 10px 0',
-                fontWeight: '500',
-                color: '#333',
-                fontSize: '14px'
+              <div style={{ 
+                display: 'flex', 
+                gap: '15px',
+                justifyContent: 'center'
               }}>
-                추가 의견이나 개선사항을 알려주세요
-              </p>
-              <textarea
-                value={formData.feedback}
-                onChange={(e) => handleInputChange('feedback', e.target.value)}
-                placeholder="의견을 자유롭게 작성해주세요..."
-                style={{
-                  width: '100%',
-                  minHeight: '80px',
-                  padding: '10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '6px',
-                  fontSize: '13px',
-                  resize: 'vertical'
-                }}
-              />
-            </div>
-
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button
-                type="submit"
-                disabled={!isFormValid() || isSubmitting}
-                style={{
-                  background: isFormValid() && !isSubmitting 
-                    ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                    : '#ccc',
-                  color: 'white',
-                  border: 'none',
-                  padding: '10px 20px',
-                  borderRadius: '6px',
-                  cursor: isFormValid() && !isSubmitting ? 'pointer' : 'not-allowed',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  flex: 1
-                }}
-              >
-                {isSubmitting ? '제출 중...' : '설문 제출'}
-              </button>
-              
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                style={{
-                  background: '#f5f5f5',
-                  color: '#666',
-                  border: '1px solid #ddd',
-                  padding: '10px 20px',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500'
-                }}
-              >
-                취소
-              </button>
-            </div>
-          </form>
+                <button
+                  type="submit"
+                  disabled={!isFormValid() || isSubmitting}
+                  style={{
+                    background: isFormValid() && !isSubmitting 
+                      ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                      : '#ccc',
+                    color: 'white',
+                    border: 'none',
+                    padding: '15px 30px',
+                    borderRadius: '8px',
+                    cursor: isFormValid() && !isSubmitting ? 'pointer' : 'not-allowed',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    minWidth: '150px',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  {isSubmitting ? '제출 중...' : '설문 제출'}
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  style={{
+                    background: '#f5f5f5',
+                    color: '#666',
+                    border: '1px solid #ddd',
+                    padding: '15px 30px',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    minWidth: '100px',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  취소
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
