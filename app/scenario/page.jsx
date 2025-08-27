@@ -308,7 +308,7 @@ export default function ScenarioPage() {
                </div>
                
                <div className="scenario-card cafe-date">
-                 <div className="card-background"></div>
+                 <div className="card-background" style={{backgroundImage: "url('/bg/bg_cafe.webp')"}}></div>
                  <div className="card-content">
                    <div className="card-icon">
                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
