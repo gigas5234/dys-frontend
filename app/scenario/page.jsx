@@ -284,31 +284,95 @@ export default function ScenarioPage() {
             <h1>도전 시나리오</h1>
             <p>다양한 데이트 상황을 연습해보세요.</p>
             
-            <div className="scenario-grid">
-              <div className="scenario-card">
-                <h3>첫 만남</h3>
-                <p>소개팅이나 데이트 앱으로 만난 상대와의 첫 만남 시나리오</p>
-                <button className="btn btn-primary">시작하기</button>
-              </div>
-              
-              <div className="scenario-card">
-                <h3>카페 데이트</h3>
-                <p>조용한 카페에서의 대화 시나리오</p>
-                <button className="btn btn-primary">시작하기</button>
-              </div>
-              
-              <div className="scenario-card">
-                <h3>식사 데이트</h3>
-                <p>레스토랑에서의 식사 데이트 시나리오</p>
-                <button className="btn btn-primary">시작하기</button>
-              </div>
-              
-              <div className="scenario-card">
-                <h3>영화 데이트</h3>
-                <p>영화관에서의 데이트 시나리오</p>
-                <button className="btn btn-primary">시작하기</button>
-              </div>
-            </div>
+                         <div className="scenario-grid">
+               <div className="scenario-card first-meeting">
+                 <div className="card-background"></div>
+                 <div className="card-content">
+                   <div className="card-icon">
+                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                       <circle cx="9" cy="7" r="4"/>
+                       <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                       <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                     </svg>
+                   </div>
+                   <h3>첫 만남</h3>
+                   <p>소개팅이나 데이트 앱으로 만난 상대와의 첫 만남 시나리오</p>
+                   <div className="card-features">
+                     <span className="feature-tag">긴장감</span>
+                     <span className="feature-tag">첫인상</span>
+                     <span className="feature-tag">자기소개</span>
+                   </div>
+                   <button className="btn btn-primary">시작하기</button>
+                 </div>
+               </div>
+               
+               <div className="scenario-card cafe-date">
+                 <div className="card-background"></div>
+                 <div className="card-content">
+                   <div className="card-icon">
+                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                       <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+                       <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+                       <line x1="6" y1="1" x2="6" y2="4"/>
+                       <line x1="10" y1="1" x2="10" y2="4"/>
+                       <line x1="14" y1="1" x2="14" y2="4"/>
+                     </svg>
+                   </div>
+                   <h3>카페 데이트</h3>
+                   <p>조용한 카페에서의 대화 시나리오</p>
+                   <div className="card-features">
+                     <span className="feature-tag">편안함</span>
+                     <span className="feature-tag">대화</span>
+                     <span className="feature-tag">분위기</span>
+                   </div>
+                   <button className="btn btn-primary">시작하기</button>
+                 </div>
+               </div>
+               
+               <div className="scenario-card restaurant-date">
+                 <div className="card-background"></div>
+                 <div className="card-content">
+                   <div className="card-icon">
+                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                       <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+                       <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+                       <line x1="6" y1="1" x2="6" y2="4"/>
+                       <line x1="10" y1="1" x2="10" y2="4"/>
+                       <line x1="14" y1="1" x2="14" y2="4"/>
+                       <path d="M9 12l2 2 4-4"/>
+                     </svg>
+                   </div>
+                   <h3>식사 데이트</h3>
+                   <p>레스토랑에서의 식사 데이트 시나리오</p>
+                   <div className="card-features">
+                     <span className="feature-tag">식사</span>
+                     <span className="feature-tag">매너</span>
+                     <span className="feature-tag">분위기</span>
+                   </div>
+                   <button className="btn btn-primary">시작하기</button>
+                 </div>
+               </div>
+               
+               <div className="scenario-card movie-date">
+                 <div className="card-background"></div>
+                 <div className="card-content">
+                   <div className="card-icon">
+                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                       <polygon points="5 3 19 12 5 21 5 3"/>
+                     </svg>
+                   </div>
+                   <h3>영화 데이트</h3>
+                   <p>영화관에서의 데이트 시나리오</p>
+                   <div className="card-features">
+                     <span className="feature-tag">영화</span>
+                     <span className="feature-tag">공감</span>
+                     <span className="feature-tag">대화</span>
+                   </div>
+                   <button className="btn btn-primary">시작하기</button>
+                 </div>
+               </div>
+             </div>
           </div>
         </main>
       </div>
