@@ -3544,7 +3544,7 @@ section[id] {
 .card-icon {
     width: 40px;
     height: 40px;
-    background: var(--primary);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -3557,13 +3557,18 @@ section[id] {
     width: 20px;
     height: 20px;
     color: white;
+    stroke: white;
+    fill: none;
 }
 
 .scenario-card h3 {
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 8px;
-    color: var(--text-primary);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .scenario-card p {
@@ -3582,20 +3587,20 @@ section[id] {
 }
 
 .feature-tag {
-    background: var(--background-tertiary);
-    color: var(--text-secondary);
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
     padding: 3px 10px;
     border-radius: 12px;
     font-size: 0.75rem;
     font-weight: 500;
-    border: 1px solid var(--stroke);
+    border: 1px solid rgba(102, 126, 234, 0.2);
     transition: all 0.2s ease;
 }
 
 .feature-tag:hover {
-    background: var(--primary);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    border-color: var(--primary);
+    border-color: #667eea;
 }
 
 .scenario-card .btn {
@@ -3605,16 +3610,17 @@ section[id] {
     font-weight: 500;
     border-radius: 8px;
     transition: all 0.2s ease;
-    background: var(--primary);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
     color: white;
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+    cursor: pointer;
 }
 
 .scenario-card .btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-    background: var(--primary-hover);
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
 }
 
 /* 각 시나리오별 배경 이미지 */
