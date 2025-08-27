@@ -645,12 +645,34 @@ function PersonaPage() {
                             </svg>
                             <span>피드백</span>
                         </a>
+                        <button 
+                            onClick={() => {
+                                // BetaSurvey 컴포넌트의 isOpen 상태를 변경하는 방법
+                                const event = new CustomEvent('openBetaSurvey');
+                                window.dispatchEvent(event);
+                            }}
+                            style={{
+                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                color: 'white',
+                                border: 'none',
+                                padding: '12px 20px',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                width: '100%',
+                                marginTop: '10px',
+                                transition: 'all 0.3s ease'
+                            }}
+                        >
+                            베타 테스트 설문
+                        </button>
                     </nav>
                     
-                    <BetaSurvey />
                 </aside>
 
                 <main className={`main-content ${isChatActive ? 'chat-active' : ''}`}>
+                    <BetaSurvey />
                     {selectedPersona && (
                         <div className="chat-view-container">
                             <div className="chat-simulation-container">

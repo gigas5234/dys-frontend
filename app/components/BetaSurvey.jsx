@@ -1,11 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 
 const BetaSurvey = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const handleOpenSurvey = () => {
+      setIsOpen(true);
+    };
+
+    window.addEventListener('openBetaSurvey', handleOpenSurvey);
+    
+    return () => {
+      window.removeEventListener('openBetaSurvey', handleOpenSurvey);
+    };
+  }, []);
   const [formData, setFormData] = useState({
     helpfulness: '',
     satisfaction: '',
@@ -122,32 +134,13 @@ const BetaSurvey = () => {
     });
   };
 
+  // 설문이 열려있지 않으면 아무것도 렌더링하지 않음
   if (!isOpen) {
-    return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="beta-survey-toggle"
-        style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          color: 'white',
-          border: 'none',
-          padding: '12px 20px',
-          borderRadius: '8px',
-          cursor: 'pointer',
-          fontSize: '14px',
-          fontWeight: '500',
-          width: '100%',
-          marginBottom: '10px',
-          transition: 'all 0.3s ease'
-        }}
-      >
-        베타 테스트 설문
-      </button>
-    );
+    return null;
   }
 
   return (
-    <div className="main-content" style={{ 
+    <div style={{ 
       position: 'fixed',
       top: 0,
       left: 0,
@@ -160,7 +153,7 @@ const BetaSurvey = () => {
     }}>
       <div className="container" style={{ maxWidth: 800, margin: "0 auto" }}>
         {/* 헤더 */}
-        <header className="report-header" style={{ textAlign: "center", marginBottom: "40px" }}>
+        <header className="report-header" style={{ textAlign: "center", marginBottom: "40px", position: "relative" }}>
           <div className="header-content">
             <h1 style={{ 
               fontSize: '32px', 
@@ -181,8 +174,8 @@ const BetaSurvey = () => {
               onClick={handleClose}
               style={{
                 position: 'absolute',
-                top: '20px',
-                right: '20px',
+                top: '0',
+                right: '0',
                 background: 'none',
                 border: 'none',
                 fontSize: '24px',
