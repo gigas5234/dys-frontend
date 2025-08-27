@@ -891,6 +891,11 @@ export default function FeedbackPage() {
                   
                   <div className="setting-group">
                     <label className="setting-label">멤버십</label>
+                    <div className="setting-value">
+                      <span className={`membership-badge ${getActualUserPlan()}`}>
+                        {getActualUserPlan() === 'premium' ? 'Premium' : 'Basic'}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ) : (

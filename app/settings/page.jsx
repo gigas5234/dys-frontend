@@ -21,6 +21,12 @@ export default function SettingsPage() {
         return user.user_metadata?.subscription_plan || 'basic';
     };
 
+    // 실제 사용자 플랜 반환 함수 (로딩 상태 고려)
+    const getActualUserPlan = () => {
+        if (isLoadingSettings) return 'loading';
+        return userSettings?.member_tier || userPlan;
+    };
+
     // 사용자 설정 가져오기
     const fetchUserSettings = async () => {
         if (!user) return;
@@ -309,9 +315,14 @@ export default function SettingsPage() {
                                         </div>
                                     </div>
                                     
-                                                                         <div className="setting-group">
-                                         <label className="setting-label">멤버십</label>
-                                     </div>
+                                    <div className="setting-group">
+                                        <label className="setting-label">멤버십</label>
+                                        <div className="setting-value">
+                                            <span className={`membership-badge ${getActualUserPlan()}`}>
+                                                {getActualUserPlan() === 'premium' ? 'Premium' : 'Basic'}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </section>
                             </div>
                         ) : (

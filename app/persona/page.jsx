@@ -49,6 +49,7 @@ function PersonaPage() {
     const [showSettingsModal, setShowSettingsModal] = useState(false);
     const [userSettings, setUserSettings] = useState(null);
     const [isLoadingSettings, setIsLoadingSettings] = useState(false);
+    const [scrollProgress, setScrollProgress] = useState(0);
     
     const router = useRouter();
     const trackRef = useRef(null);
@@ -172,6 +173,23 @@ function PersonaPage() {
         setIsClient(true);
         checkUser();
         handleSessionEndResult();
+        
+        // 스크롤 이벤트 핸들러 추가
+        const handleScroll = () => {
+            const scrollY = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            
+            // 스크롤 진행률 계산 (0-100%)
+            const progress = Math.min((scrollY / (documentHeight - windowHeight)) * 100, 100);
+            setScrollProgress(progress);
+        };
+        
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
     }, []);
 
     // 헤더 높이를 측정하여 CSS 변수로 반영 (레이아웃 오프셋 정확화)
@@ -625,6 +643,14 @@ function PersonaPage() {
                         )}
                     </div>
                 </div>
+                
+                {/* 스크롤 진행률 바 */}
+                <div className="scroll-progress-bar">
+                  <div 
+                    className="scroll-progress-fill"
+                    style={{ width: `${scrollProgress}%` }}
+                  ></div>
+                </div>
             </header>
             <div className="persona-container">
                 <aside className="sidebar">
@@ -721,11 +747,31 @@ function PersonaPage() {
                         <div className="filter-buttons">
                             <div className="filter-button-group">
                                 <input type="radio" id="filter-all" name="filter" value="all" checked={activeFilter === 'all'} onChange={() => handleFilterClick('all')} />
-                                <label htmlFor="filter-all">전체</label>
+                                <label htmlFor="filter-all">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                    </svg>
+                                    전체
+                                </label>
                                 <input type="radio" id="filter-female" name="filter" value="female" checked={activeFilter === 'female'} onChange={() => handleFilterClick('female')} />
-                                <label htmlFor="filter-female">여성</label>
+                                <label htmlFor="filter-female">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                    여성
+                                </label>
                                 <input type="radio" id="filter-male" name="filter" value="male" checked={activeFilter === 'male'} onChange={() => handleFilterClick('male')} />
-                                <label htmlFor="filter-male">남성</label>
+                                <label htmlFor="filter-male">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                                    </svg>
+                                    남성
+                                </label>
                             </div>
                         </div>
                         <div className="persona-coverflow" ref={coverflowRef}>
@@ -942,6 +988,11 @@ function PersonaPage() {
                                     
                                     <div className="setting-group">
                                         <label className="setting-label">멤버십</label>
+                                        <div className="setting-value">
+                                            <span className={`membership-badge ${getActualUserPlan()}`}>
+                                                {getActualUserPlan() === 'premium' ? 'Premium' : 'Basic'}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             ) : (
