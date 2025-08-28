@@ -3678,3 +3678,12 @@ section[id] {
 .scenario-card.movie-date .card-background {
     background-image: linear-gradient(135deg, var(--brand3) 0%, var(--brand1) 100%);
 }
+
+/* 피드백 페이지의 section은 전체 높이를 차지하지 않도록 예외 처리 */
+.feedback-page section,
+#report-content section {
+    min-height: auto;
+    display: block;
+    align-items: initial;
+    justify-content: initial;
+}

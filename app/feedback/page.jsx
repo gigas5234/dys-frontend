@@ -482,7 +482,7 @@ export default function FeedbackPage() {
   };
 
   return (
-    <>
+    <div className="feedback-page">
       <header className="main-header">
         <div className="container">
           <div className="header-left">
@@ -1086,7 +1086,7 @@ export default function FeedbackPage() {
           .voice-analysis-grid { grid-template-columns: 1fr; }
         }
       `}</style>
-    </>
+    </div>
   );
 }
 
