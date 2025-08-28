@@ -651,7 +651,7 @@ export default function FeedbackPage() {
                 </div>
               </section>
 
-              <section className="card radar-section" style={{ animationDelay: "0.1s" }}>
+              <section className="card radar-section">
                 <div className="section-header">
                   <h2 className="section-title">매력 지수 분석</h2>
                   <p className="section-subtitle">5가지 핵심 요소로 분석한 당신의 매력 지수</p>
@@ -661,7 +661,7 @@ export default function FeedbackPage() {
                 </div>
               </section>
 
-              <section className="card moments-section" style={{ animationDelay: "0.2s" }}>
+              <section className="card moments-section">
                 <div className="section-header">
                   <h2 className="section-title">최고의 순간</h2>
                   <p className="section-subtitle">세션 중 가장 빛났던 순간들을 타임라인으로 확인해보세요</p>
@@ -691,13 +691,13 @@ export default function FeedbackPage() {
                 </div>
               </section>
 
-              <section className="card analysis-section" style={{ animationDelay: "0.3s" }}>
+              <section className="card analysis-section">
                 <div className="section-header">
                   <h2 className="section-title">자세 & 표정 분석</h2>
                   <p className="section-subtitle">비언어적 소통의 핵심 요소들을 분석했어요</p>
                 </div>
                 <div className="detail-analysis-grid">
-                  <div className="metric-item" data-aos="fade-up" data-aos-delay="100">
+                  <div className="metric-item">
                     <div className="metric-header">
                       <span className="label">시선 안정성</span>
                       <span className="value" data-value="0">0<span className="unit">%</span></span>
@@ -705,7 +705,7 @@ export default function FeedbackPage() {
                     <div className="progress-bar"><div className="progress-bar-inner" data-value="0"></div></div>
                     <div className="metric-insight">상대방의 눈을 편안하게 바라보았어요.</div>
                   </div>
-                  <div className="metric-item" data-aos="fade-up" data-aos-delay="200">
+                  <div className="metric-item">
                     <div className="metric-header">
                       <span className="label">긍정적 표정</span>
                       <span className="value" data-value="0">0<span className="unit">%</span></span>
@@ -713,7 +713,7 @@ export default function FeedbackPage() {
                     <div className="progress-bar"><div className="progress-bar-inner" data-value="0"></div></div>
                     <div className="metric-insight">밝은 표정이 대화 분위기를 이끌었어요.</div>
                   </div>
-                  <div className="metric-item" data-aos="fade-up" data-aos-delay="300">
+                  <div className="metric-item">
                     <div className="metric-header">
                       <span className="label">자세 안정성</span>
                       <span className="value" data-value="0">0<span className="unit">%</span></span>
@@ -721,7 +721,7 @@ export default function FeedbackPage() {
                     <div className="progress-bar"><div className="progress-bar-inner" data-value="0"></div></div>
                     <div className="metric-insight">대부분 안정적이었으나, 가끔 움직임이 있었어요.</div>
                   </div>
-                  <div className="metric-item" data-aos="fade-up" data-aos-delay="400">
+                  <div className="metric-item">
                     <div className="metric-header">
                       <span className="label">평균 미소 유지</span>
                       <span className="value" data-value="0">0<span className="unit">초</span></span>
@@ -732,14 +732,14 @@ export default function FeedbackPage() {
                 </div>
               </section>
 
-              <section className="card voice-section" style={{ animationDelay: "0.4s" }}>
+              <section className="card voice-section">
                 <div className="section-header">
                   <h2 className="section-title">음성 & 대화 분석</h2>
                   <p className="section-subtitle">목소리 톤과 대화 패턴을 분석했어요</p>
                 </div>
                 <div className="voice-analysis-grid">
                   <div className="voice-metrics">
-                    <div className="metric-item" data-aos="fade-up" data-aos-delay="100">
+                    <div className="metric-item">
                       <div className="metric-header">
                         <span className="label">목소리 자신감</span>
                         <span className="value" data-value="0">0<span className="unit">점</span></span>
@@ -747,7 +747,7 @@ export default function FeedbackPage() {
                       <div className="progress-bar"><div className="progress-bar-inner" data-value="0"></div></div>
                       <div className="metric-insight">조금 더 힘 있는 목소리가 전달력을 높여요.</div>
                     </div>
-                    <div className="metric-item" data-aos="fade-up" data-aos-delay="200">
+                    <div className="metric-item">
                       <div className="metric-header">
                         <span className="label">대화 참여도</span>
                         <span className="value" data-value="0">0<span className="unit">%</span></span>
@@ -762,7 +762,7 @@ export default function FeedbackPage() {
                 </div>
               </section>
 
-              <section className="card coaching-section final-coaching" style={{ animationDelay: "0.5s" }}>
+              <section className="card coaching-section final-coaching">
                 <div className="section-header">
                   <h2 className="section-title">AI 종합 코칭</h2>
                   <p className="section-subtitle">이번 세션을 종합적으로 분석한 맞춤형 피드백</p>
@@ -932,13 +932,13 @@ export default function FeedbackPage() {
         .calendar-grid div { padding: 8px 4px; font-size: 14px; position: relative; }
         .calendar-day-name { font-weight: 600; color: var(--muted); font-size: 12px; }
         .calendar-day { cursor: pointer; border-radius: 50%; transition: background-color .2s, color .2s; border: 2px solid transparent; }
-                 .calendar-day.today { font-weight: 700; border-color: var(--brand2); color: var(--brand2); }
-         .calendar-day.selected { background: var(--brand2); color: #fff; border-color: var(--brand2); }
-         .calendar-day:not(.selected):hover { background-color: rgba(0,0,0,0.05); }
-         .session-markers { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); display: flex; gap: 3px; }
-         .session-marker { width: 5px; height: 5px; border-radius: 50%; background: #fbc2eb; }
-         .calendar-day.selected .session-marker { background: #fff; }
-         .calendar-day.today:not(.selected) .session-marker { background: var(--brand2); }
+        .calendar-day.today { font-weight: 700; border-color: var(--brand2); color: var(--brand2); }
+        .calendar-day.selected { background: var(--brand2); color: #fff; border-color: var(--brand2); }
+        .calendar-day:not(.selected):hover { background-color: rgba(0,0,0,0.05); }
+        .session-markers { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); display: flex; gap: 3px; }
+        .session-marker { width: 5px; height: 5px; border-radius: 50%; background: #fbc2eb; }
+        .calendar-day.selected .session-marker { background: #fff; }
+        .calendar-day.today:not(.selected) .session-marker { background: var(--brand2); }
 
         .session-list-wrapper h3 { font-size: 18px; font-weight: 700; margin: 0 0 20px 0; color: var(--text); padding-left: 10px; }
         .session-list-container { max-height: 300px; overflow-y: auto; padding-right: 5px; padding-top: 8px; }
@@ -966,8 +966,7 @@ export default function FeedbackPage() {
         .stat-number { display: block; font-size: 24px; font-weight: 800; color: var(--brand2); }
         .stat-label { font-size: 14px; color: var(--muted); font-weight: 500; }
 
-        .card { background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: var(--radius); border: 1px solid var(--stroke); padding: 32px; box-shadow: var(--shadow); opacity: 0; transform: translateY(20px); animation: fadeInUp .7s ease-out forwards; }
-        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+        .card { background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: var(--radius); border: 1px solid var(--stroke); padding: 32px; box-shadow: var(--shadow); }
         
         .score-overview { background: linear-gradient(135deg, rgba(166, 193, 238, 0.05), rgba(251, 194, 235, 0.05)); border: 1px solid rgba(166, 193, 238, 0.2); }
         .summary-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 32px; align-items: center; }
@@ -1058,16 +1057,16 @@ export default function FeedbackPage() {
         .voice-analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .voice-metrics { display: flex; flex-direction: column; gap: 24px; }
 
-                 @media (max-width: 768px) {
-           .history-card { grid-template-columns: 1fr; }
-           .calendar-wrapper { border-right: none; padding-right: 0; }
-           .session-list-wrapper { border-top: 1px solid var(--stroke); padding-top: 20px; }
-           .summary-grid { grid-template-columns: 1fr; text-align: center; }
-           .detail-analysis-grid { grid-template-columns: 1fr; }
-           .key-moments-grid { grid-template-columns: 1fr; }
-           .coaching-details { grid-template-columns: 1fr; }
-           .voice-analysis-grid { grid-template-columns: 1fr; }
-         }
+        @media (max-width: 768px) {
+          .history-card { grid-template-columns: 1fr; }
+          .calendar-wrapper { border-right: none; padding-right: 0; }
+          .session-list-wrapper { border-top: 1px solid var(--stroke); padding-top: 20px; }
+          .summary-grid { grid-template-columns: 1fr; text-align: center; }
+          .detail-analysis-grid { grid-template-columns: 1fr; }
+          .key-moments-grid { grid-template-columns: 1fr; }
+          .coaching-details { grid-template-columns: 1fr; }
+          .voice-analysis-grid { grid-template-columns: 1fr; }
+        }
       `}</style>
     </>
   );
