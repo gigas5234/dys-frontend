@@ -966,7 +966,7 @@ export default function FeedbackPage() {
         .stat-number { display: block; font-size: 24px; font-weight: 800; color: var(--brand2); }
         .stat-label { font-size: 14px; color: var(--muted); font-weight: 500; }
 
-        .card { background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: var(--radius); border: 1px solid var(--stroke); padding: 32px; box-shadow: var(--shadow); }
+        .card { background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: var(--radius); border: 1px solid var(--stroke); padding: 32px; box-shadow: var(--shadow); margin-bottom: 24px; }
         
         .score-overview { background: linear-gradient(135deg, rgba(166, 193, 238, 0.05), rgba(251, 194, 235, 0.05)); border: 1px solid rgba(166, 193, 238, 0.2); }
         .summary-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 32px; align-items: center; }
@@ -1056,6 +1056,8 @@ export default function FeedbackPage() {
 
         .voice-analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .voice-metrics { display: flex; flex-direction: column; gap: 24px; }
+
+        #report-content { display: flex; flex-direction: column; gap: 32px; }
 
         @media (max-width: 768px) {
           .history-card { grid-template-columns: 1fr; }
