@@ -9,7 +9,7 @@
       "destination": "http://34.64.136.237/health"
     },
     {
-      "source": "/api/gke/dys_studio/(.*)",
+      "source": "/api/gke/frontend/pages/(.*)",
       "destination": "http://34.64.136.237/src/frontend/pages/$1"
     },
     {

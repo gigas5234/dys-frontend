@@ -9,7 +9,6 @@
   [![React](https://img.shields.io/badge/React-18.3.1-blue?style=flat-square&logo=react)](https://reactjs.org/)
   [![Supabase](https://img.shields.io/badge/Supabase-2.54.0-green?style=flat-square&logo=supabase)](https://supabase.com/)
   [![Vercel](https://img.shields.io/badge/Vercel-Deployed-blue?style=flat-square&logo=vercel)](https://vercel.com/)
-  [![License](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
 </div>
 
 ## 📋 목차
@@ -23,11 +22,10 @@
 - [API 구조](#api-구조)
 - [배포](#배포)
 - [개발 가이드](#개발-가이드)
-- [기여하기](#기여하기)
 
 ## 🎯 프로젝트 개요
 
-**데연소(DYS)**는 AI 가상 인물과의 데이트 연습을 통해 사용자의 소통 능력을 진단하고 개선하는 웹 애플리케이션입니다. 
+**데연소(DYS)** 는 AI 가상 인물과의 데이트 연습을 통해 사용자의 소통 능력을 진단하고 개선하는 웹 애플리케이션입니다. 
 
 ### 주요 특징
 - 🤖 **AI 페르소나**: 10명의 다양한 성격의 가상 인물과 대화 연습
@@ -179,12 +177,88 @@ npm start
 1. [Supabase](https://supabase.com/)에서 새 프로젝트 생성
 2. Authentication > Settings에서 Google OAuth 설정
 3. Database에서 필요한 테이블 생성:
-   - `users`: 사용자 프로필 정보
-   - `beta_surveys`: 베타 테스트 설문조사 결과
+
+#### 사용자 테이블 (users)
+```sql
+CREATE TABLE users (
+    id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+    name TEXT,
+    email TEXT UNIQUE,
+    mbti TEXT,
+    member_tier TEXT DEFAULT 'basic',
+    cam_calibration BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    preferred_persona TEXT,
+    mongo_external_id TEXT,
+    sync_status TEXT,
+    synced_at TIMESTAMP WITH TIME ZONE
+);
+```
+
+#### 피드백 시스템 테이블들
+```sql
+-- AI 페르소나 테이블
+CREATE TABLE personas (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    age INTEGER NOT NULL,
+    mbti TEXT NOT NULL,
+    job TEXT NOT NULL,
+    personality TEXT[] NOT NULL,
+    image TEXT NOT NULL,
+    insta_image TEXT,
+    description TEXT,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 코칭 세션 테이블
+CREATE TABLE coaching_sessions (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+    persona_id INTEGER REFERENCES personas(id) ON DELETE CASCADE NOT NULL,
+    session_date DATE NOT NULL,
+    session_time TIME,
+    duration_minutes INTEGER,
+    total_score INTEGER CHECK (total_score >= 0 AND total_score <= 100),
+    ai_summary TEXT,
+    status TEXT DEFAULT 'completed',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 매력 지수 분석 테이블
+CREATE TABLE charm_analysis (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    session_id UUID REFERENCES coaching_sessions(id) ON DELETE CASCADE NOT NULL,
+    gaze_score INTEGER CHECK (gaze_score >= 0 AND gaze_score <= 100),
+    expression_score INTEGER CHECK (expression_score >= 0 AND expression_score <= 100),
+    posture_score INTEGER CHECK (posture_score >= 0 AND posture_score <= 100),
+    voice_score INTEGER CHECK (voice_score >= 0 AND voice_score <= 100),
+    conversation_score INTEGER CHECK (conversation_score >= 0 AND conversation_score <= 100),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 베타 테스트 설문조사 테이블
+CREATE TABLE beta_surveys (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    helpfulness INTEGER CHECK (helpfulness >= 1 AND helpfulness <= 5),
+    satisfaction INTEGER CHECK (satisfaction >= 1 AND satisfaction <= 5),
+    ease_of_use INTEGER CHECK (ease_of_use >= 1 AND ease_of_use <= 5),
+    recommendation INTEGER CHECK (recommendation >= 1 AND recommendation <= 5),
+    overall_experience INTEGER CHECK (overall_experience >= 1 AND overall_experience <= 5),
+    feedback TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
 
 ### GKE 백엔드 연결
 - **Health Check**: `/api/health` → `http://34.64.136.237/health`
-- **Studio Proxy**: `/api/gke/dys_studio/*` → `http://34.64.136.237/dys_studio/*`
+- **Studio Proxy**: `/api/gke/dys_studio/*` → `http://34.64.136.237/src/frontend/pages/*`
 - **General API**: `/api/gke/*` → `http://34.64.136.237/*`
 
 ## 🎨 주요 기능
@@ -204,6 +278,7 @@ npm start
 - **대화 분석**: 자세, 시선, 목소리 톤 분석
 - **실시간 피드백**: 즉시 개선점 제안
 - **히스토리 관리**: 과거 연습 기록 저장
+- **상세 분석**: 매력 지수, 자세 분석, 음성 분석 데이터 저장
 
 ### 4. 시나리오 연습
 - **다양한 상황**: 첫 만남, 카페 데이트, 식사 데이트, 영화 데이트
@@ -227,7 +302,7 @@ npm start
 ```
 GKE Server (34.64.136.237)
 ├── /health                    # 서버 상태 확인
-├── /dys_studio/              # AI 스튜디오 애플리케이션
+├── /src/frontend/pages/      # AI 스튜디오 애플리케이션
 │   └── studio_calibration.html  # 메인 스튜디오 페이지
 └── /api/*                    # 기타 API 엔드포인트
 ```
@@ -241,6 +316,8 @@ supabase.auth.signOut()
 
 // 데이터베이스
 supabase.from('users').select()
+supabase.from('coaching_sessions').insert()
+supabase.from('charm_analysis').insert()
 supabase.from('beta_surveys').insert()
 ```
 
@@ -303,38 +380,9 @@ try {
 }
 ```
 
-## 🤝 기여하기
-
-### 개발 환경 설정
-1. 저장소 포크
-2. 기능 브랜치 생성: `git checkout -b feature/새기능`
-3. 변경사항 커밋: `git commit -m "feat: 새 기능 추가"`
-4. PR 생성 및 리뷰 요청
-
-### 커밋 컨벤션
-```
-feat: 새로운 기능 추가
-fix: 버그 수정
-docs: 문서 수정
-style: 코드 스타일 변경
-refactor: 코드 리팩토링
-test: 테스트 추가
-chore: 빌드 프로세스 또는 보조 도구 변경
-```
-
-### 이슈 리포트
-- 버그 리포트: 상세한 재현 단계 포함
-- 기능 요청: 명확한 사용 사례 설명
-- 개선 제안: 구체적인 개선 방안 제시
-
-## 📄 라이선스
-
-이 프로젝트는 MIT 라이선스 하에 배포됩니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
-
 ## 📞 연락처
 
 - **프로젝트 관리자**: gigas5234
-- **이메일**: [이메일 주소]
 - **GitHub**: [https://github.com/gigas5234/dys-frontend](https://github.com/gigas5234/dys-frontend)
 
 ## 🙏 감사의 말

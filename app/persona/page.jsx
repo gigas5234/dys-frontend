@@ -410,7 +410,7 @@ function PersonaPage() {
         });
         
         // Vercel 프록시를 통해 GKE 서버에 접근
-        const studioUrl = `/api/gke/dys_studio/studio_calibration.html?${params.toString()}`;
+        const studioUrl = `/api/gke/frontend/pages/studio_calibration.html?${params.toString()}`;
         console.log('이동할 URL:', studioUrl);
         
         try {
