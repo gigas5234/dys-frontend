@@ -11,6 +11,10 @@
     {
       "source": "/api/gke/dys_studio/(.*)",
       "destination": "http://34.64.136.237/dys_studio/$1"
+    },
+    {
+      "source": "/api/backend/(.*)",
+      "destination": "http://34.64.136.237/$1"
     }
   ],
   "headers": [

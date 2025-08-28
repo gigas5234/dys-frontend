@@ -409,47 +409,29 @@ function PersonaPage() {
             persona_image: personaData.image
         });
         
-        // HTTPS 환경에서는 Vercel 프록시를 통해 접근
-        const studioUrl = typeof window !== 'undefined' && window.location.protocol === 'https:'
-            ? `/api/gke/dys_studio/studio_calibration.html?${params.toString()}`
-            : `${process.env.NEXT_PUBLIC_API_URL}/dys_studio/studio_calibration.html?${params.toString()}`;
+        // Vercel 프록시를 통해 GKE 서버에 접근
+        const studioUrl = `/api/gke/dys_studio/studio_calibration.html?${params.toString()}`;
         console.log('이동할 URL:', studioUrl);
         
         try {
-            // HTTPS 환경에서는 프록시를 통해 health check
-            if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
-                console.log('HTTPS 환경에서 프록시를 통한 health check');
-                console.log('현재 URL:', window.location.href);
-                console.log('프로토콜:', window.location.protocol);
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10초 타임아웃
-                
-                const response = await fetch('/api/health', {
-                    method: 'GET',
-                    signal: controller.signal
-                });
-                
-                clearTimeout(timeoutId);
-                
-                if (!response.ok) {
-                    throw new Error('서버 연결 실패');
-                }
-                
-                console.log('Health check 성공, 페이지 이동');
-                window.location.href = studioUrl;
-            } else {
-                // HTTP 환경에서는 직접 요청
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/health`, {
-                    method: 'GET'
-                });
-                
-                if (!response.ok) {
-                    throw new Error('서버 연결 실패');
-                }
-                
-                // 연결 성공 시 페이지 이동
-                window.location.href = studioUrl;
+            // Vercel 프록시를 통한 health check
+            console.log('Vercel 프록시를 통한 health check');
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10초 타임아웃
+            
+            const response = await fetch('/api/health', {
+                method: 'GET',
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+                throw new Error('서버 연결 실패');
             }
+            
+            console.log('Health check 성공, 페이지 이동');
+            window.location.href = studioUrl;
         } catch (error) {
             console.error('GKE 백엔드 연결 실패:', error);
             if (error.name === 'AbortError') {
