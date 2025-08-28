@@ -10,7 +10,7 @@
     },
     {
       "source": "/api/gke/dys_studio/(.*)",
-      "destination": "http://34.64.136.237/dys_studio/$1"
+      "destination": "http://34.64.136.237/src/frontend/pages/$1"
     },
     {
       "source": "/api/backend/(.*)",
