@@ -1681,10 +1681,10 @@ section[id] {
 
 .video-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 2fr;
     gap: 80px;
     align-items: center;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     width: 100%;
 }
@@ -1758,6 +1758,7 @@ section[id] {
         grid-template-columns: 1fr;
         gap: 40px;
         text-align: center;
+        max-width: 100%;
     }
     
     .video-content h3 {
