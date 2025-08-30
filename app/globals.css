@@ -1714,6 +1714,7 @@ section[id] {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     transform: perspective(1000px) rotateY(-5deg);
     transition: transform 0.3s ease;
+    background: transparent;
 }
 
 .video-container:hover {
@@ -1726,24 +1727,27 @@ section[id] {
     display: block;
     border-radius: 20px;
     background: transparent;
+    object-fit: cover;
+    z-index: 1;
+    position: relative;
 }
 
 /* 비디오 컨트롤 커스터마이징 */
 .demo-video::-webkit-media-controls {
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: transparent;
 }
 
 .demo-video::-webkit-media-controls-panel {
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: transparent;
 }
 
 .demo-video::-webkit-media-controls-play-button {
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.9);
     border-radius: 50%;
 }
 
 .demo-video::-webkit-media-controls-volume-slider {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.5);
 }
 
 /* 반응형 디자인 */
