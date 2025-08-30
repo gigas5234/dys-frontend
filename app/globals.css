@@ -1485,8 +1485,10 @@ section[id] {
     height: 100vh;
     display: flex;
     align-items: center;
+    justify-content: center;
     position: relative;
     overflow: hidden;
+    padding: 60px 0;
 }
 
 .personas-section::before {
@@ -1496,14 +1498,25 @@ section[id] {
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(circle at 30% 20%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 70% 80%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
+    background: radial-gradient(circle at 30% 20%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(118, 75, 162, 0.05) 0%, transparent 50%);
     pointer-events: none;
+}
+
+.personas-section .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 .personas-section .section-title {
     text-align: center;
-    margin-bottom: 60px;
+    margin-bottom: 40px;
     position: relative;
     z-index: 2;
 }
@@ -1529,34 +1542,45 @@ section[id] {
 .personas-showcase {
     position: relative;
     z-index: 2;
+    width: 100%;
 }
 
 .personas-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 20px;
-    max-width: 1200px;
+    gap: 30px;
+    max-width: 800px;
     margin: 0 auto;
-    height: 400px;
+    height: 300px;
     position: relative;
 }
 
 .persona-card {
-    width: 120px;
-    height: 160px;
+    width: 80px;
+    height: 100px;
     background: white;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
     overflow: hidden;
     transition: all 0.3s ease;
-    animation: personaFloat 3s ease-in-out infinite;
+    animation: personaFloat 4s ease-in-out infinite;
     position: relative;
+    cursor: pointer;
 }
 
+.persona-card:nth-child(1) { animation-delay: 0s; transform: rotate(-8deg) translateY(-5px); }
+.persona-card:nth-child(2) { animation-delay: 0.5s; transform: rotate(5deg) translateY(10px); }
+.persona-card:nth-child(3) { animation-delay: 1s; transform: rotate(-3deg) translateY(-8px); }
+.persona-card:nth-child(4) { animation-delay: 1.5s; transform: rotate(7deg) translateY(5px); }
+.persona-card:nth-child(5) { animation-delay: 2s; transform: rotate(-5deg) translateY(-12px); }
+.persona-card:nth-child(6) { animation-delay: 2.5s; transform: rotate(3deg) translateY(8px); }
+.persona-card:nth-child(7) { animation-delay: 3s; transform: rotate(-6deg) translateY(-3px); }
+.persona-card:nth-child(8) { animation-delay: 3.5s; transform: rotate(4deg) translateY(12px); }
+
 .persona-card:hover {
-    transform: scale(1.1) rotate(0deg) !important;
-    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+    transform: scale(1.15) rotate(0deg) !important;
+    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.25);
     z-index: 10;
 }
 
@@ -1568,7 +1592,7 @@ section[id] {
 }
 
 .persona-card:hover img {
-    transform: scale(1.05);
+    transform: scale(1.08);
 }
 
 @keyframes personaFloat {
@@ -1576,7 +1600,7 @@ section[id] {
         transform: translateY(0px);
     }
     50% {
-        transform: translateY(-10px);
+        transform: translateY(-8px);
     }
 }
 
@@ -1584,14 +1608,14 @@ section[id] {
 @media (max-width: 768px) {
     .personas-grid {
         grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(4, 1fr);
-        gap: 15px;
-        height: 500px;
+        grid-template-rows: repeat(3, 1fr);
+        gap: 20px;
+        height: 250px;
     }
     
     .persona-card {
-        width: 100px;
-        height: 130px;
+        width: 70px;
+        height: 90px;
     }
     
     .personas-section .section-title h2 {

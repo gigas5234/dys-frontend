@@ -624,35 +624,29 @@ function HomePage() {
                 </div>
                 <div className="personas-showcase reveal">
                     <div className="personas-grid">
-                        <div className="persona-card" style={{transform: 'rotate(-15deg) translateY(-20px)', animationDelay: '0s'}}>
+                        <div className="persona-card">
                             <img src="/img/woman1_insta.webp" alt="AI Persona 1" />
                         </div>
-                        <div className="persona-card" style={{transform: 'rotate(10deg) translateY(10px)', animationDelay: '0.2s'}}>
+                        <div className="persona-card">
                             <img src="/img/man1_insta.webp" alt="AI Persona 2" />
                         </div>
-                        <div className="persona-card" style={{transform: 'rotate(-8deg) translateY(-15px)', animationDelay: '0.4s'}}>
+                        <div className="persona-card">
                             <img src="/img/woman2_insta.webp" alt="AI Persona 3" />
                         </div>
-                        <div className="persona-card" style={{transform: 'rotate(12deg) translateY(5px)', animationDelay: '0.6s'}}>
+                        <div className="persona-card">
                             <img src="/img/man2_insta.webp" alt="AI Persona 4" />
                         </div>
-                        <div className="persona-card" style={{transform: 'rotate(-5deg) translateY(-25px)', animationDelay: '0.8s'}}>
+                        <div className="persona-card">
                             <img src="/img/woman3_insta.webp" alt="AI Persona 5" />
                         </div>
-                        <div className="persona-card" style={{transform: 'rotate(8deg) translateY(15px)', animationDelay: '1s'}}>
+                        <div className="persona-card">
                             <img src="/img/man3_insta.webp" alt="AI Persona 6" />
                         </div>
-                        <div className="persona-card" style={{transform: 'rotate(-12deg) translateY(-10px)', animationDelay: '1.2s'}}>
+                        <div className="persona-card">
                             <img src="/img/woman4_insta.webp" alt="AI Persona 7" />
                         </div>
-                        <div className="persona-card" style={{transform: 'rotate(6deg) translateY(20px)', animationDelay: '1.4s'}}>
+                        <div className="persona-card">
                             <img src="/img/man4_insta.webp" alt="AI Persona 8" />
-                        </div>
-                        <div className="persona-card" style={{transform: 'rotate(-10deg) translateY(-5px)', animationDelay: '1.6s'}}>
-                            <img src="/img/woman5_insta.webp" alt="AI Persona 9" />
-                        </div>
-                        <div className="persona-card" style={{transform: 'rotate(15deg) translateY(25px)', animationDelay: '1.8s'}}>
-                            <img src="/img/man5_insta.webp" alt="AI Persona 10" />
                         </div>
                     </div>
                 </div>
