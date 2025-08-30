@@ -658,10 +658,18 @@ function HomePage() {
                         <h3>과학적인 종합 분석 리포트</h3>
                         <p>대화가 끝난 후, 당신의 표정, 시선, 목소리 톤, 대화 균형 등을 분석한 '데연소 리포트'를 제공하여 강점과 개선점을 명확하게 파악할 수 있습니다.</p>
                     </div>
-                    <div className="feature-card reveal" style={{transitionDelay: '0.3s'}}>
-                        <svg className="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                        <div className="feature-card reveal" style={{transitionDelay: '0.3s'}}>
+                         <svg className="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                         <h3>다양한 AI 페르소나</h3>
                         <p>MBTI, 직업, 관심사 등을 조합하여 원하는 이상형에 가까운 AI 파트너를 직접 선택하고, 다양한 상황에 맞는 대화 연습을 할 수 있습니다.</p>
+                    </div>
+                    
+                    <div className="feature-card reveal" style={{transitionDelay: '0.45s'}}>
+                        <svg className="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <h3>10가지 다양한 AI 페르소나</h3>
+                        <p>각각 다른 성격과 매력을 가진 10명의 AI 파트너와 만나보세요. 당신의 이상형에 맞는 완벽한 연습 상대를 찾을 수 있습니다.</p>
                         
                         {/* 다이나믹 페르소나 카드뷰 */}
                         <div className="persona-showcase">
