@@ -21,10 +21,8 @@ const OnboardingModal = ({ isOpen, onClose, onComplete, onDismiss }) => {
          { type: 'mouse', x: 30, y: 30, delay: 1000 },
          { type: 'mouse', x: 45, y: 35, delay: 1500 },
          { type: 'mouse', x: 50, y: 40, delay: 2000 },
-         // 중앙 카드 클릭 (세로 긴 카드 중앙)
-         { type: 'click', x: 50, y: 40, delay: 2500 },
-         // 중앙 카드 하이라이트 (세로 긴 카드에 맞춤)
-         { type: 'highlight', x: 40, y: 25, width: 20, height: 30, delay: 3000 }
+         // 중앙 카드 클릭 (정중앙)
+         { type: 'click', x: 50, y: 40, delay: 2500 }
        ]
     },
     {
@@ -34,21 +32,21 @@ const OnboardingModal = ({ isOpen, onClose, onComplete, onDismiss }) => {
       alt: "채팅에서 두 가지 선택지",
       hasAnimation: true,
              animationElements: [
-         // 1. "다른 상대 찾기" 버튼 하이라이트 (헤더 좌측 뒤로가기)
-         { type: 'highlight', x: 8, y: 8, width: 15, height: 6, delay: 500 },
-         // 2. "다른 상대 찾기" 버튼으로 마우스 이동
-         { type: 'mouse', x: 12, y: 10, delay: 1000 },
-         { type: 'mouse', x: 14, y: 11, delay: 1500 },
-         // 3. "다른 상대 찾기" 버튼 클릭
-         { type: 'click', x: 14, y: 11, delay: 2000 },
-         // 4. "데이트 시작하기" 버튼으로 이동 (하단 분홍색 버튼)
-         { type: 'mouse', x: 35, y: 75, delay: 3000 },
-         { type: 'mouse', x: 42, y: 78, delay: 3500 },
-         { type: 'mouse', x: 45, y: 80, delay: 4000 },
-         // 5. "데이트 시작하기" 버튼 클릭
-         { type: 'click', x: 45, y: 80, delay: 4500 },
-         // 6. "데이트 시작하기" 버튼 하이라이트 (하단 분홍색 버튼)
-         { type: 'highlight', x: 35, y: 75, width: 30, height: 10, delay: 5000 }
+         // 1. "다른 상대 찾기" 버튼 하이라이트 (우측 하단으로 이동)
+         { type: 'highlight', x: 65, y: 75, width: 20, height: 8, delay: 500 },
+         // 2. "다른 상대 찾기" 버튼으로 마우스 이동 (우측 하단)
+         { type: 'mouse', x: 70, y: 78, delay: 1000 },
+         { type: 'mouse', x: 72, y: 79, delay: 1500 },
+         // 3. "다른 상대 찾기" 버튼 클릭 (우측 하단)
+         { type: 'click', x: 72, y: 79, delay: 2000 },
+         // 4. "데이트 시작하기" 버튼으로 이동 (좌측 하단으로 이동)
+         { type: 'mouse', x: 25, y: 75, delay: 3000 },
+         { type: 'mouse', x: 20, y: 78, delay: 3500 },
+         { type: 'mouse', x: 18, y: 80, delay: 4000 },
+         // 5. "데이트 시작하기" 버튼 클릭 (좌측 하단)
+         { type: 'click', x: 18, y: 80, delay: 4500 },
+         // 6. "데이트 시작하기" 버튼 하이라이트 (좌측 하단)
+         { type: 'highlight', x: 15, y: 75, width: 25, height: 10, delay: 5000 }
        ]
     },
     {
@@ -58,19 +56,19 @@ const OnboardingModal = ({ isOpen, onClose, onComplete, onDismiss }) => {
       alt: "GKE 스튜디오 전체 화면",
       hasAnimation: true,
              animationElements: [
-         // 1. 좌측 실시간 피드백 영역 하이라이트 (파란색 테두리 패널)
-         { type: 'highlight', x: 8, y: 20, width: 18, height: 40, delay: 500 },
-         // 2. 중앙 붉은 마이크 버튼으로 이동 (테이블 위)
-         { type: 'mouse', x: 38, y: 55, delay: 1500 },
-         { type: 'mouse', x: 42, y: 58, delay: 2000 },
+         // 1. 좌측 실시간 피드백 영역 하이라이트 (전체 세로 패널)
+         { type: 'highlight', x: 5, y: 15, width: 15, height: 50, delay: 500 },
+         // 2. 중앙 붉은 마이크 버튼으로 이동 (정확한 위치)
+         { type: 'mouse', x: 45, y: 65, delay: 1500 },
+         { type: 'mouse', x: 48, y: 68, delay: 2000 },
          // 3. 중앙 붉은 마이크 버튼 클릭
-         { type: 'click', x: 42, y: 58, delay: 2500 },
+         { type: 'click', x: 48, y: 68, delay: 2500 },
          // 4. 중앙 붉은 마이크 버튼 하이라이트 (원형 버튼)
-         { type: 'highlight', x: 40, y: 56, width: 4, height: 4, delay: 3000 },
+         { type: 'highlight', x: 46, y: 66, width: 5, height: 5, delay: 3000 },
          // 5. 우측 채팅창으로 화살표
-         { type: 'arrow', x: 58, y: 40, direction: 'right', delay: 3500 },
-         // 6. 우측 채팅창 하이라이트 (파란색 테두리 패널)
-         { type: 'highlight', x: 65, y: 20, width: 18, height: 40, delay: 4000 }
+         { type: 'arrow', x: 65, y: 45, direction: 'right', delay: 3500 },
+         // 6. 우측 채팅창 하이라이트 (전체 세로 패널)
+         { type: 'highlight', x: 70, y: 15, width: 15, height: 50, delay: 4000 }
        ]
     }
   ];
