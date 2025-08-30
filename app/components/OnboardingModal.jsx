@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { updateOnboardingStatus } from '../../lib/supabase';
 
  const OnboardingModal = ({ isOpen, onClose, onComplete }) => {
-   const [currentSlide, setCurrentSlide] = useState(0);
-   const [isLoading, setIsLoading] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [dontShowAgain, setDontShowAgain] = useState(false);
   
            const slides = [
       {
@@ -38,12 +39,13 @@ import { updateOnboardingStatus } from '../../lib/supabase';
       }
     ];
 
-     // 모달이 열릴 때 첫 번째 슬라이드로 리셋
-   useEffect(() => {
-     if (isOpen) {
-       setCurrentSlide(0);
-     }
-   }, [isOpen]);
+       // 모달이 열릴 때 첫 번째 슬라이드로 리셋
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentSlide(0);
+      setDontShowAgain(false);
+    }
+  }, [isOpen]);
 
   // 다음 슬라이드로 이동
   const nextSlide = () => {
@@ -63,7 +65,7 @@ import { updateOnboardingStatus } from '../../lib/supabase';
   const handleComplete = async () => {
     setIsLoading(true);
     try {
-      await updateOnboardingStatus('completed');
+      await updateOnboardingStatus('completed', dontShowAgain);
       onComplete();
     } catch (error) {
       console.error('온보딩 완료 처리 오류:', error);
@@ -156,27 +158,37 @@ import { updateOnboardingStatus } from '../../lib/supabase';
             이전
           </button>
 
-                     <div className="navigation-center">
-             {isLastSlide ? (
-               <button
-                 className="btn btn-primary complete-btn"
-                 onClick={handleComplete}
-                 disabled={isLoading}
-               >
-                 {isLoading ? '처리 중...' : '시작하기'}
-               </button>
-             ) : (
-               <button
-                 className="btn btn-primary next-btn"
-                 onClick={nextSlide}
-               >
-                 다음
-                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                   <polyline points="9,18 15,12 9,6"></polyline>
-                 </svg>
-               </button>
-             )}
-           </div>
+                                 <div className="navigation-center">
+              {isLastSlide ? (
+                <div className="final-actions">
+                  <label className="dismiss-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={dontShowAgain}
+                      onChange={(e) => setDontShowAgain(e.target.checked)}
+                    />
+                    <span>다시 보지 않기</span>
+                  </label>
+                  <button
+                    className="btn btn-primary complete-btn"
+                    onClick={handleComplete}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? '처리 중...' : '시작하기'}
+                  </button>
+                </div>
+              ) : (
+                <button
+                  className="btn btn-primary next-btn"
+                  onClick={nextSlide}
+                >
+                  다음
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="9,18 15,12 9,6"></polyline>
+                  </svg>
+                </button>
+              )}
+            </div>
         </div>
       </div>
     </div>

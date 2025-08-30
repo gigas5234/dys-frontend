@@ -444,21 +444,38 @@ function HomePage() {
 
       <main className={showAnimations ? 'fade-in' : ''}>
         <section className="hero-section">
-            <div className="slogan reveal">설렘은 현실로, 실수는 연습으로.</div>
-            <h1 className="reveal" style={{transitionDelay: '0.1s'}}>AI 소통 코칭으로<br/>당신의 매력을 발견하세요</h1>
-            <p className="reveal" style={{transitionDelay: '0.2s'}}>관계에 대한 막연한 두려움이 있으신가요? 데연소는 실패의 부담이 없는 안전한 공간에서 당신의 소통 능력을 과학적으로 진단하고 잠재된 매력을 찾아드립니다.</p>
-                         <button 
-               onClick={() => {
-                 if (typeof window !== 'undefined') {
-                   user ? window.location.href = '/persona' : window.location.href = '/login';
-                 }
-               }} 
-               className="btn btn-cta reveal" 
-               style={{transitionDelay: '0.3s'}}
-               suppressHydrationWarning
-             >
-               {isClient && user ? '데이트 준비하기' : '지금 시작하기'}
-             </button>
+            {/* 물감 흘러나오는 애니메이션 */}
+            <div className="paint-flow-container">
+                <div className="paint-flow paint-left"></div>
+                <div className="paint-flow paint-right"></div>
+                <div className="paint-flow paint-top"></div>
+                <div className="paint-flow paint-bottom"></div>
+            </div>
+            
+            {/* 중앙 물감 풀 효과 */}
+            <div className="paint-pool">
+                <div className="paint-ripple ripple-1"></div>
+                <div className="paint-ripple ripple-2"></div>
+                <div className="paint-ripple ripple-3"></div>
+            </div>
+            
+            <div className="hero-content">
+                <div className="slogan reveal">설렘은 현실로, 실수는 연습으로.</div>
+                <h1 className="reveal" style={{transitionDelay: '0.1s'}}>AI 소통 코칭으로<br/>당신의 매력을 발견하세요</h1>
+                <p className="reveal" style={{transitionDelay: '0.2s'}}>관계에 대한 막연한 두려움이 있으신가요? 데연소는 실패의 부담이 없는 안전한 공간에서 당신의 소통 능력을 과학적으로 진단하고 잠재된 매력을 찾아드립니다.</p>
+                <button 
+                    onClick={() => {
+                        if (typeof window !== 'undefined') {
+                            user ? window.location.href = '/persona' : window.location.href = '/login';
+                        }
+                    }} 
+                    className="btn btn-cta reveal" 
+                    style={{transitionDelay: '0.3s'}}
+                    suppressHydrationWarning
+                >
+                    {isClient && user ? '데이트 준비하기' : '지금 시작하기'}
+                </button>
+            </div>
             
             {/* 스크롤 안내 화살표 */}
             {showScrollArrow && (
@@ -471,7 +488,7 @@ function HomePage() {
                   transform: 'translateX(-50%)',
                   cursor: 'pointer',
                   animation: 'bounce 2s infinite',
-                  zIndex: 10,
+                  zIndex: 20,
                   background: 'rgba(255, 255, 255, 0.9)',
                   backdropFilter: 'blur(10px)',
                   borderRadius: '20px',
