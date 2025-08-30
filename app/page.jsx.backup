@@ -23,6 +23,11 @@ function HomePage() {
   const hasAnimatedRef = useRef(false);
   const cleanupRef = useRef(() => {});
   const dropdownRef = useRef(null);
+  
+  // 마우스 포인터 효과 관련 상태
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const canvasRef = useRef(null);
+  const cursorRef = useRef(null);
 
   // 사용자 플랜 확인 함수
   const getUserPlan = (user) => {
@@ -155,8 +160,217 @@ function HomePage() {
     };
   }, []);
 
+  // 마우스 포인터 효과 관련 함수들
+  const colors = ['#fbc2eb', '#a6c1ee', '#e6b3ff'];
+  let particles = [];
+  let mouse = { x: null, y: null };
+
+  // Particle 클래스
+  class Particle {
+    constructor(x, y, isSplatter = false) {
+      this.x = x;
+      this.y = y;
+      this.color = colors[Math.floor(Math.random() * colors.length)];
+      this.life = 1; // 1 = 100% life
+      
+      if (isSplatter) {
+        this.size = Math.random() * 5 + 3;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 4 + 2;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+      } else {
+        this.size = Math.random() * 3 + 2;
+        this.vx = (Math.random() - 0.5) * 2;
+        this.vy = (Math.random() - 0.5) * 2;
+      }
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life -= 0.03; // Fade out speed
+    }
+
+    draw(ctx) {
+      ctx.globalAlpha = this.life;
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // 파티클 처리 함수
+  const handleParticles = (ctx) => {
+    for (let i = particles.length - 1; i >= 0; i--) {
+      particles[i].update();
+      particles[i].draw(ctx);
+      if (particles[i].life <= 0) {
+        particles.splice(i, 1);
+      }
+    }
+  };
+
+  // 애니메이션 루프
+  const animate = (ctx, canvas) => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.globalAlpha = 1; // Reset global alpha
+    handleParticles(ctx);
+    requestAnimationFrame(() => animate(ctx, canvas));
+  };
+
+  // 캔버스 리사이즈
+  const resizeCanvas = (canvas) => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  };
+
+  // 마우스 이벤트 핸들러
+  const handleMouseMove = (event) => {
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
+    setMousePosition({ x: mouse.x, y: mouse.y });
+    
+    if (cursorRef.current) {
+      cursorRef.current.style.transform = `translate(${mouse.x - 10}px, ${mouse.y - 10}px)`;
+    }
+    
+    // Create particles on mouse move (수량 1개로 감소)
+    if (canvasRef.current) {
+      particles.push(new Particle(mouse.x, mouse.y));
+    }
+  };
+
+  const handleMouseClick = (event) => {
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
+    // Create a bigger splatter on click (수량 20개로 감소)
+    if (canvasRef.current) {
+      for (let i = 0; i < 20; i++) {
+        particles.push(new Particle(mouse.x, mouse.y, true));
+      }
+    }
+  };
+
+  // 마우스 포인터 효과 초기화
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const canvas = canvasRef.current;
+    const cursor = cursorRef.current;
+    
+    if (!canvas || !cursor) return;
+    
+    const ctx = canvas.getContext('2d');
+    resizeCanvas(canvas);
+    
+    // 애니메이션 시작
+    animate(ctx, canvas);
+    
+    // 이벤트 리스너 추가
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('click', handleMouseClick);
+    window.addEventListener('resize', () => resizeCanvas(canvas));
+    
+    // 클린업
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('click', handleMouseClick);
+      window.removeEventListener('resize', () => resizeCanvas(canvas));
+    };
+  }, []);
+
   // 컴포넌트 언마운트 시 cleanup
   useEffect(() => () => cleanupRef.current(), []);
+
+  // Particle 클래스
+  class Particle {
+    constructor(x, y, isSplatter = false) {
+      this.x = x;
+      this.y = y;
+      this.color = colors[Math.floor(Math.random() * colors.length)];
+      this.life = 1; // 1 = 100% life
+      
+      if (isSplatter) {
+        this.size = Math.random() * 5 + 3;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 4 + 2;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+      } else {
+        this.size = Math.random() * 3 + 2;
+        this.vx = (Math.random() - 0.5) * 2;
+        this.vy = (Math.random() - 0.5) * 2;
+      }
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life -= 0.03; // Fade out speed
+    }
+
+    draw(ctx) {
+      ctx.globalAlpha = this.life;
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // 파티클 처리 함수
+  const handleParticles = (ctx) => {
+    for (let i = particles.length - 1; i >= 0; i--) {
+      particles[i].update();
+      particles[i].draw(ctx);
+      if (particles[i].life <= 0) {
+        particles.splice(i, 1);
+      }
+    }
+  };
+
+  // 애니메이션 루프
+  const animate = (ctx, canvas) => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.globalAlpha = 1; // Reset global alpha
+    handleParticles(ctx);
+    requestAnimationFrame(() => animate(ctx, canvas));
+  };
+
+  // 캔버스 리사이즈
+  const resizeCanvas = (canvas) => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  };
+
+  // 마우스 이벤트 핸들러
+  const handleMouseMove = (event) => {
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
+    setMousePosition({ x: mouse.x, y: mouse.y });
+    
+    if (cursorRef.current) {
+      cursorRef.current.style.transform = `translate(${mouse.x - 10}px, ${mouse.y - 10}px)`;
+    }
+    
+    // Create particles on mouse move (수량 1개로 감소)
+    if (canvasRef.current) {
+      particles.push(new Particle(mouse.x, mouse.y));
+    }
+  };
+
+  const handleMouseClick = (event) => {
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
+    // Create a bigger splatter on click (수량 20개로 감소)
+    if (canvasRef.current) {
+      for (let i = 0; i < 20; i++) {
+        particles.push(new Particle(mouse.x, mouse.y, true));
+      }
+    }
+  };
 
   // 키보드 화살표 키로 섹션 이동
   useEffect(() => {
@@ -357,6 +571,12 @@ function HomePage() {
   // class -> className, style 속성은 객체로, 주석은 {/**/}으로 변경됩니다.
   return (
     <>
+      {/* 마우스 포인터 효과 캔버스 */}
+      <canvas id="background-canvas" ref={canvasRef}></canvas>
+      
+      {/* 커스텀 마우스 커서 */}
+      <div className="cursor" ref={cursorRef}></div>
+      
       <header className={`main-header ${showAnimations ? 'fade-in' : ''}`}>
         <div className="container">
           <div className="header-left">
@@ -580,6 +800,31 @@ function HomePage() {
             )}
         </section>
 
+        <section id="problem" className="problem-section">
+            <div className="container">
+                <div className="section-title reveal">
+                    <h2>혹시, 당신의 이야기인가요?</h2>
+                    <p>우리 사회는 '관계 단절의 시대'에 살고 있습니다. 이성과의 만남과 대화가 점점 더 특별하고 부담스러운 일이 되어가고 있죠. 더 이상 혼자 고민하지 마세요.</p>
+                </div>
+                <div className="stats-grid">
+                    <div className="stat-card reveal" data-parallax="0.1"><div className="number">75.8%</div><p className="description">현재 연애를 하고 있지 않은 20-50대 성인 남녀의 비율.</p></div>
+                    <div className="stat-card reveal" data-parallax="0.2" style={{transitionDelay: '0.15s'}}><div className="number">35.4%</div><p className="description">지금까지 연애 경험이 전혀 없는 20대의 비율.</p></div>
+                    <div className="stat-card reveal" data-parallax="0.1" style={{transitionDelay: '0.3s'}}><div className="number">ZERO</div><p className="description">만날 기회는 줄고, 편하게 연습할 기회는 사라졌습니다. 데연소(데이트 연습소)는 실패의 부담감을 덜어주는 환경을 제공합니다.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="empathy" className="empathy-section">
+            <div className="container">
+                <div className="section-title reveal">
+                    <h2>"좋아하는 이성을 만났지만,<br/>놓쳤던 경험이 있으신가요?"</h2>
+                    <p>그 순간 무슨 말을 해야 할지 몰라 망설였던 기억, 어색한 침묵에 아쉬웠던 순간들. <span className="highlight-text">그 몇 초의 공백이, 평생의 기회를 놓치게 할 수도 있습니다.</span>
+                    <br/><br/>
+                    '데연소'는 그런 당신을 위해 탄생했습니다. 실전보다 더 실감 나는 대화 연습으로, 말문이 막히던 순간을 기회의 순간으로 바꿔드립니다. 다음 번엔 주저하지 않고, 마음을 사로잡을 수 있도록 도와드릴게요.</p>
+                </div>
+            </div>
+        </section>
+
         <section id="preview" className="preview-section">
             <div className="container">
                 <div className="preview-grid">
@@ -615,7 +860,7 @@ function HomePage() {
                 </div>
             </div>
         </section>
-
+        
         <section id="science" className="science-section">
             <div className="container">
                  <div className="section-title reveal">
@@ -691,31 +936,6 @@ function HomePage() {
                           </React.Fragment>
                         ))}
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="problem" className="problem-section">
-            <div className="container">
-                <div className="section-title reveal">
-                    <h2>혹시, 당신의 이야기인가요?</h2>
-                    <p>우리 사회는 '관계 단절의 시대'에 살고 있습니다. 이성과의 만남과 대화가 점점 더 특별하고 부담스러운 일이 되어가고 있죠. 더 이상 혼자 고민하지 마세요.</p>
-                </div>
-                <div className="stats-grid">
-                    <div className="stat-card reveal" data-parallax="0.1"><div className="number">75.8%</div><p className="description">현재 연애를 하고 있지 않은 20-50대 성인 남녀의 비율.</p></div>
-                    <div className="stat-card reveal" data-parallax="0.2" style={{transitionDelay: '0.15s'}}><div className="number">35.4%</div><p className="description">지금까지 연애 경험이 전혀 없는 20대의 비율.</p></div>
-                    <div className="stat-card reveal" data-parallax="0.1" style={{transitionDelay: '0.3s'}}><div className="number">ZERO</div><p className="description">만날 기회는 줄고, 편하게 연습할 기회는 사라졌습니다. 데연소(데이트 연습소)는 실패의 부담감을 덜어주는 환경을 제공합니다.</p></div>
-                </div>
-            </div>
-        </section>
-
-        <section id="empathy" className="empathy-section">
-            <div className="container">
-                <div className="section-title reveal">
-                    <h2>"좋아하는 이성을 만났지만,<br/>놓쳤던 경험이 있으신가요?"</h2>
-                    <p>그 순간 무슨 말을 해야 할지 몰라 망설였던 기억, 어색한 침묵에 아쉬웠던 순간들. <span className="highlight-text">그 몇 초의 공백이, 평생의 기회를 놓치게 할 수도 있습니다.</span>
-                    <br/><br/>
-                    '데연소'는 그런 당신을 위해 탄생했습니다. 실전보다 더 실감 나는 대화 연습으로, 말문이 막히던 순간을 기회의 순간으로 바꿔드립니다. 다음 번엔 주저하지 않고, 마음을 사로잡을 수 있도록 도와드릴게요.</p>
                 </div>
             </div>
         </section>
