@@ -126,6 +126,26 @@ section {
     }
 }
 
+@keyframes float {
+    0%, 100% {
+        transform: translateX(-50%) translateY(0px);
+    }
+    50% {
+        transform: translateX(-50%) translateY(-10px);
+    }
+}
+
+@keyframes arrowBounce {
+    0%, 100% {
+        transform: translateY(0px);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translateY(5px);
+        opacity: 1;
+    }
+}
+
 .loading-logo {
     display: flex;
     align-items: center;
@@ -2961,12 +2981,12 @@ section[id] {
 
 /* --- Price Page Styles --- */
 .pricing-section {
-    padding: 180px 0 120px;
+    padding: 120px 0 80px;
     text-align: center;
 }
 
 .pricing-section .section-title {
-    margin-bottom: 70px;
+    margin-bottom: 50px;
 }
 
 .pricing-section .section-title h1 {
@@ -3176,7 +3196,7 @@ section[id] {
     }
     
     .pricing-section {
-        padding: 140px 0 80px;
+        padding: 100px 0 60px;
     }
     
     .pricing-section .section-title h1 {

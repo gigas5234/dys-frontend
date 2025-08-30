@@ -509,62 +509,45 @@ function HomePage() {
                   bottom: '40px',
                   left: '50%',
                   transform: 'translateX(-50%)',
-                  cursor: 'pointer',
-                  animation: 'bounce 2s infinite',
                   zIndex: 20,
-                  background: 'rgba(255, 255, 255, 0.9)',
-                  backdropFilter: 'blur(10px)',
-                  borderRadius: '20px',
-                  padding: '12px 20px',
-                  boxShadow: '0 4px 20px rgba(166, 193, 238, 0.2)',
-                  border: '1px solid rgba(166, 193, 238, 0.1)',
-                  transition: 'all 0.3s ease'
-                }}
-                onClick={() => {
-                  const problemSection = document.getElementById('problem');
-                  if (problemSection) {
-                    problemSection.scrollIntoView({
-                      behavior: 'smooth',
-                      block: 'start'
-                    });
-                  }
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.transform = 'translateX(-50%) scale(1.05)';
-                  e.target.style.boxShadow = '0 6px 25px rgba(166, 193, 238, 0.3)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.transform = 'translateX(-50%) scale(1)';
-                  e.target.style.boxShadow = '0 4px 20px rgba(166, 193, 238, 0.2)';
+                  textAlign: 'center',
+                  animation: 'float 3s ease-in-out infinite'
                 }}
               >
                 <div style={{
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
+                  color: 'rgba(255, 255, 255, 0.8)',
                   fontSize: '14px',
-                  fontWeight: '600'
+                  fontWeight: '500',
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                 }}>
-                  <span style={{ marginBottom: '8px' }}>아래로 스크롤</span>
-                  <svg 
-                    width="24" 
-                    height="24" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="url(#scrollGradient)" 
-                    strokeWidth="2"
-                  >
-                    <defs>
-                      <linearGradient id="scrollGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#667eea" />
-                        <stop offset="100%" stopColor="#764ba2" />
-                      </linearGradient>
-                    </defs>
-                    <polyline points="6,9 12,15 18,9"></polyline>
-                  </svg>
+                  <span style={{ marginBottom: '12px', letterSpacing: '0.5px' }}>아래로 스크롤</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                    <svg 
+                      width="20" 
+                      height="20" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="rgba(255, 255, 255, 0.8)" 
+                      strokeWidth="2"
+                      style={{ animation: 'arrowBounce 2s ease-in-out infinite' }}
+                    >
+                      <polyline points="6,9 12,15 18,9"></polyline>
+                    </svg>
+                    <svg 
+                      width="20" 
+                      height="20" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="rgba(255, 255, 255, 0.6)" 
+                      strokeWidth="2"
+                      style={{ animation: 'arrowBounce 2s ease-in-out infinite 0.5s' }}
+                    >
+                      <polyline points="6,9 12,15 18,9"></polyline>
+                    </svg>
+                  </div>
                 </div>
               </div>
             )}
