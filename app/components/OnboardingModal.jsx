@@ -16,20 +16,39 @@ const OnboardingModal = ({ isOpen, onClose, onComplete, onDismiss }) => {
       alt: "페르소나 선택 화면",
       hasAnimation: true,
       animationElements: [
-        { type: 'mouse', x: 200, y: 150, delay: 1000 },
-        { type: 'highlight', x: 300, y: 200, width: 120, height: 40, delay: 2000 }
+        // 멀리서 시작해서 중앙 카드로 이동하는 마우스 커서
+        { type: 'mouse', x: 50, y: 100, delay: 500 },
+        { type: 'mouse', x: 150, y: 120, delay: 1000 },
+        { type: 'mouse', x: 250, y: 140, delay: 1500 },
+        { type: 'mouse', x: 300, y: 150, delay: 2000 },
+        // 중앙 카드 클릭
+        { type: 'click', x: 300, y: 150, delay: 2500 },
+        // 중앙 카드 하이라이트
+        { type: 'highlight', x: 250, y: 120, width: 100, height: 60, delay: 3000 }
       ]
     },
     {
-      title: "자연스러운 대화에서 실제 데이트로",
-      description: "선택한 상대와 대화를 연습하고, 준비가 완료되면 실제 AI 데이트를 시작할 수 있습니다.",
+      title: "두 가지 선택지를 경험해보세요",
+      description: "다른 상대를 찾아볼 수도 있고, 준비가 완료되면 실제 AI 데이트를 시작할 수도 있습니다.",
       image: "/onboarding/slide2-chat-to-date.webp",
-      alt: "채팅에서 데이트 시작까지",
+      alt: "채팅에서 두 가지 선택지",
       hasAnimation: true,
       animationElements: [
-        { type: 'mouse', x: 150, y: 300, delay: 1000 },
-        { type: 'click', x: 150, y: 300, delay: 2500 },
-        { type: 'highlight', x: 250, y: 350, width: 150, height: 50, delay: 3000 }
+        // 1. "다른 상대 찾기" 버튼 하이라이트 (좌측 상단)
+        { type: 'highlight', x: 50, y: 30, width: 120, height: 35, delay: 500 },
+        // 2. "다른 상대 찾기" 버튼으로 마우스 이동
+        { type: 'mouse', x: 100, y: 50, delay: 1000 },
+        { type: 'mouse', x: 110, y: 47, delay: 1500 },
+        // 3. "다른 상대 찾기" 버튼 클릭
+        { type: 'click', x: 110, y: 47, delay: 2000 },
+        // 4. "데이트 시작하기" 버튼으로 이동 (우측 하단)
+        { type: 'mouse', x: 200, y: 150, delay: 3000 },
+        { type: 'mouse', x: 250, y: 180, delay: 3500 },
+        { type: 'mouse', x: 300, y: 200, delay: 4000 },
+        // 5. "데이트 시작하기" 버튼 클릭
+        { type: 'click', x: 300, y: 200, delay: 4500 },
+        // 6. "데이트 시작하기" 버튼 하이라이트
+        { type: 'highlight', x: 250, y: 180, width: 140, height: 40, delay: 5000 }
       ]
     },
     {
@@ -39,10 +58,19 @@ const OnboardingModal = ({ isOpen, onClose, onComplete, onDismiss }) => {
       alt: "GKE 스튜디오 전체 화면",
       hasAnimation: true,
       animationElements: [
-        { type: 'mouse', x: 100, y: 100, delay: 500 },
-        { type: 'highlight', x: 50, y: 50, width: 200, height: 150, delay: 1500 },
-        { type: 'arrow', x: 400, y: 200, direction: 'right', delay: 3000 },
-        { type: 'highlight', x: 450, y: 150, width: 150, height: 100, delay: 3500 }
+        // 좌측 실시간 피드백 영역 하이라이트
+        { type: 'highlight', x: 20, y: 50, width: 180, height: 200, delay: 500 },
+        // 중앙 마이크 버튼으로 이동
+        { type: 'mouse', x: 200, y: 150, delay: 1500 },
+        { type: 'mouse', x: 280, y: 150, delay: 2000 },
+        // 중앙 마이크 버튼 클릭
+        { type: 'click', x: 280, y: 150, delay: 2500 },
+        // 중앙 마이크 버튼 하이라이트
+        { type: 'highlight', x: 250, y: 120, width: 60, height: 60, delay: 3000 },
+        // 우측 채팅창으로 화살표
+        { type: 'arrow', x: 400, y: 150, direction: 'right', delay: 3500 },
+        // 우측 채팅창 하이라이트
+        { type: 'highlight', x: 420, y: 50, width: 160, height: 200, delay: 4000 }
       ]
     }
   ];
