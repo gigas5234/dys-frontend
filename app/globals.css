@@ -27,6 +27,7 @@ html, body {
     overflow-x: hidden;
     scroll-behavior: smooth;
     word-break: keep-all;
+    cursor: none; /* 기본 커서 숨기기 */
 }
 
 /* 스크롤 스냅 설정 */
@@ -87,6 +88,31 @@ section {
 .auth-page {
   min-height: calc(100vh - var(--header-height));
   padding-top: var(--header-height);
+}
+
+/* 커스텀 마우스 커서 */
+.cursor {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 101;
+    transition: transform 0.1s ease-out;
+}
+
+/* 배경 캔버스 */
+#background-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
 }
 
 /* --- 페이지 로딩 화면 --- */

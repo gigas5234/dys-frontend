@@ -23,6 +23,11 @@ function HomePage() {
   const hasAnimatedRef = useRef(false);
   const cleanupRef = useRef(() => {});
   const dropdownRef = useRef(null);
+  
+  // 마우스 포인터 효과 관련 상태
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const canvasRef = useRef(null);
+  const cursorRef = useRef(null);
 
   // 사용자 플랜 확인 함수
   const getUserPlan = (user) => {
@@ -155,8 +160,129 @@ function HomePage() {
     };
   }, []);
 
+  // 마우스 포인터 효과 초기화
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const canvas = canvasRef.current;
+    const cursor = cursorRef.current;
+    
+    if (!canvas || !cursor) return;
+    
+    const ctx = canvas.getContext('2d');
+    resizeCanvas(canvas);
+    
+    // 애니메이션 시작
+    animate(ctx, canvas);
+    
+    // 이벤트 리스너 추가
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('click', handleMouseClick);
+    window.addEventListener('resize', () => resizeCanvas(canvas));
+    
+    // 클린업
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('click', handleMouseClick);
+      window.removeEventListener('resize', () => resizeCanvas(canvas));
+    };
+  }, []);
+
   // 컴포넌트 언마운트 시 cleanup
   useEffect(() => () => cleanupRef.current(), []);
+
+  // 마우스 포인터 효과 관련 함수들
+  const colors = ['#fbc2eb', '#a6c1ee', '#e6b3ff'];
+  let particles = [];
+  let mouse = { x: null, y: null };
+
+  // Particle 클래스
+  class Particle {
+    constructor(x, y, isSplatter = false) {
+      this.x = x;
+      this.y = y;
+      this.color = colors[Math.floor(Math.random() * colors.length)];
+      this.life = 1; // 1 = 100% life
+      
+      if (isSplatter) {
+        this.size = Math.random() * 5 + 3;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 4 + 2;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+      } else {
+        this.size = Math.random() * 3 + 2;
+        this.vx = (Math.random() - 0.5) * 2;
+        this.vy = (Math.random() - 0.5) * 2;
+      }
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life -= 0.03; // Fade out speed
+    }
+
+    draw(ctx) {
+      ctx.globalAlpha = this.life;
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // 파티클 처리 함수
+  const handleParticles = (ctx) => {
+    for (let i = particles.length - 1; i >= 0; i--) {
+      particles[i].update();
+      particles[i].draw(ctx);
+      if (particles[i].life <= 0) {
+        particles.splice(i, 1);
+      }
+    }
+  };
+
+  // 애니메이션 루프
+  const animate = (ctx, canvas) => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.globalAlpha = 1; // Reset global alpha
+    handleParticles(ctx);
+    requestAnimationFrame(() => animate(ctx, canvas));
+  };
+
+  // 캔버스 리사이즈
+  const resizeCanvas = (canvas) => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  };
+
+  // 마우스 이벤트 핸들러
+  const handleMouseMove = (event) => {
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
+    setMousePosition({ x: mouse.x, y: mouse.y });
+    
+    if (cursorRef.current) {
+      cursorRef.current.style.transform = `translate(${mouse.x - 10}px, ${mouse.y - 10}px)`;
+    }
+    
+    // Create particles on mouse move (수량 1개로 감소)
+    if (canvasRef.current) {
+      particles.push(new Particle(mouse.x, mouse.y));
+    }
+  };
+
+  const handleMouseClick = (event) => {
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
+    // Create a bigger splatter on click (수량 20개로 감소)
+    if (canvasRef.current) {
+      for (let i = 0; i < 20; i++) {
+        particles.push(new Particle(mouse.x, mouse.y, true));
+      }
+    }
+  };
 
   // 키보드 화살표 키로 섹션 이동
   useEffect(() => {
@@ -357,6 +483,12 @@ function HomePage() {
   // class -> className, style 속성은 객체로, 주석은 {/**/}으로 변경됩니다.
   return (
     <>
+      {/* 마우스 포인터 효과 캔버스 */}
+      <canvas id="background-canvas" ref={canvasRef}></canvas>
+      
+      {/* 커스텀 마우스 커서 */}
+      <div className="cursor" ref={cursorRef}></div>
+      
       <header className={`main-header ${showAnimations ? 'fade-in' : ''}`}>
         <div className="container">
           <div className="header-left">
