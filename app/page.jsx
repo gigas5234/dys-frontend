@@ -594,6 +594,20 @@ function HomePage() {
             </div>
         </section>
 
+        <section id="personas" className="personas-section">
+            <div className="container">
+                <div className="personas-grid">
+                    <div className="personas-image reveal">
+                        <img src="/img/dys_main_card.webp" alt="다양한 AI 페르소나" />
+                    </div>
+                    <div className="personas-content reveal" style={{transitionDelay: '0.2s'}}>
+                        <h2>실제보다 더 실제같은<br/>AI 데이트 시뮬레이션</h2>
+                        <p>다양한 성격과 스토리를 가진 AI 파트너를 직접 선택하고, 약속을 잡는 과정부터 실제 대화까지. 현실적인 시나리오 속에서 당신의 소통 능력을 마음껏 시험하고 발전시켜 보세요.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="features" className="features-section">
             <div className="container">
                 <div className="section-title reveal">

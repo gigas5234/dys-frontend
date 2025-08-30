@@ -1666,6 +1666,97 @@ section[id] {
     }
 }
 
+/* --- 페르소나 섹션 --- */
+.personas-section {
+    min-height: 100vh;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.personas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.personas-image {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    transform: perspective(1000px) rotateY(-5deg);
+    transition: transform 0.3s ease;
+}
+
+.personas-image:hover {
+    transform: perspective(1000px) rotateY(0deg);
+}
+
+.personas-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 20px;
+}
+
+.personas-content h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 24px;
+    line-height: 1.2;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.personas-content p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #64748b;
+    margin-bottom: 0;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .personas-section {
+        padding: 80px 0;
+        height: auto;
+        min-height: auto;
+    }
+    
+    .personas-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        text-align: center;
+    }
+    
+    .personas-content h2 {
+        font-size: 2rem;
+    }
+    
+    .personas-content p {
+        font-size: 1rem;
+    }
+    
+    .personas-image {
+        transform: none;
+    }
+    
+    .personas-image:hover {
+        transform: none;
+    }
+}
+
 /* --- 과학적 근거 섹션 --- */
 .science-section {
     min-height: 100vh;
