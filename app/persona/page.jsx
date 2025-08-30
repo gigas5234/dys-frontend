@@ -178,8 +178,8 @@ function PersonaPage() {
             }
             setOnboardingStatus(data);
             
-            // 온보딩을 완료하지 않았고 거부하지도 않은 경우 온보딩 표시
-            if (data && !data.onboarding_completed && !data.onboarding_dismissed) {
+            // 온보딩을 완료하지 않은 경우에만 온보딩 표시
+            if (data && !data.onboarding_completed) {
                 setShowOnboarding(true);
             }
         } catch (error) {

@@ -65,7 +65,9 @@ import { updateOnboardingStatus } from '../../lib/supabase';
   const handleComplete = async () => {
     setIsLoading(true);
     try {
-      await updateOnboardingStatus('completed', dontShowAgain);
+      // "다시 보지 않기"가 체크된 경우 completed로, 아니면 dismissed로 설정
+      const status = dontShowAgain ? 'completed' : 'dismissed';
+      await updateOnboardingStatus(status);
       onComplete();
     } catch (error) {
       console.error('온보딩 완료 처리 오류:', error);

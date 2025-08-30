@@ -562,13 +562,418 @@ section[id] {
     z-index: 1;
 }
 
-/* 물감 흘러나오는 효과 */
-.paint-flow {
+/* AI 코칭 스마트 애니메이션 요소들 */
+.ai-neuron {
     position: absolute;
-    background: linear-gradient(135deg, var(--brand1), var(--brand2), var(--brand3));
+    width: 8px;
+    height: 8px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
     border-radius: 50%;
     opacity: 0.8;
-    animation: paintFlow 4s ease-in-out infinite;
+    animation: neuronFlow 8s ease-in-out infinite;
+}
+
+.ai-neuron::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 2px;
+    background: #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.neuron-left {
+    top: 25%;
+    left: -20px;
+    animation-delay: 0s;
+}
+
+.neuron-right {
+    top: 35%;
+    right: -20px;
+    animation-delay: 1s;
+}
+
+.neuron-top {
+    top: -20px;
+    left: 45%;
+    animation-delay: 2s;
+}
+
+.neuron-bottom {
+    bottom: -20px;
+    right: 40%;
+    animation-delay: 3s;
+}
+
+.neuron-left-2 {
+    top: 65%;
+    left: -20px;
+    animation-delay: 4s;
+}
+
+.neuron-right-2 {
+    top: 15%;
+    right: -20px;
+    animation-delay: 5s;
+}
+
+.neuron-top-2 {
+    top: -20px;
+    left: 25%;
+    animation-delay: 6s;
+}
+
+.neuron-bottom-2 {
+    bottom: -20px;
+    right: 20%;
+    animation-delay: 7s;
+}
+
+/* AI 연결선 */
+.ai-connection {
+    position: absolute;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.6), transparent);
+    animation: connectionFlow 6s ease-in-out infinite;
+    opacity: 0;
+}
+
+.connection-1 {
+    top: 30%;
+    left: 10%;
+    width: 200px;
+    animation-delay: 1s;
+}
+
+.connection-2 {
+    top: 50%;
+    right: 15%;
+    width: 180px;
+    animation-delay: 2s;
+}
+
+.connection-3 {
+    top: 70%;
+    left: 20%;
+    width: 160px;
+    animation-delay: 3s;
+}
+
+/* 대화 버블 효과 */
+.chat-bubble {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    animation: chatBubble 4s ease-in-out infinite;
+    opacity: 0;
+}
+
+.chat-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 20px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid rgba(255, 255, 255, 0.1);
+}
+
+.bubble-1 {
+    top: 20%;
+    left: 15%;
+    animation-delay: 2s;
+}
+
+.bubble-2 {
+    top: 60%;
+    right: 20%;
+    animation-delay: 3s;
+}
+
+.bubble-3 {
+    top: 40%;
+    left: 60%;
+    animation-delay: 4s;
+}
+
+/* 데이터 시각화 효과 */
+.data-point {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #fbc2eb;
+    border-radius: 50%;
+    animation: dataVisualization 5s ease-in-out infinite;
+}
+
+.data-point::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    width: 1px;
+    height: 20px;
+    background: linear-gradient(to top, transparent, rgba(251, 194, 235, 0.3));
+    transform: translateX(-50%);
+}
+
+.data-1 {
+    top: 30%;
+    left: 25%;
+    animation-delay: 0s;
+}
+
+.data-2 {
+    top: 45%;
+    left: 35%;
+    animation-delay: 1s;
+}
+
+.data-3 {
+    top: 60%;
+    left: 45%;
+    animation-delay: 2s;
+}
+
+.data-4 {
+    top: 75%;
+    left: 55%;
+    animation-delay: 3s;
+}
+
+/* 타겟팅 효과 */
+.target-ring {
+    position: absolute;
+    border: 2px solid rgba(102, 126, 234, 0.4);
+    border-radius: 50%;
+    animation: targetPulse 3s ease-in-out infinite;
+}
+
+.target-1 {
+    top: 40%;
+    left: 30%;
+    width: 60px;
+    height: 60px;
+    animation-delay: 0s;
+}
+
+.target-2 {
+    top: 50%;
+    right: 25%;
+    width: 80px;
+    height: 80px;
+    animation-delay: 1.5s;
+}
+
+/* 중앙 AI 코어 */
+.ai-core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.1));
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 2;
+    animation: aiCorePulse 4s ease-in-out infinite;
+}
+
+.ai-core::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.4), transparent);
+    border-radius: 50%;
+    animation: aiCoreInner 2s ease-in-out infinite;
+}
+
+.ai-core::after {
+    content: 'AI';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+}
+
+/* 히어로 콘텐츠 */
+.hero-content {
+    position: relative;
+    z-index: 3;
+    max-width: 800px;
+    padding: 0 20px;
+}
+
+/* AI 뉴런 흐름 애니메이션 */
+@keyframes neuronFlow {
+    0% {
+        transform: translateX(0) translateY(0) scale(1);
+        opacity: 0.6;
+    }
+    25% {
+        transform: translateX(calc(25vw - 50%)) translateY(calc(25vh - 50%)) scale(1.2);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translateX(calc(50vw - 50%)) translateY(calc(50vh - 50%)) scale(1.5);
+        opacity: 1;
+    }
+    75% {
+        transform: translateX(calc(75vw - 50%)) translateY(calc(75vh - 50%)) scale(1.2);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateX(calc(50vw - 50%)) translateY(calc(50vh - 50%)) scale(0.8);
+        opacity: 0.3;
+    }
+}
+
+/* 연결선 흐름 애니메이션 */
+@keyframes connectionFlow {
+    0%, 100% {
+        opacity: 0;
+        transform: scaleX(0);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scaleX(1);
+    }
+}
+
+/* 대화 버블 애니메이션 */
+@keyframes chatBubble {
+    0%, 100% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 데이터 시각화 애니메이션 */
+@keyframes dataVisualization {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.5);
+    }
+}
+
+/* 타겟 펄스 애니메이션 */
+@keyframes targetPulse {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+}
+
+/* AI 코어 펄스 애니메이션 */
+@keyframes aiCorePulse {
+    0%, 100% {
+        opacity: 0.6;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+/* AI 코어 내부 애니메이션 */
+@keyframes aiCoreInner {
+    0%, 100% {
+        opacity: 0.4;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .ai-neuron {
+        width: 6px;
+        height: 6px;
+    }
+    
+    .neuron-left, .neuron-left-2 {
+        left: -15px;
+    }
+    
+    .neuron-right, .neuron-right-2 {
+        right: -15px;
+    }
+    
+    .neuron-top, .neuron-top-2 {
+        top: -15px;
+    }
+    
+    .neuron-bottom, .neuron-bottom-2 {
+        bottom: -15px;
+    }
+    
+    .ai-core {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .ai-core::before {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .ai-core::after {
+        font-size: 14px;
+    }
+    
+    .chat-bubble {
+        font-size: 10px;
+        padding: 6px 12px;
+    }
+    
+    .target-ring {
+        border-width: 1px;
+    }
+    
+    .target-1 {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .target-2 {
+        width: 50px;
+        height: 50px;
+    }
 }
 
 .paint-left {
@@ -684,41 +1089,7 @@ section[id] {
     animation-delay: 2s;
 }
 
-/* 히어로 콘텐츠 */
-.hero-content {
-    position: relative;
-    z-index: 3;
-    max-width: 800px;
-    padding: 0 20px;
-}
 
-/* 물감 흘러나오는 애니메이션 */
-@keyframes paintFlow {
-    0% {
-        transform: translateX(0) translateY(0) scale(1);
-        opacity: 0.6;
-    }
-    50% {
-        transform: translateX(calc(50vw - 50%)) translateY(calc(50vh - 50%)) scale(1.5);
-        opacity: 0.9;
-    }
-    100% {
-        transform: translateX(calc(50vw - 50%)) translateY(calc(50vh - 50%)) scale(0.8);
-        opacity: 0.3;
-    }
-}
-
-/* 물감 리플 애니메이션 */
-@keyframes ripple {
-    0% {
-        transform: translate(-50%, -50%) scale(0);
-        opacity: 1;
-    }
-    100% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 0;
-    }
-}
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {
