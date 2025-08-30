@@ -616,43 +616,6 @@ function HomePage() {
             </div>
         </section>
 
-        <section id="personas" className="personas-section">
-            <div className="container">
-                <div className="section-title reveal">
-                    <h2>실제보다 더 실제같은<br/>다양한 AI 페르소나</h2>
-                    <p>각각 다른 성격과 매력을 가진 AI 파트너와 만나보세요. 당신의 이상형에 맞는 완벽한 연습 상대를 찾을 수 있습니다.</p>
-                </div>
-                <div className="personas-showcase reveal">
-                    <div className="personas-grid">
-                        <div className="persona-card">
-                            <img src="/img/woman1_insta.webp" alt="AI Persona 1" />
-                        </div>
-                        <div className="persona-card">
-                            <img src="/img/man1_insta.webp" alt="AI Persona 2" />
-                        </div>
-                        <div className="persona-card">
-                            <img src="/img/woman2_insta.webp" alt="AI Persona 3" />
-                        </div>
-                        <div className="persona-card">
-                            <img src="/img/man2_insta.webp" alt="AI Persona 4" />
-                        </div>
-                        <div className="persona-card">
-                            <img src="/img/woman3_insta.webp" alt="AI Persona 5" />
-                        </div>
-                        <div className="persona-card">
-                            <img src="/img/man3_insta.webp" alt="AI Persona 6" />
-                        </div>
-                        <div className="persona-card">
-                            <img src="/img/woman4_insta.webp" alt="AI Persona 7" />
-                        </div>
-                        <div className="persona-card">
-                            <img src="/img/man4_insta.webp" alt="AI Persona 8" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <section id="science" className="science-section">
             <div className="container">
                  <div className="section-title reveal">
