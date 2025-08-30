@@ -15,17 +15,17 @@ const OnboardingModal = ({ isOpen, onClose, onComplete, onDismiss }) => {
       image: "/onboarding/slide1-persona-selection.webp",
       alt: "페르소나 선택 화면",
       hasAnimation: true,
-      animationElements: [
-        // 멀리서 시작해서 중앙 카드로 이동하는 마우스 커서
-        { type: 'mouse', x: 50, y: 100, delay: 500 },
-        { type: 'mouse', x: 150, y: 120, delay: 1000 },
-        { type: 'mouse', x: 250, y: 140, delay: 1500 },
-        { type: 'mouse', x: 300, y: 150, delay: 2000 },
-        // 중앙 카드 클릭
-        { type: 'click', x: 300, y: 150, delay: 2500 },
-        // 중앙 카드 하이라이트
-        { type: 'highlight', x: 250, y: 120, width: 100, height: 60, delay: 3000 }
-      ]
+             animationElements: [
+         // 멀리서 시작해서 중앙 카드로 이동하는 마우스 커서
+         { type: 'mouse', x: 10, y: 30, delay: 500 },
+         { type: 'mouse', x: 25, y: 35, delay: 1000 },
+         { type: 'mouse', x: 40, y: 40, delay: 1500 },
+         { type: 'mouse', x: 50, y: 45, delay: 2000 },
+         // 중앙 카드 클릭
+         { type: 'click', x: 50, y: 45, delay: 2500 },
+         // 중앙 카드 하이라이트
+         { type: 'highlight', x: 40, y: 35, width: 20, height: 15, delay: 3000 }
+       ]
     },
     {
       title: "두 가지 선택지를 경험해보세요",
@@ -33,23 +33,23 @@ const OnboardingModal = ({ isOpen, onClose, onComplete, onDismiss }) => {
       image: "/onboarding/slide2-chat-to-date.webp",
       alt: "채팅에서 두 가지 선택지",
       hasAnimation: true,
-      animationElements: [
-        // 1. "다른 상대 찾기" 버튼 하이라이트 (좌측 상단)
-        { type: 'highlight', x: 50, y: 30, width: 120, height: 35, delay: 500 },
-        // 2. "다른 상대 찾기" 버튼으로 마우스 이동
-        { type: 'mouse', x: 100, y: 50, delay: 1000 },
-        { type: 'mouse', x: 110, y: 47, delay: 1500 },
-        // 3. "다른 상대 찾기" 버튼 클릭
-        { type: 'click', x: 110, y: 47, delay: 2000 },
-        // 4. "데이트 시작하기" 버튼으로 이동 (우측 하단)
-        { type: 'mouse', x: 200, y: 150, delay: 3000 },
-        { type: 'mouse', x: 250, y: 180, delay: 3500 },
-        { type: 'mouse', x: 300, y: 200, delay: 4000 },
-        // 5. "데이트 시작하기" 버튼 클릭
-        { type: 'click', x: 300, y: 200, delay: 4500 },
-        // 6. "데이트 시작하기" 버튼 하이라이트
-        { type: 'highlight', x: 250, y: 180, width: 140, height: 40, delay: 5000 }
-      ]
+             animationElements: [
+         // 1. "다른 상대 찾기" 버튼 하이라이트 (좌측 상단)
+         { type: 'highlight', x: 10, y: 10, width: 15, height: 8, delay: 500 },
+         // 2. "다른 상대 찾기" 버튼으로 마우스 이동
+         { type: 'mouse', x: 15, y: 12, delay: 1000 },
+         { type: 'mouse', x: 17, y: 14, delay: 1500 },
+         // 3. "다른 상대 찾기" 버튼 클릭
+         { type: 'click', x: 17, y: 14, delay: 2000 },
+         // 4. "데이트 시작하기" 버튼으로 이동 (우측 하단)
+         { type: 'mouse', x: 30, y: 40, delay: 3000 },
+         { type: 'mouse', x: 35, y: 45, delay: 3500 },
+         { type: 'mouse', x: 40, y: 50, delay: 4000 },
+         // 5. "데이트 시작하기" 버튼 클릭
+         { type: 'click', x: 40, y: 50, delay: 4500 },
+         // 6. "데이트 시작하기" 버튼 하이라이트
+         { type: 'highlight', x: 35, y: 45, width: 18, height: 10, delay: 5000 }
+       ]
     },
     {
       title: "실시간 피드백으로 소통 능력을 향상시키세요",
@@ -57,21 +57,21 @@ const OnboardingModal = ({ isOpen, onClose, onComplete, onDismiss }) => {
       image: "/onboarding/slide3-studio-overview.webp",
       alt: "GKE 스튜디오 전체 화면",
       hasAnimation: true,
-      animationElements: [
-        // 좌측 실시간 피드백 영역 하이라이트
-        { type: 'highlight', x: 20, y: 50, width: 180, height: 200, delay: 500 },
-        // 중앙 마이크 버튼으로 이동
-        { type: 'mouse', x: 200, y: 150, delay: 1500 },
-        { type: 'mouse', x: 280, y: 150, delay: 2000 },
-        // 중앙 마이크 버튼 클릭
-        { type: 'click', x: 280, y: 150, delay: 2500 },
-        // 중앙 마이크 버튼 하이라이트
-        { type: 'highlight', x: 250, y: 120, width: 60, height: 60, delay: 3000 },
-        // 우측 채팅창으로 화살표
-        { type: 'arrow', x: 400, y: 150, direction: 'right', delay: 3500 },
-        // 우측 채팅창 하이라이트
-        { type: 'highlight', x: 420, y: 50, width: 160, height: 200, delay: 4000 }
-      ]
+             animationElements: [
+         // 좌측 실시간 피드백 영역 하이라이트
+         { type: 'highlight', x: 5, y: 15, width: 25, height: 40, delay: 500 },
+         // 중앙 마이크 버튼으로 이동
+         { type: 'mouse', x: 30, y: 30, delay: 1500 },
+         { type: 'mouse', x: 35, y: 30, delay: 2000 },
+         // 중앙 마이크 버튼 클릭
+         { type: 'click', x: 35, y: 30, delay: 2500 },
+         // 중앙 마이크 버튼 하이라이트
+         { type: 'highlight', x: 32, y: 25, width: 8, height: 8, delay: 3000 },
+         // 우측 채팅창으로 화살표
+         { type: 'arrow', x: 45, y: 30, direction: 'right', delay: 3500 },
+         // 우측 채팅창 하이라이트
+         { type: 'highlight', x: 50, y: 15, width: 20, height: 40, delay: 4000 }
+       ]
     }
   ];
 
@@ -164,19 +164,19 @@ const OnboardingModal = ({ isOpen, onClose, onComplete, onDismiss }) => {
               }}
             />
             
-            {/* 애니메이션 요소들 */}
-            {currentSlideData.hasAnimation && currentSlideData.animationElements?.map((element, index) => (
-              <div
-                key={index}
-                className={`animation-element ${element.type}`}
-                style={{
-                  left: `${element.x}px`,
-                  top: `${element.y}px`,
-                  width: element.width ? `${element.width}px` : 'auto',
-                  height: element.height ? `${element.height}px` : 'auto',
-                  animationDelay: `${element.delay}ms`
-                }}
-              >
+                         {/* 애니메이션 요소들 */}
+             {currentSlideData.hasAnimation && currentSlideData.animationElements?.map((element, index) => (
+               <div
+                 key={index}
+                 className={`animation-element ${element.type}`}
+                 style={{
+                   left: element.x + '%',
+                   top: element.y + '%',
+                   width: element.width ? element.width + '%' : 'auto',
+                   height: element.height ? element.height + '%' : 'auto',
+                   animationDelay: `${element.delay}ms`
+                 }}
+               >
                 {element.type === 'arrow' && (
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <polyline points="9,18 15,12 9,6"></polyline>
