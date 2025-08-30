@@ -450,6 +450,10 @@ function HomePage() {
                 <div className="paint-flow paint-right"></div>
                 <div className="paint-flow paint-top"></div>
                 <div className="paint-flow paint-bottom"></div>
+                <div className="paint-flow paint-left-2"></div>
+                <div className="paint-flow paint-right-2"></div>
+                <div className="paint-flow paint-top-2"></div>
+                <div className="paint-flow paint-bottom-2"></div>
             </div>
             
             {/* 중앙 물감 풀 효과 */}

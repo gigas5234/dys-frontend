@@ -574,33 +574,74 @@ section[id] {
 .paint-left {
     width: 200px;
     height: 200px;
-    top: 20%;
-    left: -100px;
+    top: 30%;
+    left: -150px;
     animation-delay: 0s;
+    animation-duration: 6s;
 }
 
 .paint-right {
-    width: 150px;
-    height: 150px;
-    top: 60%;
-    right: -75px;
-    animation-delay: 1s;
+    width: 180px;
+    height: 180px;
+    top: 40%;
+    right: -120px;
+    animation-delay: 1.5s;
+    animation-duration: 6s;
 }
 
 .paint-top {
-    width: 180px;
-    height: 180px;
-    top: -90px;
-    left: 30%;
-    animation-delay: 2s;
+    width: 160px;
+    height: 160px;
+    top: -100px;
+    left: 40%;
+    animation-delay: 3s;
+    animation-duration: 6s;
 }
 
 .paint-bottom {
+    width: 140px;
+    height: 140px;
+    bottom: -80px;
+    right: 30%;
+    animation-delay: 4.5s;
+    animation-duration: 6s;
+}
+
+/* 추가 물감 요소들 */
+.paint-left-2 {
     width: 120px;
     height: 120px;
-    bottom: -60px;
-    right: 20%;
-    animation-delay: 3s;
+    top: 60%;
+    left: -80px;
+    animation-delay: 2s;
+    animation-duration: 5s;
+}
+
+.paint-right-2 {
+    width: 100px;
+    height: 100px;
+    top: 20%;
+    right: -60px;
+    animation-delay: 3.5s;
+    animation-duration: 5s;
+}
+
+.paint-top-2 {
+    width: 140px;
+    height: 140px;
+    top: -80px;
+    left: 20%;
+    animation-delay: 5s;
+    animation-duration: 5s;
+}
+
+.paint-bottom-2 {
+    width: 160px;
+    height: 160px;
+    bottom: -100px;
+    right: 10%;
+    animation-delay: 1s;
+    animation-duration: 6s;
 }
 
 /* 중앙 물감 풀 효과 */
@@ -655,23 +696,15 @@ section[id] {
 @keyframes paintFlow {
     0% {
         transform: translateX(0) translateY(0) scale(1);
-        opacity: 0.8;
-    }
-    25% {
-        transform: translateX(50px) translateY(-30px) scale(1.2);
-        opacity: 0.9;
-    }
-    50% {
-        transform: translateX(100px) translateY(20px) scale(0.8);
         opacity: 0.6;
     }
-    75% {
-        transform: translateX(30px) translateY(-50px) scale(1.1);
-        opacity: 0.7;
+    50% {
+        transform: translateX(calc(50vw - 50%)) translateY(calc(50vh - 50%)) scale(1.5);
+        opacity: 0.9;
     }
     100% {
-        transform: translateX(0) translateY(0) scale(1);
-        opacity: 0.8;
+        transform: translateX(calc(50vw - 50%)) translateY(calc(50vh - 50%)) scale(0.8);
+        opacity: 0.3;
     }
 }
 
@@ -711,6 +744,30 @@ section[id] {
         width: 80px;
         height: 80px;
         bottom: -40px;
+    }
+    
+    .paint-left-2 {
+        width: 80px;
+        height: 80px;
+        left: -40px;
+    }
+    
+    .paint-right-2 {
+        width: 70px;
+        height: 70px;
+        right: -35px;
+    }
+    
+    .paint-top-2 {
+        width: 90px;
+        height: 90px;
+        top: -45px;
+    }
+    
+    .paint-bottom-2 {
+        width: 100px;
+        height: 100px;
+        bottom: -50px;
     }
     
     .paint-pool {
