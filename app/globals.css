@@ -1279,8 +1279,8 @@ section[id] {
 .problem-section { 
     background: rgba(255,255,255,0.2); 
     padding: 60px 0;
-    min-height: 100vh;
-    height: 100vh;
+    min-height: 80vh;
+    height: 80vh;
     display: flex;
     align-items: center;
 }
@@ -1326,8 +1326,8 @@ section[id] {
 .empathy-section { 
     text-align: center; 
     padding: 60px 0;
-    min-height: 100vh;
-    height: 100vh;
+    min-height: 80vh;
+    height: 80vh;
     display: flex;
     align-items: center;
 }
@@ -1384,10 +1384,11 @@ section[id] {
 /* --- 서비스 미리보기 섹션 --- */
 .preview-section { 
     background: #fff; 
-    min-height: 100vh;
-    height: 100vh;
+    min-height: 80vh;
+    height: 80vh;
     display: flex;
     align-items: center;
+    padding: 60px 0;
 }
 
 .preview-grid { 
@@ -1711,7 +1712,7 @@ section[id] {
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    transform: perspective(1000px) rotateY(5deg);
+    transform: perspective(1000px) rotateY(-5deg);
     transition: transform 0.3s ease;
 }
 
@@ -1724,7 +1725,7 @@ section[id] {
     height: auto;
     display: block;
     border-radius: 20px;
-    background: #000;
+    background: transparent;
 }
 
 /* 비디오 컨트롤 커스터마이징 */
