@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getCurrentSession, restoreSessionFromUrl, signOut, supabase } from '../../lib/supabase';
+import { getCurrentSession, restoreSessionFromUrl, signOut, supabase, checkOnboardingStatus } from '../../lib/supabase';
 import personas from '../../data/personas.json';
 import BetaSurvey from '../components/BetaSurvey';
+import OnboardingModal from '../components/OnboardingModal';
 
 // 공통 페르소나 데이터 사용
 const allPersonas = personas;
@@ -76,6 +77,8 @@ function PersonaPage() {
     const [userSettings, setUserSettings] = useState(null);
     const [isLoadingSettings, setIsLoadingSettings] = useState(false);
     const [scrollProgress, setScrollProgress] = useState(0);
+    const [showOnboarding, setShowOnboarding] = useState(false);
+    const [onboardingStatus, setOnboardingStatus] = useState(null);
     
     const router = useRouter();
     const trackRef = useRef(null);
@@ -165,6 +168,25 @@ function PersonaPage() {
         }
     };
 
+    // 온보딩 상태 확인
+    const checkOnboarding = async () => {
+        try {
+            const { data, error } = await checkOnboardingStatus();
+            if (error) {
+                console.error('온보딩 상태 확인 오류:', error);
+                return;
+            }
+            setOnboardingStatus(data);
+            
+            // 온보딩을 완료하지 않았고 거부하지도 않은 경우 온보딩 표시
+            if (data && !data.onboarding_completed && !data.onboarding_dismissed) {
+                setShowOnboarding(true);
+            }
+        } catch (error) {
+            console.error('온보딩 상태 확인 중 오류:', error);
+        }
+    };
+
     // 사용자 세션 확인
     const checkUser = async () => {
         try {
@@ -175,6 +197,8 @@ function PersonaPage() {
                 setUser(restored.user);
                 setUserPlan(getUserPlan(restored.user));
                 setLoading(false);
+                // 온보딩 상태 확인
+                await checkOnboarding();
                 return;
             }
 
@@ -185,6 +209,9 @@ function PersonaPage() {
                 setUserPlan(getUserPlan(session.user));
             }
             setLoading(false);
+            
+            // 온보딩 상태 확인
+            await checkOnboarding();
         } catch (error) {
             console.error('Error checking user session:', error);
             setUser(null);
@@ -259,6 +286,17 @@ function PersonaPage() {
     const closeWarningModal = () => setShowWarningModal(false);
     const closeSessionEndModal = () => setShowSessionEndModal(false);
     const closeSettingsModal = () => setShowSettingsModal(false);
+    
+    // 온보딩 관련 핸들러
+    const handleOnboardingComplete = () => {
+        setShowOnboarding(false);
+        setOnboardingStatus(prev => ({ ...prev, onboarding_completed: true }));
+    };
+    
+    const handleOnboardingDismiss = () => {
+        setShowOnboarding(false);
+        setOnboardingStatus(prev => ({ ...prev, onboarding_dismissed: true }));
+    };
 
     // 사용자 설정 가져오기
     const fetchUserSettings = async (userId) => {
@@ -601,62 +639,80 @@ function PersonaPage() {
                     </div>
                     <div className="header-right" suppressHydrationWarning>
                         {isClient && user ? (
-                            <div className="user-dropdown" ref={dropdownRef}>
-                                <div className="plan-badge-header">
-                                    {userSettings ? (
-                                        <span className={`plan-type ${getActualUserPlan()}`}>
-                                            {getActualUserPlan() === 'premium' ? 'Premium' : 'Basic'}
-                                        </span>
-                                    ) : (
-                                        <span className="plan-type basic" style={{ opacity: 0.6 }}>로딩중...</span>
-                                    )}
-                                </div>
-                                <div
-                                    className={`user-dropdown-toggle ${isDropdownOpen ? 'open' : ''}`}
-                                    role="button"
-                                    aria-haspopup="menu"
-                                    aria-expanded={isDropdownOpen}
-                                    aria-controls="user-menu"
-                                    onClick={() => setIsDropdownOpen(o => !o)}
+                            <>
+                                {/* 온보딩 다시보기 버튼 */}
+                                <button 
+                                    className="onboarding-replay-btn"
+                                    onClick={() => setShowOnboarding(true)}
+                                    style={{ marginRight: '12px' }}
                                 >
-                                    <img
-                                        src={user.user_metadata?.avatar_url || 'https://placehold.co/32x32/e0e8ff/7d7d7d?text=U'}
-                                        alt="프로필"
-                                        className="user-avatar"
-                                    />
-                                    <span className="user-name">{user.user_metadata?.full_name || user.email}</span>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <polyline points="6,9 12,15 18,9"></polyline>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14,2 14,8 20,8"/>
+                                        <line x1="16" y1="13" x2="8" y2="13"/>
+                                        <line x1="16" y1="17" x2="8" y2="17"/>
+                                        <polyline points="10,9 9,9 8,9"/>
                                     </svg>
+                                    서비스 설명
+                                </button>
+                                
+                                <div className="user-dropdown" ref={dropdownRef}>
+                                    <div className="plan-badge-header">
+                                        {userSettings ? (
+                                            <span className={`plan-type ${getActualUserPlan()}`}>
+                                                {getActualUserPlan() === 'premium' ? 'Premium' : 'Basic'}
+                                            </span>
+                                        ) : (
+                                            <span className="plan-type basic" style={{ opacity: 0.6 }}>로딩중...</span>
+                                        )}
+                                    </div>
+                                    <div
+                                        className={`user-dropdown-toggle ${isDropdownOpen ? 'open' : ''}`}
+                                        role="button"
+                                        aria-haspopup="menu"
+                                        aria-expanded={isDropdownOpen}
+                                        aria-controls="user-menu"
+                                        onClick={() => setIsDropdownOpen(o => !o)}
+                                    >
+                                        <img
+                                            src={user.user_metadata?.avatar_url || 'https://placehold.co/32x32/e0e8ff/7d7d7d?text=U'}
+                                            alt="프로필"
+                                            className="user-avatar"
+                                        />
+                                        <span className="user-name">{user.user_metadata?.full_name || user.email}</span>
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <polyline points="6,9 12,15 18,9"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div id="user-menu" className={`user-dropdown-menu ${isDropdownOpen ? 'open' : ''}`} role="menu">
+                                        <a href="/persona" className="user-dropdown-item" role="menuitem">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <path d="M5 12h14"/>
+                                                <path d="m12 5 7 7-7 7"/>
+                                            </svg>
+                                            시작하기
+                                        </a>
+                                        <button onClick={() => {
+                                            setShowSettingsModal(true);
+                                            fetchUserSettings();
+                                        }} className="user-dropdown-item" role="menuitem">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <circle cx="12" cy="12" r="3"/>
+                                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                                            </svg>
+                                            설정
+                                        </button>
+                                        <button onClick={handleLogout} className="user-dropdown-item logout" role="menuitem">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                                <polyline points="16,17 21,12 16,7"></polyline>
+                                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                                            </svg>
+                                            로그아웃
+                                        </button>
+                                    </div>
                                 </div>
-                                <div id="user-menu" className={`user-dropdown-menu ${isDropdownOpen ? 'open' : ''}`} role="menu">
-                                    <a href="/persona" className="user-dropdown-item" role="menuitem">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M5 12h14"/>
-                                            <path d="m12 5 7 7-7 7"/>
-                                        </svg>
-                                        시작하기
-                                    </a>
-                                    <button onClick={() => {
-                                        setShowSettingsModal(true);
-                                        fetchUserSettings();
-                                    }} className="user-dropdown-item" role="menuitem">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <circle cx="12" cy="12" r="3"/>
-                                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                                        </svg>
-                                        설정
-                                    </button>
-                                    <button onClick={handleLogout} className="user-dropdown-item logout" role="menuitem">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                                            <polyline points="16,17 21,12 16,7"></polyline>
-                                            <line x1="21" y1="12" x2="9" y2="12"></line>
-                                        </svg>
-                                        로그아웃
-                                    </button>
-                                </div>
-                            </div>
+                            </>
                         ) : (
                             <a href="/login" className="btn btn-login">로그인</a>
                         )}
@@ -1024,6 +1080,14 @@ function PersonaPage() {
                     </div>
                 </div>
             )}
+            
+            {/* 온보딩 모달 */}
+            <OnboardingModal
+                isOpen={showOnboarding}
+                onClose={() => setShowOnboarding(false)}
+                onComplete={handleOnboardingComplete}
+                onDismiss={handleOnboardingDismiss}
+            />
         </>
     );
 }
