@@ -551,6 +551,11 @@ section[id] {
     overflow: hidden;
 }
 
+.hero-content {
+    position: relative;
+    z-index: 10;
+}
+
 /* 물감 흘러나오는 애니메이션 컨테이너 */
 .paint-flow-container {
     position: absolute;
@@ -2135,21 +2140,21 @@ section[id] {
     background: linear-gradient(135deg, var(--brand2), var(--brand1)); 
     color: white; 
     border-radius: var(--radius); 
-    padding: 80px 40px; 
-    margin: 120px 20px 0; 
+    padding: 60px 40px; 
+    margin: 60px 20px 0; 
 }
 
 .cta-section h2 { 
-    font-size: 36px; 
+    font-size: 32px; 
     font-weight: 800; 
-    margin-bottom: 20px; 
+    margin-bottom: 15px; 
     color: white; 
 }
 
 .cta-section p { 
-    font-size: 18px; 
+    font-size: 16px; 
     max-width: 600px; 
-    margin: 0 auto 40px auto; 
+    margin: 0 auto 30px auto; 
     opacity: 0.9; 
 }
 
@@ -2219,6 +2224,20 @@ section[id] {
     
     .user-name {
       max-width: 80px;
+    }
+    
+    .cta-section {
+        padding: 40px 20px;
+        margin: 40px 10px 0;
+    }
+    
+    .cta-section h2 {
+        font-size: 28px;
+    }
+    
+    .cta-section p {
+        font-size: 14px;
+        margin-bottom: 20px;
     }
 }
 

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { getCurrentSession, restoreSessionFromUrl, signOut, isReturnFromBackend, cleanReturnParams, supabase } from '../lib/supabase';
+import DeyonsoNetworkOnly from './components/DeyonsoNetworkOnly';
 
 function HomePage() {
   const [isChatStarted, setIsChatStarted] = useState(false);
@@ -480,7 +481,7 @@ function HomePage() {
 
       <main className={showAnimations ? 'fade-in' : ''}>
         <section className="hero-section">
-            
+            <DeyonsoNetworkOnly />
             <div className="hero-content">
                 <div className="slogan reveal">설렘은 현실로, 실수는 연습으로.</div>
                 <h1 className="reveal" style={{transitionDelay: '0.1s'}}>AI 소통 코칭으로<br/>당신의 매력을 발견하세요</h1>
