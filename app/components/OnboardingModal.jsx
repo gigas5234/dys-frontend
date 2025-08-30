@@ -28,49 +28,49 @@ const OnboardingModal = ({ isOpen, onClose, onComplete, onDismiss }) => {
        ]
     },
     {
-      title: "두 가지 선택지를 경험해보세요",
+      title: "바로 데이트를 시작해 보세요.",
       description: "다른 상대를 찾아볼 수도 있고, 준비가 완료되면 실제 AI 데이트를 시작할 수도 있습니다.",
       image: "/onboarding/slide2-chat-to-date.webp",
       alt: "채팅에서 두 가지 선택지",
       hasAnimation: true,
              animationElements: [
-         // 1. "다른 상대 찾기" 버튼 하이라이트 (헤더 좌측)
-         { type: 'highlight', x: 5, y: 5, width: 20, height: 8, delay: 500 },
+         // 1. "다른 상대 찾기" 버튼 하이라이트 (헤더 좌측 뒤로가기)
+         { type: 'highlight', x: 8, y: 8, width: 15, height: 6, delay: 500 },
          // 2. "다른 상대 찾기" 버튼으로 마우스 이동
-         { type: 'mouse', x: 10, y: 8, delay: 1000 },
-         { type: 'mouse', x: 12, y: 9, delay: 1500 },
+         { type: 'mouse', x: 12, y: 10, delay: 1000 },
+         { type: 'mouse', x: 14, y: 11, delay: 1500 },
          // 3. "다른 상대 찾기" 버튼 클릭
-         { type: 'click', x: 12, y: 9, delay: 2000 },
-         // 4. "데이트 시작하기" 버튼으로 이동 (하단 중앙)
-         { type: 'mouse', x: 30, y: 60, delay: 3000 },
-         { type: 'mouse', x: 40, y: 65, delay: 3500 },
-         { type: 'mouse', x: 45, y: 70, delay: 4000 },
+         { type: 'click', x: 14, y: 11, delay: 2000 },
+         // 4. "데이트 시작하기" 버튼으로 이동 (하단 분홍색 버튼)
+         { type: 'mouse', x: 35, y: 75, delay: 3000 },
+         { type: 'mouse', x: 42, y: 78, delay: 3500 },
+         { type: 'mouse', x: 45, y: 80, delay: 4000 },
          // 5. "데이트 시작하기" 버튼 클릭
-         { type: 'click', x: 45, y: 70, delay: 4500 },
-         // 6. "데이트 시작하기" 버튼 하이라이트 (하단 중앙 버튼)
-         { type: 'highlight', x: 35, y: 65, width: 25, height: 8, delay: 5000 }
+         { type: 'click', x: 45, y: 80, delay: 4500 },
+         // 6. "데이트 시작하기" 버튼 하이라이트 (하단 분홍색 버튼)
+         { type: 'highlight', x: 35, y: 75, width: 30, height: 10, delay: 5000 }
        ]
     },
     {
       title: "실시간 피드백으로 소통 능력을 향상시키세요",
-      description: "카메라와 마이크를 통해 실시간으로 자세, 시선, 목소리를 분석받아 소통 능력을 개선하세요.",
+      description: "카메라와 마이크를 통해 실시간으로 자세, 시선, 목소리를 분석받아 소통 능력을 개선하세요. 카메라와 마이크의 권한 요청이 진행됩니다.",
       image: "/onboarding/slide3-studio-overview.webp",
       alt: "GKE 스튜디오 전체 화면",
       hasAnimation: true,
              animationElements: [
-         // 1. 좌측 실시간 피드백 영역 하이라이트 (데이터 분석 패널)
-         { type: 'highlight', x: 5, y: 15, width: 20, height: 45, delay: 500 },
-         // 2. 중앙 붉은 마이크 버튼으로 이동
-         { type: 'mouse', x: 35, y: 45, delay: 1500 },
-         { type: 'mouse', x: 40, y: 50, delay: 2000 },
+         // 1. 좌측 실시간 피드백 영역 하이라이트 (파란색 테두리 패널)
+         { type: 'highlight', x: 8, y: 20, width: 18, height: 40, delay: 500 },
+         // 2. 중앙 붉은 마이크 버튼으로 이동 (테이블 위)
+         { type: 'mouse', x: 38, y: 55, delay: 1500 },
+         { type: 'mouse', x: 42, y: 58, delay: 2000 },
          // 3. 중앙 붉은 마이크 버튼 클릭
-         { type: 'click', x: 40, y: 50, delay: 2500 },
+         { type: 'click', x: 42, y: 58, delay: 2500 },
          // 4. 중앙 붉은 마이크 버튼 하이라이트 (원형 버튼)
-         { type: 'highlight', x: 37, y: 47, width: 6, height: 6, delay: 3000 },
+         { type: 'highlight', x: 40, y: 56, width: 4, height: 4, delay: 3000 },
          // 5. 우측 채팅창으로 화살표
-         { type: 'arrow', x: 55, y: 35, direction: 'right', delay: 3500 },
-         // 6. 우측 채팅창 하이라이트 (채팅 패널)
-         { type: 'highlight', x: 60, y: 15, width: 20, height: 45, delay: 4000 }
+         { type: 'arrow', x: 58, y: 40, direction: 'right', delay: 3500 },
+         // 6. 우측 채팅창 하이라이트 (파란색 테두리 패널)
+         { type: 'highlight', x: 65, y: 20, width: 18, height: 40, delay: 4000 }
        ]
     }
   ];
