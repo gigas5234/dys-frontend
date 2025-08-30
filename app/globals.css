@@ -1845,6 +1845,92 @@ section[id] {
     line-height: 1.6; 
 }
 
+/* 다이나믹 페르소나 카드뷰 */
+.persona-showcase {
+    margin-top: 30px;
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.persona-cards-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.persona-card {
+    position: absolute;
+    width: 80px;
+    height: 100px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    animation: personaFloat 4s ease-in-out infinite;
+    cursor: pointer;
+}
+
+.persona-card:hover {
+    transform: scale(1.1) rotate(0deg) !important;
+    z-index: 10;
+    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.3);
+}
+
+.persona-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.persona-card:hover img {
+    transform: scale(1.05);
+}
+
+/* 페르소나 카드 플로팅 애니메이션 */
+@keyframes personaFloat {
+    0%, 100% {
+        transform: translateY(0px) rotate(var(--rotation));
+    }
+    25% {
+        transform: translateY(-8px) rotate(calc(var(--rotation) + 2deg));
+    }
+    50% {
+        transform: translateY(-15px) rotate(var(--rotation));
+    }
+    75% {
+        transform: translateY(-8px) rotate(calc(var(--rotation) - 2deg));
+    }
+}
+
+/* 각 카드별 개별 애니메이션 */
+.persona-card:nth-child(1) { --rotation: -15deg; animation-delay: 0s; }
+.persona-card:nth-child(2) { --rotation: 10deg; animation-delay: 0.2s; }
+.persona-card:nth-child(3) { --rotation: -8deg; animation-delay: 0.4s; }
+.persona-card:nth-child(4) { --rotation: 12deg; animation-delay: 0.6s; }
+.persona-card:nth-child(5) { --rotation: -5deg; animation-delay: 0.8s; }
+.persona-card:nth-child(6) { --rotation: 8deg; animation-delay: 1s; }
+.persona-card:nth-child(7) { --rotation: -12deg; animation-delay: 1.2s; }
+.persona-card:nth-child(8) { --rotation: 6deg; animation-delay: 1.4s; }
+.persona-card:nth-child(9) { --rotation: -10deg; animation-delay: 1.6s; }
+.persona-card:nth-child(10) { --rotation: 15deg; animation-delay: 1.8s; }
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .persona-showcase {
+        height: 150px;
+    }
+    
+    .persona-card {
+        width: 60px;
+        height: 75px;
+    }
+}
+
 /* --- 실제 후기 섹션 --- */
 .reviews-section {
     padding-top: 80px;

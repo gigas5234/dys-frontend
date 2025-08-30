@@ -659,9 +659,45 @@ function HomePage() {
                         <p>대화가 끝난 후, 당신의 표정, 시선, 목소리 톤, 대화 균형 등을 분석한 '데연소 리포트'를 제공하여 강점과 개선점을 명확하게 파악할 수 있습니다.</p>
                     </div>
                     <div className="feature-card reveal" style={{transitionDelay: '0.3s'}}>
-                         <svg className="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                        <svg className="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                         <h3>다양한 AI 페르소나</h3>
                         <p>MBTI, 직업, 관심사 등을 조합하여 원하는 이상형에 가까운 AI 파트너를 직접 선택하고, 다양한 상황에 맞는 대화 연습을 할 수 있습니다.</p>
+                        
+                        {/* 다이나믹 페르소나 카드뷰 */}
+                        <div className="persona-showcase">
+                            <div className="persona-cards-container">
+                                <div className="persona-card" style={{transform: 'rotate(-15deg) translateY(-20px)', animationDelay: '0s'}}>
+                                    <img src="/img/woman1_insta.webp" alt="AI Persona 1" />
+                                </div>
+                                <div className="persona-card" style={{transform: 'rotate(10deg) translateY(10px)', animationDelay: '0.2s'}}>
+                                    <img src="/img/man1_insta.webp" alt="AI Persona 2" />
+                                </div>
+                                <div className="persona-card" style={{transform: 'rotate(-8deg) translateY(-15px)', animationDelay: '0.4s'}}>
+                                    <img src="/img/woman2_insta.webp" alt="AI Persona 3" />
+                                </div>
+                                <div className="persona-card" style={{transform: 'rotate(12deg) translateY(5px)', animationDelay: '0.6s'}}>
+                                    <img src="/img/man2_insta.webp" alt="AI Persona 4" />
+                                </div>
+                                <div className="persona-card" style={{transform: 'rotate(-5deg) translateY(-25px)', animationDelay: '0.8s'}}>
+                                    <img src="/img/woman3_insta.webp" alt="AI Persona 5" />
+                                </div>
+                                <div className="persona-card" style={{transform: 'rotate(8deg) translateY(15px)', animationDelay: '1s'}}>
+                                    <img src="/img/man3_insta.webp" alt="AI Persona 6" />
+                                </div>
+                                <div className="persona-card" style={{transform: 'rotate(-12deg) translateY(-10px)', animationDelay: '1.2s'}}>
+                                    <img src="/img/woman4_insta.webp" alt="AI Persona 7" />
+                                </div>
+                                <div className="persona-card" style={{transform: 'rotate(6deg) translateY(20px)', animationDelay: '1.4s'}}>
+                                    <img src="/img/man4_insta.webp" alt="AI Persona 8" />
+                                </div>
+                                <div className="persona-card" style={{transform: 'rotate(-10deg) translateY(-5px)', animationDelay: '1.6s'}}>
+                                    <img src="/img/woman5_insta.webp" alt="AI Persona 9" />
+                                </div>
+                                <div className="persona-card" style={{transform: 'rotate(15deg) translateY(25px)', animationDelay: '1.8s'}}>
+                                    <img src="/img/man5_insta.webp" alt="AI Persona 10" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
