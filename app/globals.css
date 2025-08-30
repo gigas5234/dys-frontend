@@ -1668,13 +1668,14 @@ section[id] {
 
 /* --- 페르소나 섹션 --- */
 .personas-section {
-    min-height: 100vh;
-    height: 100vh;
+    min-height: 80vh;
+    height: 80vh;
     display: flex;
     align-items: center;
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     position: relative;
     overflow: hidden;
+    padding: 60px 0;
 }
 
 .personas-grid {
@@ -1759,10 +1760,11 @@ section[id] {
 
 /* --- 과학적 근거 섹션 --- */
 .science-section {
-    min-height: 100vh;
-    height: 100vh;
+    min-height: 80vh;
+    height: 80vh;
     display: flex;
     align-items: center;
+    padding: 60px 0;
 }
 
 .science-section .content-wrapper { 
@@ -1890,10 +1892,11 @@ section[id] {
 /* --- 핵심 기능 섹션 --- */
 .features-section { 
     background: rgba(255,255,255,0.2); 
-    min-height: 100vh;
-    height: 100vh;
+    min-height: 80vh;
+    height: 80vh;
     display: flex;
     align-items: center;
+    padding: 60px 0;
 }
 
 .features-grid { 
@@ -1938,12 +1941,12 @@ section[id] {
 
 /* --- 실제 후기 섹션 --- */
 .reviews-section {
-    padding-top: 80px;
-    padding-bottom: 160px;
+    padding-top: 60px;
+    padding-bottom: 120px;
     overflow: hidden;
     text-align: center;
-    min-height: 100vh;
-    height: 100vh;
+    min-height: 80vh;
+    height: 80vh;
     display: flex;
     align-items: center;
 }

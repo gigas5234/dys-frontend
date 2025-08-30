@@ -569,6 +569,20 @@ function HomePage() {
             </div>
         </section>
 
+        <section id="personas" className="personas-section">
+            <div className="container">
+                <div className="personas-grid">
+                    <div className="personas-image reveal">
+                        <img src="/img/dys_main_card.webp" alt="다양한 AI 페르소나" />
+                    </div>
+                    <div className="personas-content reveal" style={{transitionDelay: '0.2s'}}>
+                        <h2>다양한 성격의<br/>AI 페르소나와 만나보세요</h2>
+                        <p>MBTI, 직업, 관심사가 각각 다른 AI 파트너들이 준비되어 있습니다. 당신의 이상형에 맞는 완벽한 연습 상대를 선택하고, 다양한 상황에서 대화 연습을 해보세요. 각 페르소나는 독특한 성격과 스토리를 가지고 있어 더욱 현실적인 데이트 경험을 제공합니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="science" className="science-section">
             <div className="container">
                  <div className="section-title reveal">
@@ -594,19 +608,7 @@ function HomePage() {
             </div>
         </section>
 
-        <section id="personas" className="personas-section">
-            <div className="container">
-                <div className="personas-grid">
-                    <div className="personas-image reveal">
-                        <img src="/img/dys_main_card.webp" alt="다양한 AI 페르소나" />
-                    </div>
-                    <div className="personas-content reveal" style={{transitionDelay: '0.2s'}}>
-                        <h2>다양한 성격의<br/>AI 페르소나와 만나보세요</h2>
-                        <p>MBTI, 직업, 관심사가 각각 다른 10명의 AI 파트너가 준비되어 있습니다. 당신의 이상형에 맞는 완벽한 연습 상대를 선택하고, 다양한 상황에서 대화 연습을 해보세요. 각 페르소나는 독특한 성격과 스토리를 가지고 있어 더욱 현실적인 데이트 경험을 제공합니다.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+
 
         <section id="features" className="features-section">
             <div className="container">
