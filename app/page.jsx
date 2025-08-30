@@ -166,7 +166,7 @@ function HomePage() {
     if (!video) return;
     
     // 볼륨 설정
-    video.volume = 0.3;
+    video.volume = 0.5;
     
     // Intersection Observer 설정
     const observer = new IntersectionObserver((entries) => {
@@ -696,33 +696,7 @@ function HomePage() {
             </div>
         </section>
 
-        <section id="reviews" className="reviews-section">
-            <div className="container">
-                <div className="section-title reveal">
-                    <h2>실제 사용자들의 이야기</h2>
-                    <p>데연소를 통해 자신감을 찾고, 새로운 인연을 만난 분들의 생생한 후기를 확인해보세요.</p>
-                </div>
-                <div className="reviews-wrapper">
-                    <div className="review-track scroll-left">
-                        {/* 무한 루프 효과를 위해 리뷰 목록을 복제합니다. */}
-                        {[...Array(3)].map((_, i) => (
-                          <React.Fragment key={`review-${i}`}>
-                            <div className="review-card" key={`review-${i}-1`}><div className="stars">★★★★★</div><p className="comment">소개팅 전날 밤, AI랑 연습한 게 정말 큰 도움이 됐어요. 예전 같았으면 어색해서 말도 못했을 텐데, 자연스럽게 대화를 이어갈 수 있었습니다!</p><p className="author">- 김*준 (31세, 개발자)</p></div>
-                            <div className="review-card" key={`review-${i}-2`}><div className="stars">★★★★★</div><p className="comment">제가 어떤 표정을 짓는지, 목소리 톤이 어떤지 객관적으로 알 수 있어서 좋았어요. 리포트 보고 고칠 점을 명확히 알게 됐습니다.</p><p className="author">- 박*연 (28세, 마케터)</p></div>
-                            <div className="review-card" key={`review-${i}-3`}><div className="stars">★★★★☆</div><p className="comment">다양한 성격의 AI가 있어서 여러 상황을 연습하기 좋았어요. 다만 가끔 AI 답변이 조금 느릴 때가 있네요. 그래도 만족합니다.</p><p className="author">- 최*우 (34세, 회사원)</p></div>
-                            <div className="review-card" key={`review-${i}-4`}><div className="stars">★★★★★</div><p className="comment">솔직히 반신반의했는데, 그냥 대화만 하는 게 아니라 과학적으로 분석해준다는 점이 신뢰가 갔어요. 제 매력이 뭔지 알게 된 기분이에요.</p><p className="author">- 이*은 (29세, 디자이너)</p></div>
-                            <div className="review-card" key={`review-${i}-5`}><div className="stars">★★★★★</div><p className="comment">이런 서비스 만들어주셔서 감사합니다. 저처럼 내성적인 사람들한테는 정말 한 줄기 빛과 같아요. 자신감이 많이 생겼어요!</p><p className="author">- 정*솜 (26세, 대학원생)</p></div>
-                            <div className="review-card" key={`review-${i}-6`}><div className="stars">★★★★★</div><p className="comment">실패해도 부담이 없다는 점이 가장 큰 장점이에요. 마음 편하게 여러 가지 시도를 해볼 수 있었어요.</p><p className="author">- 윤*호 (30세, 프리랜서)</p></div>
-                            <div className="review-card" key={`review-${i}-7`}><div className="stars">★★★★☆</div><p className="comment">리액션이나 질문 타이밍 같은 디테일한 부분을 연습하기에 좋네요.</p><p className="author">- 한*라 (27세, 간호사)</p></div>
-                            <div className="review-card" key={`review-${i}-8`}><div className="stars">★★★★★</div><p className="comment">드디어... 썸녀한테 애프터 신청 받았습니다. 다 데연소 덕분입니다. 진심으로요.</p><p className="author">- 강*민 (32세, 연구원)</p></div>
-                            <div className="review-card" key={`review-${i}-9`}><div className="stars">★★★★★</div><p className="comment">AI라고 어색할 줄 알았는데, 대화가 너무 자연스러워서 놀랐어요. 시간 가는 줄 모르고 연습했네요.</p><p className="author">- 신*영 (29세, 교사)</p></div>
-                            <div className="review-card" key={`review-${i}-10`}><div className="stars">★★★★☆</div><p className="comment">분석 리포트가 생각보다 훨씬 상세해서 놀랐습니다. 다음 업데이트도 기대돼요!</p><p className="author">- 문*혁 (35세, 공무원)</p></div>
-                          </React.Fragment>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </section>
+
 
         <section id="problem" className="problem-section">
             <div className="container">
