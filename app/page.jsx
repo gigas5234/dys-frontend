@@ -620,79 +620,39 @@ function HomePage() {
             <div className="container">
                 <div className="section-title reveal">
                     <h2>실제보다 더 실제같은<br/>다양한 AI 페르소나</h2>
-                    <p>각각 다른 성격과 매력을 가진 10명의 AI 파트너와 만나보세요. 당신의 이상형에 맞는 완벽한 연습 상대를 찾을 수 있습니다.</p>
+                    <p>각각 다른 성격과 매력을 가진 AI 파트너와 만나보세요. 당신의 이상형에 맞는 완벽한 연습 상대를 찾을 수 있습니다.</p>
                 </div>
                 <div className="personas-showcase reveal">
                     <div className="personas-grid">
                         <div className="persona-card" style={{transform: 'rotate(-15deg) translateY(-20px)', animationDelay: '0s'}}>
                             <img src="/img/woman1_insta.webp" alt="AI Persona 1" />
-                            <div className="persona-info">
-                                <h4>이서아</h4>
-                                <p>28세 · ENFP · 마케터</p>
-                            </div>
                         </div>
                         <div className="persona-card" style={{transform: 'rotate(10deg) translateY(10px)', animationDelay: '0.2s'}}>
                             <img src="/img/man1_insta.webp" alt="AI Persona 2" />
-                            <div className="persona-info">
-                                <h4>김민수</h4>
-                                <p>30세 · INTJ · 개발자</p>
-                            </div>
                         </div>
                         <div className="persona-card" style={{transform: 'rotate(-8deg) translateY(-15px)', animationDelay: '0.4s'}}>
                             <img src="/img/woman2_insta.webp" alt="AI Persona 3" />
-                            <div className="persona-info">
-                                <h4>박지영</h4>
-                                <p>26세 · ISFP · 디자이너</p>
-                            </div>
                         </div>
                         <div className="persona-card" style={{transform: 'rotate(12deg) translateY(5px)', animationDelay: '0.6s'}}>
                             <img src="/img/man2_insta.webp" alt="AI Persona 4" />
-                            <div className="persona-info">
-                                <h4>최준호</h4>
-                                <p>32세 · ENTP · 기업가</p>
-                            </div>
                         </div>
                         <div className="persona-card" style={{transform: 'rotate(-5deg) translateY(-25px)', animationDelay: '0.8s'}}>
                             <img src="/img/woman3_insta.webp" alt="AI Persona 5" />
-                            <div className="persona-info">
-                                <h4>정수진</h4>
-                                <p>29세 · INFJ · 교사</p>
-                            </div>
                         </div>
                         <div className="persona-card" style={{transform: 'rotate(8deg) translateY(15px)', animationDelay: '1s'}}>
                             <img src="/img/man3_insta.webp" alt="AI Persona 6" />
-                            <div className="persona-info">
-                                <h4>윤태현</h4>
-                                <p>31세 · ESTP · 의사</p>
-                            </div>
                         </div>
                         <div className="persona-card" style={{transform: 'rotate(-12deg) translateY(-10px)', animationDelay: '1.2s'}}>
                             <img src="/img/woman4_insta.webp" alt="AI Persona 7" />
-                            <div className="persona-info">
-                                <h4>한소희</h4>
-                                <p>27세 · ESFJ · 간호사</p>
-                            </div>
                         </div>
                         <div className="persona-card" style={{transform: 'rotate(6deg) translateY(20px)', animationDelay: '1.4s'}}>
                             <img src="/img/man4_insta.webp" alt="AI Persona 8" />
-                            <div className="persona-info">
-                                <h4>강동원</h4>
-                                <p>33세 · ISTP · 건축가</p>
-                            </div>
                         </div>
                         <div className="persona-card" style={{transform: 'rotate(-10deg) translateY(-5px)', animationDelay: '1.6s'}}>
                             <img src="/img/woman5_insta.webp" alt="AI Persona 9" />
-                            <div className="persona-info">
-                                <h4>임하나</h4>
-                                <p>25세 · ENFJ · 변호사</p>
-                            </div>
                         </div>
                         <div className="persona-card" style={{transform: 'rotate(15deg) translateY(25px)', animationDelay: '1.8s'}}>
                             <img src="/img/man5_insta.webp" alt="AI Persona 10" />
-                            <div className="persona-info">
-                                <h4>송재민</h4>
-                                <p>34세 · INTP · 연구원</p>
-                            </div>
                         </div>
                     </div>
                 </div>

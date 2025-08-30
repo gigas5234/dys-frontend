@@ -4822,7 +4822,7 @@ section[id] {
 
 /* --- 페르소나 섹션 --- */
 .personas-section {
-    padding: 80px 0;
+    padding: 60px 0;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     position: relative;
@@ -4841,63 +4841,53 @@ section[id] {
 }
 
 .personas-showcase {
-    margin-top: 60px;
+    margin-top: 40px;
 }
 
 .personas-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 30px;
-    max-width: 1200px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
 }
 
 .persona-card {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 20px;
+    border-radius: 15px;
+    padding: 15px;
     text-align: center;
     transition: all 0.3s ease;
     animation: personaFloat 6s ease-in-out infinite;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.4);
     position: relative;
     overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .persona-card:hover {
-    transform: translateY(-10px) scale(1.05) !important;
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    transform: translateY(-8px) scale(1.08) !important;
+    background: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.6);
 }
 
 .persona-card img {
-    width: 120px;
-    height: 120px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     object-fit: cover;
-    margin-bottom: 15px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
+    border: 3px solid rgba(255, 255, 255, 0.5);
     transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .persona-card:hover img {
-    border-color: rgba(255, 255, 255, 0.8);
-    transform: scale(1.1);
-}
-
-.persona-info h4 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 5px;
-    color: white;
-}
-
-.persona-info p {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.8);
-    margin: 0;
+    border-color: rgba(255, 255, 255, 0.9);
+    transform: scale(1.15);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
 }
 
 @keyframes personaFloat {
@@ -4905,32 +4895,36 @@ section[id] {
         transform: translateY(0px) rotate(var(--rotation, 0deg));
     }
     50% {
-        transform: translateY(-10px) rotate(var(--rotation, 0deg));
+        transform: translateY(-8px) rotate(var(--rotation, 0deg));
     }
 }
 
 /* 페르소나 섹션 반응형 디자인 */
 @media (max-width: 768px) {
     .personas-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 20px;
-        padding: 10px;
-    }
-    
-    .persona-card {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
         padding: 15px;
     }
     
+    .persona-card {
+        padding: 12px;
+    }
+    
     .persona-card img {
-        width: 80px;
-        height: 80px;
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .personas-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
     }
     
-    .persona-info h4 {
-        font-size: 16px;
-    }
-    
-    .persona-info p {
-        font-size: 12px;
+    .persona-card img {
+        width: 50px;
+        height: 50px;
     }
 }
