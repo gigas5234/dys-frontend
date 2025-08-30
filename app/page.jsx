@@ -158,6 +158,42 @@ function HomePage() {
   // 컴포넌트 언마운트 시 cleanup
   useEffect(() => () => cleanupRef.current(), []);
 
+  // 비디오 볼륨 설정 및 화면에 보일 때 재생
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const video = document.querySelector('.demo-video');
+    if (!video) return;
+    
+    // 볼륨 설정
+    video.volume = 0.3;
+    
+    // Intersection Observer 설정
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          // 화면에 보일 때 비디오 재생
+          video.play().catch(error => {
+            console.log('비디오 자동 재생 실패:', error);
+          });
+        } else {
+          // 화면에서 벗어날 때 비디오 일시정지
+          video.pause();
+        }
+      });
+    }, {
+      threshold: 0.3 // 30% 이상 보일 때 재생
+    });
+    
+    // 비디오 요소 관찰 시작
+    observer.observe(video);
+    
+    // 클린업
+    return () => {
+      observer.unobserve(video);
+    };
+  }, []);
+
   // 키보드 화살표 키로 섹션 이동
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -538,7 +574,7 @@ function HomePage() {
                 <div className="preview-grid">
                     <div className="preview-text reveal">
                         <h3>실제보다 더 실제같은<br/>AI 데이트 시뮬레이션</h3>
-                        <p>다양한 성격과 스토리를 가진 AI 파트너를 직접 선택하고, 약속을 잡는 과정부터 실제 대화까지. 현실적인 시나리오 속에서 당신의 소통 능력을 마음껏 시험하고 발전시켜 보세요.</p>
+                        <p>실제 연락해서 약속을 잡으면서 데연소는 시작합니다. 다양한 성격과 스토리를 가진 AI 파트너와의 자연스러운 대화를 통해 당신의 소통 능력을 마음껏 시험하고 발전시켜 보세요.</p>
                     </div>
                     <div className="interactive-mockup reveal" style={{transitionDelay: '0.2s'}}>
                         <div className="mockup-chat-container">
@@ -576,8 +612,32 @@ function HomePage() {
                         <img src="/img/dys_main_card.webp" alt="다양한 AI 페르소나" />
                     </div>
                     <div className="personas-content reveal" style={{transitionDelay: '0.2s'}}>
-                        <h2>다양한 성격의<br/>AI 페르소나와 만나보세요</h2>
+                        <h3>다양한 성격의<br/>AI 페르소나와 만나보세요</h3>
                         <p>MBTI, 직업, 관심사가 각각 다른 AI 파트너들이 준비되어 있습니다. 당신의 이상형에 맞는 완벽한 연습 상대를 선택하고, 다양한 상황에서 대화 연습을 해보세요. 각 페르소나는 독특한 성격과 스토리를 가지고 있어 더욱 현실적인 데이트 경험을 제공합니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="video-demo" className="video-section">
+            <div className="container">
+                <div className="video-grid">
+                    <div className="video-content reveal">
+                        <h3>실제 같은<br/>시뮬레이션</h3>
+                        <p>AI 페르소나와의 실제 대화를 통해 데이트 시뮬레이션을 경험해보세요. 자연스러운 대화 흐름과 실시간 피드백으로 더욱 현실적인 연습이 가능합니다.</p>
+                    </div>
+                    <div className="video-container reveal" style={{transitionDelay: '0.2s'}}>
+                        <video 
+                            className="demo-video"
+                            muted 
+                            loop
+                            playsInline
+                            controls
+                            preload="metadata"
+                        >
+                            <source src="/mov/dys_이서아.mp4" type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
                     </div>
                 </div>
             </div>
