@@ -158,6 +158,48 @@ function HomePage() {
   // 컴포넌트 언마운트 시 cleanup
   useEffect(() => () => cleanupRef.current(), []);
 
+  // 키보드 화살표 키로 섹션 이동
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const handleKeyDown = (e) => {
+      const sections = [
+        'hero-section',
+        'problem',
+        'empathy',
+        'preview',
+        'science',
+        'features',
+        'reviews'
+      ];
+      
+      const currentScrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const currentSectionIndex = Math.round(currentScrollY / windowHeight);
+      
+      if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+        e.preventDefault();
+        const nextSectionIndex = Math.min(currentSectionIndex + 1, sections.length - 1);
+        const nextSection = document.getElementById(sections[nextSectionIndex]) || 
+                          document.querySelector(`.${sections[nextSectionIndex]}`);
+        if (nextSection) {
+          nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+        e.preventDefault();
+        const prevSectionIndex = Math.max(currentSectionIndex - 1, 0);
+        const prevSection = document.getElementById(sections[prevSectionIndex]) || 
+                          document.querySelector(`.${sections[prevSectionIndex]}`);
+        if (prevSection) {
+          prevSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   useEffect(() => {
     // 클라이언트에서만 실행
     if (typeof window === 'undefined') return;
@@ -441,11 +483,9 @@ function HomePage() {
                 onClick={() => {
                   const problemSection = document.getElementById('problem');
                   if (problemSection) {
-                    const headerHeight = 80; // 헤더 높이
-                    const targetPosition = problemSection.offsetTop - headerHeight;
-                    window.scrollTo({
-                      top: targetPosition,
-                      behavior: 'smooth'
+                    problemSection.scrollIntoView({
+                      behavior: 'smooth',
+                      block: 'start'
                     });
                   }
                 }}
