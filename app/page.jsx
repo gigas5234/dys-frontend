@@ -444,53 +444,6 @@ function HomePage() {
 
       <main className={showAnimations ? 'fade-in' : ''}>
         <section className="hero-section">
-            {/* AI 코칭 스마트 애니메이션 */}
-            <div className="paint-flow-container">
-                {/* AI 뉴런들 */}
-                <div className="ai-neuron neuron-left"></div>
-                <div className="ai-neuron neuron-right"></div>
-                <div className="ai-neuron neuron-top"></div>
-                <div className="ai-neuron neuron-bottom"></div>
-                <div className="ai-neuron neuron-left-2"></div>
-                <div className="ai-neuron neuron-right-2"></div>
-                <div className="ai-neuron neuron-top-2"></div>
-                <div className="ai-neuron neuron-bottom-2"></div>
-                
-                {/* AI 연결선 */}
-                <div className="ai-connection connection-1"></div>
-                <div className="ai-connection connection-2"></div>
-                <div className="ai-connection connection-3"></div>
-                
-                {/* 대화 버블 */}
-                <div className="chat-bubble bubble-1">안녕하세요!</div>
-                <div className="chat-bubble bubble-2">소통 연습을 시작해볼까요?</div>
-                <div className="chat-bubble bubble-3">AI가 도와드릴게요</div>
-                
-                {/* 데이터 시각화 */}
-                <div className="data-point data-1"></div>
-                <div className="data-point data-2"></div>
-                <div className="data-point data-3"></div>
-                <div className="data-point data-4"></div>
-                
-                {/* 타겟팅 효과 */}
-                <div className="target-ring target-1"></div>
-                <div className="target-ring target-2"></div>
-            </div>
-            
-            {/* 외각 AI 뉴런 확장 효과 */}
-            <div className="ai-outer-neurons">
-                <div className="ai-outer-neuron outer-neuron-1"></div>
-                <div className="ai-outer-neuron outer-neuron-2"></div>
-                <div className="ai-outer-neuron outer-neuron-3"></div>
-                <div className="ai-outer-neuron outer-neuron-4"></div>
-                <div className="ai-outer-neuron outer-neuron-5"></div>
-                <div className="ai-outer-neuron outer-neuron-6"></div>
-                
-                <div className="outer-connection outer-conn-1"></div>
-                <div className="outer-connection outer-conn-2"></div>
-                <div className="outer-connection outer-conn-3"></div>
-                <div className="outer-connection outer-conn-4"></div>
-            </div>
             
             <div className="hero-content">
                 <div className="slogan reveal">설렘은 현실로, 실수는 연습으로.</div>
