@@ -477,8 +477,20 @@ function HomePage() {
                 <div className="target-ring target-2"></div>
             </div>
             
-            {/* 중앙 AI 코어 */}
-            <div className="ai-core"></div>
+            {/* 외각 AI 뉴런 확장 효과 */}
+            <div className="ai-outer-neurons">
+                <div className="ai-outer-neuron outer-neuron-1"></div>
+                <div className="ai-outer-neuron outer-neuron-2"></div>
+                <div className="ai-outer-neuron outer-neuron-3"></div>
+                <div className="ai-outer-neuron outer-neuron-4"></div>
+                <div className="ai-outer-neuron outer-neuron-5"></div>
+                <div className="ai-outer-neuron outer-neuron-6"></div>
+                
+                <div className="outer-connection outer-conn-1"></div>
+                <div className="outer-connection outer-conn-2"></div>
+                <div className="outer-connection outer-conn-3"></div>
+                <div className="outer-connection outer-conn-4"></div>
+            </div>
             
             <div className="hero-content">
                 <div className="slogan reveal">설렘은 현실로, 실수는 연습으로.</div>
