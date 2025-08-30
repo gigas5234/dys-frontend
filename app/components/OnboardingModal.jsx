@@ -7,36 +7,36 @@ import { updateOnboardingStatus } from '../../lib/supabase';
    const [currentSlide, setCurrentSlide] = useState(0);
    const [isLoading, setIsLoading] = useState(false);
   
-     const slides = [
-     {
-       title: "마음에 드는 상대를 선택하세요",
-       description: "10명의 다양한 AI 페르소나 중에서 마음에 드는 상대를 선택할 수 있습니다.",
-       image: "/onboarding/slide1-persona-selection.webp",
-       alt: "페르소나 선택 화면",
-       hasAnimation: false
-     },
-     {
-       title: "바로 데이트를 시작해 보세요.",
-       description: "다른 상대를 찾아볼 수도 있고, 준비가 완료되면 실제 AI 데이트를 시작할 수도 있습니다.",
-       image: "/onboarding/slide2-chat-to-date.webp",
-       alt: "채팅에서 두 가지 선택지",
-       hasAnimation: false
-     },
-     {
-       title: "실제 사용자에 맞춤 자세를 측정해줍니다",
-       description: "자세 측정 하기를 시작하고 5초간 가만히 있으면 완료됩니다.",
-       image: "/onboarding/slide3-camera.webp",
-       alt: "자세 측정 화면",
-       hasAnimation: false
-     },
-     {
-       title: "실시간 피드백으로 소통 능력을 향상시키세요",
-       description: "카메라와 마이크를 통해 실시간으로 자세, 시선, 목소리를 분석받아 소통 능력을 개선하세요. 카메라와 마이크의 권한 요청이 진행됩니다.",
-       image: "/onboarding/slide4-studio-overview.webp",
-       alt: "GKE 스튜디오 전체 화면",
-       hasAnimation: false
-     }
-   ];
+           const slides = [
+      {
+        title: "마음에 드는 상대를 선택하세요.",
+        description: "10명의 다양한 AI 페르소나 중에서 마음에 드는 상대를 선택할 수 있습니다.",
+        image: "/onboarding/slide1-persona-selection.webp",
+        alt: "페르소나 선택 화면",
+        hasAnimation: false
+      },
+      {
+        title: "바로 데이트를 시작해 보세요.",
+        description: "다른 상대를 찾아볼 수도 있고, 준비가 완료되면 실제 AI 데이트를 시작할 수도 있습니다.",
+        image: "/onboarding/slide2-chat-to-date.webp",
+        alt: "채팅에서 두 가지 선택지",
+        hasAnimation: false
+      },
+      {
+        title: "개인화된 맞춤 자세를 측정하세요.",
+        description: "자세 측정 하기를 시작하고 5초간 가만히 있으면 완료됩니다.",
+        image: "/onboarding/slide3-camera.webp",
+        alt: "자세 측정 화면",
+        hasAnimation: false
+      },
+      {
+        title: "실시간 피드백으로 소통 능력을 향상시키세요.",
+        description: "카메라와 마이크를 통해 실시간으로 자세, 시선, 목소리를 분석받아 소통 능력을 개선하세요. 카메라와 마이크의 권한 요청이 진행됩니다.",
+        image: "/onboarding/slide4-studio-overview.webp",
+        alt: "GKE 스튜디오 전체 화면",
+        hasAnimation: false
+      }
+    ];
 
      // 모달이 열릴 때 첫 번째 슬라이드로 리셋
    useEffect(() => {
