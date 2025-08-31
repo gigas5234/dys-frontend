@@ -518,10 +518,10 @@ function HomePage() {
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  color: 'rgba(255, 255, 255, 0.8)',
+                  color: 'rgba(0, 0, 0, 0.9)',
                   fontSize: '14px',
-                  fontWeight: '500',
-                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+                  fontWeight: '600',
+                  textShadow: '0 1px 3px rgba(255, 255, 255, 0.8)'
                 }}>
                   <span style={{ marginBottom: '12px', letterSpacing: '0.5px' }}>아래로 스크롤</span>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
@@ -530,7 +530,7 @@ function HomePage() {
                       height="20" 
                       viewBox="0 0 24 24" 
                       fill="none" 
-                      stroke="rgba(255, 255, 255, 0.8)" 
+                      stroke="rgba(0, 0, 0, 0.9)" 
                       strokeWidth="2"
                       style={{ animation: 'arrowBounce 2s ease-in-out infinite' }}
                     >
@@ -541,7 +541,7 @@ function HomePage() {
                       height="20" 
                       viewBox="0 0 24 24" 
                       fill="none" 
-                      stroke="rgba(255, 255, 255, 0.6)" 
+                      stroke="rgba(0, 0, 0, 0.7)" 
                       strokeWidth="2"
                       style={{ animation: 'arrowBounce 2s ease-in-out infinite 0.5s' }}
                     >
