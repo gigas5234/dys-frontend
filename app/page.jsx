@@ -627,33 +627,6 @@ function HomePage() {
             </div>
         </section>
 
-        <section id="science" className="science-section">
-            <div className="container">
-                 <div className="section-title reveal">
-                    <h2>첫인상을 결정하는 3V의 법칙</h2>
-                    <p>메라비언의 법칙에 따르면, 소통에서 가장 큰 영향을 미치는 것은 바로 3V - 시각(Visual), 청각(Vocal), 그리고 언어(Verbal)입니다. 데연소는 이 세 가지 요소를 과학적으로 분석하여 당신의 숨은 매력을 찾아냅니다.</p>
-                </div>
-                <div className="content-wrapper">
-                    <div className="venn-diagram-container reveal">
-                        <div className="venn-circle venn-visual"><div className="percent">55%</div><div className="label">Visual</div></div>
-                        <div className="venn-circle venn-vocal"><div className="percent">38%</div><div className="label">Vocal</div></div>
-                        <div className="venn-circle venn-verbal"><div className="percent">7%</div><div className="label">Verbal</div></div>
-                    </div>
-                    <div className="text-content reveal" style={{transitionDelay: '0.2s'}}>
-                        <h3>'데연소'는 3V를 어떻게 분석할까요?</h3>
-                        <p>단순한 대화 분석을 넘어, AI가 당신의 표정, 시선, 목소리, 말투까지 종합적으로 분석해 '데연소 리포트'를 제공합니다.</p>
-                        <div className="analysis-grid">
-                            <div className="analysis-item visual"><h4>시각(Visual) 분석</h4><p>긍정적 표정, 안정적 시선, 자세 등을 통해 당신의 비언어적 매력을 측정합니다.</p></div>
-                            <div className="analysis-item vocal"><h4>청각(Vocal) 분석</h4><p>목소리의 톤과 감정을 분석하여 대화 분위기를 파악하고 긍정 감정에 가중치를 부여합니다.</p></div>
-                            <div className="analysis-item verbal"><h4>언어(Verbal) 분석</h4><p>GPT가 대화의 흐름과 연결성을 종합 평가하여 내용의 긍정성을 분석합니다.</p></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-
         <section id="features" className="features-section">
             <div className="container">
                 <div className="section-title reveal">
@@ -675,6 +648,31 @@ function HomePage() {
                          <svg className="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                         <h3>다양한 AI 페르소나</h3>
                         <p>MBTI, 직업, 관심사 등을 조합하여 원하는 이상형에 가까운 AI 파트너를 직접 선택하고, 다양한 상황에 맞는 대화 연습을 할 수 있습니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="science" className="science-section">
+            <div className="container">
+                 <div className="section-title reveal">
+                    <h2>첫인상을 결정하는 3V의 법칙</h2>
+                    <p>메라비언의 법칙에 따르면, 소통에서 가장 큰 영향을 미치는 것은 바로 3V - 시각(Visual), 청각(Vocal), 그리고 언어(Verbal)입니다. 데연소는 이 세 가지 요소를 과학적으로 분석하여 당신의 숨은 매력을 찾아냅니다.</p>
+                </div>
+                <div className="content-wrapper">
+                    <div className="venn-diagram-container reveal">
+                        <div className="venn-circle venn-visual"><div className="percent">55%</div><div className="label">Visual</div></div>
+                        <div className="venn-circle venn-vocal"><div className="percent">38%</div><div className="label">Vocal</div></div>
+                        <div className="venn-circle venn-verbal"><div className="percent">7%</div><div className="label">Verbal</div></div>
+                    </div>
+                    <div className="text-content reveal" style={{transitionDelay: '0.2s'}}>
+                        <h3>'데연소'는 3V를 어떻게 분석할까요?</h3>
+                        <p>단순한 대화 분석을 넘어, AI가 당신의 표정, 시선, 목소리, 말투까지 종합적으로 분석해 '데연소 리포트'를 제공합니다.</p>
+                        <div className="analysis-grid">
+                            <div className="analysis-item visual"><h4>시각(Visual) 분석</h4><p>긍정적 표정, 안정적 시선, 자세 등을 통해 당신의 비언어적 매력을 측정합니다.</p></div>
+                            <div className="analysis-item vocal"><h4>청각(Vocal) 분석</h4><p>목소리의 톤과 감정을 분석하여 대화 분위기를 파악하고 긍정 감정에 가중치를 부여합니다.</p></div>
+                            <div className="analysis-item verbal"><h4>언어(Verbal) 분석</h4><p>GPT가 대화의 흐름과 연결성을 종합 평가하여 내용의 긍정성을 분석합니다.</p></div>
+                        </div>
                     </div>
                 </div>
             </div>
